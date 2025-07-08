@@ -18,20 +18,9 @@ pip install cis-to-fleet
 
 ## Usage
 
-### Interactive TUI (default)
+### Command Line Interface (Recommended)
 
-Launch the interactive terminal interface:
-
-```bash
-cis-to-fleet tui
-```
-
-- Use checkboxes to select platforms
-- "Select All" to choose all available platforms  
-- Press `G` or click "Generate" to create Fleet YAML files
-- Press `Q` or Escape to quit
-
-### Command Line Interface
+The CLI is the most stable way to use this tool:
 
 **List available platforms:**
 ```bash
@@ -62,6 +51,21 @@ cis-to-fleet generate macos-15 --output /path/to/output
 ```bash
 cis-to-fleet generate macos-15 --force
 ```
+
+### Interactive TUI (Alpha)
+
+⚠️ **Note:** The TUI is currently in alpha and may have stability issues. CLI mode is recommended for production use.
+
+Launch the interactive terminal interface:
+
+```bash
+cis-to-fleet tui
+```
+
+- Use checkboxes to select platforms
+- "Select All" to choose all available platforms  
+- Press `G` or click "Generate" to create Fleet YAML files
+- Press `Q` or Escape to quit
 
 ## What it does
 
