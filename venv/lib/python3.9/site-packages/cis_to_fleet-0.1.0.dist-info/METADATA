@@ -1,0 +1,145 @@
+Metadata-Version: 2.4
+Name: cis-to-fleet
+Version: 0.1.0
+Summary: Convert CIS benchmarks to Fleet-compatible policy files
+Author: cis-to-fleet contributors
+License: MIT
+Project-URL: Homepage, https://github.com/username/cis-to-fleet
+Project-URL: Repository, https://github.com/username/cis-to-fleet
+Project-URL: Issues, https://github.com/username/cis-to-fleet/issues
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: System Administrators
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Topic :: System :: Systems Administration
+Classifier: Topic :: Security
+Requires-Python: <4.0,>=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: requests>=2.31.0
+Requires-Dist: typer>=0.12.0
+Requires-Dist: ruamel.yaml>=0.18.0
+Requires-Dist: textual>=0.59.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+Requires-Dist: pytest-httpx>=0.21.0; extra == "dev"
+Requires-Dist: responses>=0.23.0; extra == "dev"
+Requires-Dist: ruff>=0.1.0; extra == "dev"
+Requires-Dist: mypy>=1.0.0; extra == "dev"
+Requires-Dist: pre-commit>=3.0.0; extra == "dev"
+Requires-Dist: build>=0.10.0; extra == "dev"
+Dynamic: license-file
+
+# cis-to-fleet
+
+Convert CIS benchmarks to Fleet-compatible policy files.
+
+## Quick Start
+
+Install with pipx (recommended):
+
+```bash
+pipx install cis-to-fleet
+```
+
+Or install with pip:
+
+```bash
+pip install cis-to-fleet
+```
+
+## Usage
+
+### Interactive TUI (default)
+
+Launch the interactive terminal interface:
+
+```bash
+cis-to-fleet tui
+```
+
+- Use checkboxes to select platforms
+- "Select All" to choose all available platforms  
+- Press `G` or click "Generate" to create Fleet YAML files
+- Press `Q` or Escape to quit
+
+### Command Line Interface
+
+**List available platforms:**
+```bash
+cis-to-fleet list
+```
+
+**Generate single platform:**
+```bash
+cis-to-fleet generate macos-15
+```
+
+**Generate multiple platforms:**
+```bash
+cis-to-fleet generate macos-15 win-11
+```
+
+**Generate all platforms:**
+```bash
+cis-to-fleet generate --all
+```
+
+**Custom output directory:**
+```bash
+cis-to-fleet generate macos-15 --output /path/to/output
+```
+
+**Force overwrite existing files:**
+```bash
+cis-to-fleet generate macos-15 --force
+```
+
+## What it does
+
+This tool fetches CIS (Center for Internet Security) benchmark policies from the Fleet repository and transforms them into clean, Fleet-compatible YAML files:
+
+1. **Discovers** CIS benchmark platforms from `fleetdm/fleet/ee/cis/`
+2. **Fetches** raw policy YAML files from GitHub
+3. **Transforms** data by extracting only essential fields:
+   - `name` - Policy name
+   - `platform` - Target platform (darwin, windows, etc.)
+   - `description` - Policy description
+   - `resolution` - How to fix the issue
+   - `query` - SQL query to check compliance
+4. **Outputs** clean `.yml` files in `./output/` directory
+
+## Requirements
+
+- Python 3.9+
+- Internet connection (to fetch from GitHub)
+
+## Development
+
+Clone and install in development mode:
+
+```bash
+git clone <repository>
+cd cis-to-fleet
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -e ".[dev]"
+```
+
+Run tests:
+```bash
+pytest
+```
+
+Run linting:
+```bash
+ruff check src tests
+mypy src
+```
+
+## License
+
+MIT License

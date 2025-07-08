@@ -1,0 +1,13 @@
+- name: "Ensure System Integrity Protection status"
+  platform: "darwin"
+  description: |
+    System Integrity Protection (SIP) is a security feature that restricts
+    the root user account and limits the actions that the root user can perform.
+  query: "SELECT * FROM system_info WHERE name = 'sip_status';"
+  resolution: "Enable System Integrity Protection"
+  
+- name: "Ensure Firewall is configured"
+  platform: "darwin"
+  description: "macOS has a built-in firewall that should be enabled"
+  query: "SELECT * FROM alf WHERE setting = 'globalstate';"
+  resolution: "Configure and enable the firewall"
