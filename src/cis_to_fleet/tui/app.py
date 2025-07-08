@@ -69,7 +69,7 @@ class CISBenchmarkApp(App[None]):
         with Vertical(classes="platform-list", id="platform-container"):
             yield Checkbox("Select All", id="select-all")
         
-        yield ProgressBar(id="progress", show_eta=False, visible=False)
+        yield ProgressBar(id="progress", show_eta=False, classes="hidden")
         
         with Horizontal():
             yield Button("Generate", variant="primary", id="generate-btn")

@@ -1,4 +1,3 @@
-LICENSE
 README.md
 pyproject.toml
 src/cis_to_fleet/__init__.py
