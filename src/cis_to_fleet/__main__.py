@@ -8,7 +8,7 @@ import typer
 
 from cis_to_fleet import __version__
 from cis_to_fleet.github import fetch_yaml_sync, list_folders_sync
-from cis_to_fleet.transform import raw_yaml_to_list, sanitise_all, to_yaml
+from cis_to_fleet.transform import raw_yaml_to_list, sanitise_all, to_yaml, filter_by_level
 from cis_to_fleet.writer import output_path, write
 
 
@@ -56,6 +56,12 @@ def generate(
         "--all", 
         help="Generate for all available platforms"
     ),
+    level: str = typer.Option(
+        "all",
+        "--level",
+        "-l", 
+        help="CIS level to include: 1, 2, or all (default: all)"
+    ),
     output: Path = typer.Option(
         Path("./output"), 
         "--output", 
@@ -76,6 +82,10 @@ def generate(
     
     if not all_platforms and not platforms:
         typer.echo("Error: Must specify either platform names or --all flag.", err=True)
+        raise typer.Exit(1)
+    
+    if level not in ["1", "2", "all"]:
+        typer.echo(f"Error: Invalid level '{level}'. Must be '1', '2', or 'all'.", err=True)
         raise typer.Exit(1)
     
     # Determine platforms to process
@@ -99,6 +109,11 @@ def generate(
             
             # Parse and transform
             raw_items = raw_yaml_to_list(raw_yaml)
+            
+            # Filter by level if specified
+            if level != "all":
+                raw_items = filter_by_level(raw_items, level)
+            
             sanitised_items = sanitise_all(raw_items)
             output_yaml = to_yaml(sanitised_items)
             

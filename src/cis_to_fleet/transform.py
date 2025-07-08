@@ -82,6 +82,34 @@ def sanitise_all(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [sanitise(item) for item in items]
 
 
+def filter_by_level(items: list[dict[str, Any]], level: str) -> list[dict[str, Any]]:
+    """Filter policy items by CIS level.
+    
+    Args:
+        items: List of policy item dictionaries.
+        level: CIS level to filter by ("1" or "2").
+        
+    Returns:
+        List of policy items matching the specified level.
+    """
+    if level not in ["1", "2"]:
+        raise ValueError(f"Invalid level '{level}'. Must be '1' or '2'.")
+    
+    level_tag = f"CIS_Level{level}"
+    level_tag_alt = f"CIS_LEVEL{level}"  # Handle alternative capitalization
+    
+    filtered_items = []
+    for item in items:
+        tags = item.get("tags", "")
+        if isinstance(tags, str):
+            # Split comma-separated tags and check for level
+            tag_list = [tag.strip() for tag in tags.split(",")]
+            if level_tag in tag_list or level_tag_alt in tag_list:
+                filtered_items.append(item)
+    
+    return filtered_items
+
+
 def to_yaml(items: list[dict[str, Any]]) -> str:
     """Convert list of policy items to YAML string format.
     
