@@ -111,7 +111,7 @@ def filter_by_level(items: list[dict[str, Any]], level: str) -> list[dict[str, A
 
 
 def to_yaml(items: list[dict[str, Any]]) -> str:
-    """Convert list of policy items to YAML string format.
+    """Convert list of policy items to YAML string format (array format).
     
     Args:
         items: List of policy item dictionaries.
@@ -134,3 +134,56 @@ def to_yaml(items: list[dict[str, Any]]) -> str:
     output = io.StringIO()
     yaml.dump(items, output)
     return output.getvalue()
+
+
+def to_yaml_chunks(items: list[dict[str, Any]]) -> dict[str, str]:
+    """Convert list of policy items to individual YAML chunks.
+    
+    Args:
+        items: List of policy item dictionaries.
+        
+    Returns:
+        Dictionary mapping policy names to individual YAML strings.
+    """
+    yaml = YAML()
+    yaml.indent(mapping=2, sequence=2, offset=0)
+    yaml.default_flow_style = False
+    yaml.explicit_start = False
+    yaml.explicit_end = False
+    
+    # Configure for clean output
+    yaml.preserve_quotes = False
+    yaml.width = 4096  # Prevent line wrapping
+    yaml.map_indent = 2
+    yaml.sequence_indent = 2
+    
+    chunks = {}
+    for item in items:
+        # Create a safe filename from the policy name
+        policy_name = item.get('name', 'unknown')
+        safe_name = policy_name.replace(' ', '_').replace('/', '_').replace('\\', '_')
+        safe_name = ''.join(c for c in safe_name if c.isalnum() or c in '_-')
+        
+        # Reorder fields to match Fleet format: name, query, critical, description, resolution, platform
+        ordered_item = {}
+        if 'name' in item:
+            ordered_item['name'] = item['name']
+        if 'query' in item:
+            ordered_item['query'] = item['query']
+        
+        # Add critical field (default to false for CIS policies)
+        ordered_item['critical'] = False
+        
+        if 'description' in item:
+            ordered_item['description'] = item['description']
+        if 'resolution' in item:
+            ordered_item['resolution'] = item['resolution']
+        if 'platform' in item:
+            ordered_item['platform'] = item['platform']
+        
+        # Generate individual YAML for this policy wrapped in array format
+        output = io.StringIO()
+        yaml.dump([ordered_item], output)  # Wrap in array to get "- " prefix
+        chunks[safe_name] = output.getvalue()
+    
+    return chunks

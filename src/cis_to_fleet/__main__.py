@@ -8,7 +8,7 @@ import typer
 
 from cis_to_fleet import __version__
 from cis_to_fleet.github import fetch_yaml_sync, list_folders_sync
-from cis_to_fleet.transform import raw_yaml_to_list, sanitise_all, to_yaml, filter_by_level
+from cis_to_fleet.transform import raw_yaml_to_list, sanitise_all, to_yaml, to_yaml_chunks, filter_by_level
 from cis_to_fleet.writer import output_path, write
 
 
@@ -62,6 +62,12 @@ def generate(
         "-l", 
         help="CIS level to include: 1, 2, or all (default: all)"
     ),
+    format: str = typer.Option(
+        "combine",
+        "--format",
+        "-f",
+        help="Output format: combine (single file) or split (individual files per policy)"
+    ),
     output: Path = typer.Option(
         Path("./output"), 
         "--output", 
@@ -86,6 +92,10 @@ def generate(
     
     if level not in ["1", "2", "all"]:
         typer.echo(f"Error: Invalid level '{level}'. Must be '1', '2', or 'all'.", err=True)
+        raise typer.Exit(1)
+    
+    if format not in ["combine", "split"]:
+        typer.echo(f"Error: Invalid format '{format}'. Must be 'combine' or 'split'.", err=True)
         raise typer.Exit(1)
     
     # Determine platforms to process
@@ -115,13 +125,25 @@ def generate(
                 raw_items = filter_by_level(raw_items, level)
             
             sanitised_items = sanitise_all(raw_items)
-            output_yaml = to_yaml(sanitised_items)
             
-            # Determine output path and write
-            file_path = output_path(platform, output)
-            write(output_yaml, file_path, overwrite=force)
+            if format == "combine":
+                # Generate single YAML file with all policies
+                output_yaml = to_yaml(sanitised_items)
+                file_path = output_path(platform, output)
+                write(output_yaml, file_path, overwrite=force)
+                typer.echo(f"Generated combined file: {file_path}")
             
-            typer.echo(f"Generated: {file_path}")
+            elif format == "split":
+                # Generate individual YAML files for each policy
+                chunks = to_yaml_chunks(sanitised_items)
+                platform_dir = output / platform
+                platform_dir.mkdir(parents=True, exist_ok=True)
+                
+                for policy_name, yaml_content in chunks.items():
+                    chunk_path = platform_dir / f"{policy_name}.yml"
+                    write(yaml_content, chunk_path, overwrite=force)
+                
+                typer.echo(f"Generated {len(chunks)} individual policy files in: {platform_dir}")
             
         except FileExistsError:
             typer.echo(
