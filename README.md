@@ -52,6 +52,18 @@ cis-to-fleet generate macos-15 --output /path/to/output
 cis-to-fleet generate macos-15 --force
 ```
 
+**Filter by CIS level:**
+```bash
+# Generate only Level 1 policies (essential security)
+cis-to-fleet generate macos-15 --level 1
+
+# Generate only Level 2 policies (advanced security)
+cis-to-fleet generate macos-15 --level 2
+
+# Generate all levels (default)
+cis-to-fleet generate macos-15 --level all
+```
+
 ### Interactive TUI (Alpha)
 
 ⚠️ **Note:** The TUI is currently in alpha and may have stability issues. CLI mode is recommended for production use.
@@ -73,13 +85,16 @@ This tool fetches CIS (Center for Internet Security) benchmark policies from the
 
 1. **Discovers** CIS benchmark platforms from `fleetdm/fleet/ee/cis/`
 2. **Fetches** raw policy YAML files from GitHub
-3. **Transforms** data by extracting only essential fields:
+3. **Filters** policies by CIS level (optional):
+   - **Level 1** - Essential security policies for all organizations
+   - **Level 2** - Advanced security policies for high-security environments
+4. **Transforms** data by extracting only essential fields:
    - `name` - Policy name
    - `platform` - Target platform (darwin, windows, etc.)
    - `description` - Policy description
    - `resolution` - How to fix the issue
    - `query` - SQL query to check compliance
-4. **Outputs** clean `.yml` files in `./output/` directory
+5. **Outputs** clean `.yml` files in `./output/` directory
 
 ## Requirements
 
