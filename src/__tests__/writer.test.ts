@@ -12,6 +12,13 @@ test('outputPath generates correct file paths', () => {
   expect(outputPath('ubuntu', './test')).toBe(join('./test', 'cis-benchmark-ubuntu.yml'));
 });
 
+test('outputPath rejects dangerous folder names', () => {
+  expect(() => outputPath('../etc', './out')).toThrow('Invalid folder name');
+  expect(() => outputPath('bad/dir', './out')).toThrow('Invalid folder name');
+  expect(() => outputPath('bad\\dir', './out')).toThrow('Invalid folder name');
+  expect(() => outputPath('bad\0dir', './out')).toThrow('Invalid folder name');
+});
+
 test('write creates file with content', async () => {
   const testDir = './test-write';
   const testFile = join(testDir, 'test.yml');

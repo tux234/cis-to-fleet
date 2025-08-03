@@ -17,9 +17,17 @@ import { dirname, join } from 'node:path';
  * ```
  */
 export function outputPath(folder: string, outDir: string): string {
+  validatePath(folder);
   const cleanFolder = folder.replace(/-/g, '');
   const filename = `cis-benchmark-${cleanFolder}.yml`;
   return join(outDir, filename);
+}
+
+function validatePath(folder: string): void {
+  const dangerous = ['..', '/', '\\', '\0', '\x00'];
+  if (dangerous.some(char => folder.includes(char))) {
+    throw new Error(`Invalid folder name contains dangerous characters: ${folder}`);
+  }
 }
 
 /**
