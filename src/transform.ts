@@ -177,6 +177,9 @@ export function toYamlChunks(items: SanitizedPolicyItem[]): Record<string, strin
   for (const item of items) {
     // Create a safe filename from the policy name
     const policyName = item.name || 'unknown';
+    if (policyName.includes('\0') || policyName.includes('\x00')) {
+      throw new Error('Invalid policy name contains null bytes');
+    }
     let safeName = policyName
       .replace(/\s+/g, '_')
       .replace(/[/\\]/g, '_')

@@ -92,6 +92,11 @@ test('toYamlChunks generates individual YAML files', () => {
   expect(chunks['Policy_One']).toContain('critical: false');
 });
 
+test('toYamlChunks rejects policy names with null bytes', () => {
+  const policies = [{ name: 'bad\0name', query: 'SELECT 1' }];
+  expect(() => toYamlChunks(policies)).toThrow('Invalid policy name');
+});
+
 test('rawYamlToList handles basic YAML array', () => {
   const yaml = `
 - name: Policy 1
