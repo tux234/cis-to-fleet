@@ -11,6 +11,89 @@ const ALLOWED_KEYS = [
 	"query",
 ] as const;
 
+/**
+ * Runtime type guard to validate if an object is a valid PolicyItem.
+ *
+ * @param obj Unknown object to validate
+ * @returns True if the object matches PolicyItem structure
+ */
+function isPolicyItem(obj: unknown): obj is PolicyItem {
+	if (typeof obj !== "object" || obj === null) {
+		return false;
+	}
+
+	const item = obj as Record<string, unknown>;
+
+	// Check that all allowed keys are either string or undefined
+	for (const key of ALLOWED_KEYS) {
+		const value = item[key];
+		if (value !== undefined && typeof value !== "string") {
+			return false;
+		}
+	}
+
+	// Check that tags field (if present) is a string
+	if ("tags" in item && item.tags !== undefined && typeof item.tags !== "string") {
+		return false;
+	}
+
+	// At least one of name or query should be present for a valid policy
+	return (
+		typeof item.name === "string" ||
+		typeof item.query === "string"
+	);
+}
+
+/**
+ * Validate and parse a single policy item with proper error context.
+ *
+ * @param data Unknown data to validate as PolicyItem
+ * @param context Descriptive context for error messages
+ * @returns Validated PolicyItem
+ * @throws Error if validation fails
+ */
+function validatePolicyItem(data: unknown, context: string): PolicyItem {
+	if (!isPolicyItem(data)) {
+		const dataType = data === null ? "null" : typeof data;
+		throw new Error(
+			`Invalid policy data in ${context}: expected object with 'name' or 'query' field, got ${dataType}`,
+		);
+	}
+	return data;
+}
+
+/**
+ * Validate and parse an array of policy items.
+ *
+ * @param data Unknown data to validate as PolicyItem array
+ * @param context Descriptive context for error messages
+ * @returns Array of validated PolicyItems
+ * @throws Error if validation fails
+ */
+function validatePolicyArray(data: unknown, context: string): PolicyItem[] {
+	if (!Array.isArray(data)) {
+		const dataType = data === null ? "null" : typeof data;
+		throw new Error(
+			`Invalid policy array in ${context}: expected array, got ${dataType}`,
+		);
+	}
+
+	const validatedPolicies: PolicyItem[] = [];
+	for (let i = 0; i < data.length; i++) {
+		try {
+			const policy = validatePolicyItem(data[i], `${context}[${i}]`);
+			validatedPolicies.push(policy);
+		} catch (error) {
+			if (error instanceof Error) {
+				throw new Error(`${error.message} at index ${i}`);
+			}
+			throw error;
+		}
+	}
+
+	return validatedPolicies;
+}
+
 export type PolicyItem = {
 	name?: string;
 	platform?: string;
@@ -45,36 +128,67 @@ export function rawYamlToList(yamlStr: string): PolicyItem[] {
 
 		const policies: PolicyItem[] = [];
 
-		for (const doc of documents) {
+		for (let docIndex = 0; docIndex < documents.length; docIndex++) {
+			const doc = documents[docIndex];
 			const data = doc.toJS();
 
 			if (data && typeof data === "object") {
-				// Handle Kubernetes-style documents
-				if ("kind" in data && data.kind === "policy" && "spec" in data) {
-					policies.push(data.spec as PolicyItem);
-				}
-				// Handle direct list format
-				else if (Array.isArray(data)) {
-					policies.push(...data);
-				}
-				// Handle wrapped format
-				else if ("policies" in data && Array.isArray(data.policies)) {
-					policies.push(...data.policies);
-				}
-				// Handle single policy object
-				else if ("name" in data || "query" in data) {
-					policies.push(data as PolicyItem);
+				try {
+					// Handle Kubernetes-style documents
+					if ("kind" in data && data.kind === "policy" && "spec" in data) {
+						const policy = validatePolicyItem(
+							data.spec,
+							`document ${docIndex} (Kubernetes policy spec)`,
+						);
+						policies.push(policy);
+					}
+					// Handle direct list format
+					else if (Array.isArray(data)) {
+						const validatedPolicies = validatePolicyArray(
+							data,
+							`document ${docIndex} (direct array)`,
+						);
+						policies.push(...validatedPolicies);
+					}
+					// Handle wrapped format
+					else if ("policies" in data && Array.isArray(data.policies)) {
+						const validatedPolicies = validatePolicyArray(
+							data.policies,
+							`document ${docIndex} (wrapped policies array)`,
+						);
+						policies.push(...validatedPolicies);
+					}
+					// Handle single policy object - validate even if it looks like one
+					else {
+						// Try to validate as a policy - this will throw if invalid
+						const policy = validatePolicyItem(
+							data,
+							`document ${docIndex} (single policy)`,
+						);
+						policies.push(policy);
+					}
+				} catch (validationError) {
+					if (validationError instanceof Error) {
+						throw new Error(
+							`Validation failed for ${validationError.message}`,
+						);
+					}
+					throw validationError;
 				}
 			}
 		}
 
 		if (policies.length === 0) {
-			throw new Error("No policies found in YAML documents");
+			throw new Error("No valid policies found in YAML documents");
 		}
 
 		return policies;
 	} catch (error) {
 		if (error instanceof Error) {
+			// Don't double-wrap validation errors
+			if (error.message.includes("Validation failed")) {
+				throw error;
+			}
 			throw new Error(`Failed to parse YAML: ${error.message}`);
 		}
 		throw new Error("Failed to parse YAML: Unknown error");
