@@ -1,2 +1,0 @@
-[console_scripts]
-cis-to-fleet = cis_to_fleet.__main__:app

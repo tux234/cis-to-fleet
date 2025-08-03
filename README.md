@@ -1,101 +1,103 @@
-# cis-to-fleet
+# CIS to Fleet
 
-Convert CIS benchmarks to Fleet-compatible policy files.
+Convert CIS benchmarks to Fleet-compatible policy files for streamlined security compliance management.
 
-## Quick Start
+## Features
 
-Install with pipx (recommended):
+- 🚀 **Fast**: High-performance execution with modern JavaScript
+- 🔧 **Flexible**: Multiple output formats for different GitOps workflows
+- 📦 **Reliable**: Type-safe codebase with comprehensive testing
+- 🌐 **Compatible**: Works with Node.js 18+ environments
+- ⚡ **Efficient**: Direct GitHub API integration with intelligent caching
 
+## Installation
+
+### Option 1: Using Bun (Recommended)
 ```bash
-pipx install cis-to-fleet
+# Install Bun if you haven't already
+curl -fsSL https://bun.sh/install | bash
+
+# Clone and setup
+git clone https://github.com/your-org/cis-to-fleet.git
+cd cis-to-fleet
+bun install
 ```
 
-Or install with pip:
-
+### Option 2: Using Node.js
 ```bash
-pip install cis-to-fleet
+# Requires Node.js 18+
+git clone https://github.com/your-org/cis-to-fleet.git
+cd cis-to-fleet
+npm install
 ```
 
 ## Usage
 
-### Command Line Interface (Recommended)
-
-The CLI is the most stable way to use this tool:
+### With Bun (Recommended)
 
 **List available platforms:**
 ```bash
-cis-to-fleet list
+bun run src/cli.ts list
 ```
 
 **Generate single platform:**
 ```bash
-cis-to-fleet generate macos-15
+bun run src/cli.ts generate macos-15
 ```
 
 **Generate multiple platforms:**
 ```bash
-cis-to-fleet generate macos-15 win-11
+bun run src/cli.ts generate macos-15 win-11
 ```
 
 **Generate all platforms:**
 ```bash
-cis-to-fleet generate --all
+bun run src/cli.ts generate --all
 ```
 
 **Custom output directory:**
 ```bash
-cis-to-fleet generate macos-15 --output /path/to/output
+bun run src/cli.ts generate macos-15 --output /path/to/output
 ```
 
 **Force overwrite existing files:**
 ```bash
-cis-to-fleet generate macos-15 --force
+bun run src/cli.ts generate macos-15 --force
 ```
 
 **Filter by CIS level:**
 ```bash
 # Generate only Level 1 policies (essential security)
-cis-to-fleet generate macos-15 --level 1
+bun run src/cli.ts generate macos-15 --level 1
 
 # Generate only Level 2 policies (advanced security)
-cis-to-fleet generate macos-15 --level 2
+bun run src/cli.ts generate macos-15 --level 2
 
 # Generate all levels (default)
-cis-to-fleet generate macos-15 --level all
+bun run src/cli.ts generate macos-15 --level all
 ```
 
 **Choose output format for GitOps workflows:**
 ```bash
 # Combined format - single file for bulk deployment (default)
-cis-to-fleet generate macos-15 --format combine
+bun run src/cli.ts generate macos-15 --format combine
 
 # Split format - individual files for selective policy management
-cis-to-fleet generate macos-15 --format split
+bun run src/cli.ts generate macos-15 --format split
 ```
 
-**Combine both options:**
-```bash
-# Get Level 1 policies as individual files for cherry-picking
-cis-to-fleet generate macos-15 --level 1 --format split
+### With Node.js
 
-# Get all policies in a single file for bulk deployment
-cis-to-fleet generate macos-15 --level all --format combine
-```
-
-### Interactive TUI (Alpha)
-
-⚠️ **Note:** The TUI is currently in alpha and may have stability issues. CLI mode is recommended for production use.
-
-Launch the interactive terminal interface:
+For environments where Bun isn't available:
 
 ```bash
-cis-to-fleet tui
-```
+# Build the project first
+npm run build
 
-- Use checkboxes to select platforms
-- "Select All" to choose all available platforms  
-- Press `G` or click "Generate" to create Fleet YAML files
-- Press `Q` or Escape to quit
+# Then use the compiled version
+node dist/cli.js list
+node dist/cli.js generate macos-15
+```
 
 ## What it does
 
@@ -139,31 +141,27 @@ Filter policies by compliance level to match your security requirements:
 
 ## Requirements
 
-- Python 3.9+
-- Internet connection (to fetch from GitHub)
+- **Node.js 18+** or **Bun**
+- Internet connection (to fetch CIS benchmarks from GitHub)
 
-## Development
+## Available Platforms
 
-Clone and install in development mode:
+Currently supported CIS benchmark platforms:
+- `macos-13` - macOS 13 (Ventura)
+- `macos-14` - macOS 14 (Sonoma)  
+- `macos-15` - macOS 15 (Sequoia)
+- `win-10` - Windows 10
+- `win-11` - Windows 11
 
-```bash
-git clone <repository>
-cd cis-to-fleet
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -e ".[dev]"
-```
+Use `bun run src/cli.ts list` to see the current list of available platforms.
 
-Run tests:
-```bash
-pytest
-```
+## Contributing
 
-Run linting:
-```bash
-ruff check src tests
-mypy src
-```
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Support
+
+If you encounter issues or have questions, please open an issue on GitHub.
 
 ## License
 
