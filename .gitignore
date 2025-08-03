@@ -70,6 +70,9 @@ __pycache__/
 *.egg
 *.tar.gz
 *.whl
+.venv/
+venv/
+env/
 
 # Temporary files
 .tmp/
