@@ -141,5 +141,227 @@ spec:
 });
 
 test("rawYamlToList throws error for empty YAML", () => {
-	expect(() => rawYamlToList("")).toThrow("No policies found");
+	expect(() => rawYamlToList("")).toThrow("No valid policies found");
+});
+
+// ========================================
+// YAML Type Safety and Validation Tests
+// ========================================
+
+test("rawYamlToList validates policy objects correctly", () => {
+	const validYaml = `
+name: Valid Policy
+query: SELECT 1
+description: A valid policy
+`;
+
+	const policies = rawYamlToList(validYaml);
+	expect(policies).toHaveLength(1);
+	expect(policies[0].name).toBe("Valid Policy");
+	expect(policies[0].query).toBe("SELECT 1");
+});
+
+test("rawYamlToList rejects invalid policy with wrong field types", () => {
+	const invalidYaml = `
+name: 123  # Should be string, not number
+query: SELECT 1
+`;
+
+	expect(() => rawYamlToList(invalidYaml)).toThrow(
+		"Validation failed for Invalid policy data in document 0 (single policy): expected object with 'name' or 'query' field, got object",
+	);
+});
+
+test("rawYamlToList rejects policy with no name or query", () => {
+	const invalidYaml = `
+platform: darwin
+description: Missing name and query
+`;
+
+	expect(() => rawYamlToList(invalidYaml)).toThrow(
+		"Validation failed for Invalid policy data in document 0 (single policy): expected object with 'name' or 'query' field, got object",
+	);
+});
+
+test("rawYamlToList validates array of policies", () => {
+	const validYaml = `
+- name: Policy One
+  query: SELECT 1
+- name: Policy Two
+  query: SELECT 2
+`;
+
+	const policies = rawYamlToList(validYaml);
+	expect(policies).toHaveLength(2);
+	expect(policies[0].name).toBe("Policy One");
+	expect(policies[1].name).toBe("Policy Two");
+});
+
+test("rawYamlToList rejects array with invalid policy item", () => {
+	const invalidYaml = `
+- name: Valid Policy
+  query: SELECT 1
+- platform: darwin  # Missing name and query
+  description: Invalid policy
+`;
+
+	expect(() => rawYamlToList(invalidYaml)).toThrow(
+		"Validation failed for Invalid policy data in document 0 (direct array)[1]: expected object with 'name' or 'query' field, got object at index 1",
+	);
+});
+
+test("rawYamlToList validates Kubernetes-style policy documents", () => {
+	const kubernetesYaml = `
+kind: policy
+metadata:
+  name: test-policy
+spec:
+  name: Kubernetes Policy
+  query: SELECT 1
+  platform: darwin
+`;
+
+	const policies = rawYamlToList(kubernetesYaml);
+	expect(policies).toHaveLength(1);
+	expect(policies[0].name).toBe("Kubernetes Policy");
+	expect(policies[0].platform).toBe("darwin");
+});
+
+test("rawYamlToList rejects Kubernetes policy with invalid spec", () => {
+	const invalidKubernetesYaml = `
+kind: policy
+spec:
+  platform: darwin  # Missing name and query
+  description: Invalid spec
+`;
+
+	expect(() => rawYamlToList(invalidKubernetesYaml)).toThrow(
+		"Validation failed for Invalid policy data in document 0 (Kubernetes policy spec): expected object with 'name' or 'query' field, got object",
+	);
+});
+
+test("rawYamlToList validates wrapped policies format", () => {
+	const wrappedYaml = `
+policies:
+  - name: Wrapped Policy One
+    query: SELECT 1
+  - name: Wrapped Policy Two
+    query: SELECT 2
+`;
+
+	const policies = rawYamlToList(wrappedYaml);
+	expect(policies).toHaveLength(2);
+	expect(policies[0].name).toBe("Wrapped Policy One");
+	expect(policies[1].name).toBe("Wrapped Policy Two");
+});
+
+test("rawYamlToList rejects wrapped format with invalid policy", () => {
+	const invalidWrappedYaml = `
+policies:
+  - name: Valid Policy
+    query: SELECT 1
+  - description: No name or query  # Invalid policy
+`;
+
+	expect(() => rawYamlToList(invalidWrappedYaml)).toThrow(
+		"Validation failed for Invalid policy data in document 0 (wrapped policies array)[1]: expected object with 'name' or 'query' field, got object at index 1",
+	);
+});
+
+test("rawYamlToList rejects non-object data", () => {
+	const invalidYaml = `
+- "just a string"
+- 42
+- true
+`;
+
+	expect(() => rawYamlToList(invalidYaml)).toThrow(
+		"Validation failed for Invalid policy data in document 0 (direct array)[0]: expected object with 'name' or 'query' field, got string at index 0",
+	);
+});
+
+test("rawYamlToList rejects null values", () => {
+	const invalidYaml = `
+- name: Valid Policy
+  query: SELECT 1
+- null
+`;
+
+	expect(() => rawYamlToList(invalidYaml)).toThrow(
+		"Validation failed for Invalid policy data in document 0 (direct array)[1]: expected object with 'name' or 'query' field, got null at index 1",
+	);
+});
+
+test("rawYamlToList validates tags field type when present", () => {
+	const validYaml = `
+name: Policy with tags
+query: SELECT 1
+tags: CIS_Level1,security
+`;
+
+	const policies = rawYamlToList(validYaml);
+	expect(policies[0].tags).toBe("CIS_Level1,security");
+});
+
+test("rawYamlToList rejects invalid tags field type", () => {
+	const invalidYaml = `
+name: Policy with invalid tags
+query: SELECT 1
+tags:
+  - CIS_Level1  # Should be string, not array
+  - security
+`;
+
+	expect(() => rawYamlToList(invalidYaml)).toThrow(
+		"Validation failed for Invalid policy data in document 0 (single policy): expected object with 'name' or 'query' field, got object",
+	);
+});
+
+test("rawYamlToList handles multiple YAML documents with validation", () => {
+	const multiDocYaml = `
+name: First Policy
+query: SELECT 1
+---
+name: Second Policy  
+query: SELECT 2
+---
+- name: Third Policy
+  query: SELECT 3
+- name: Fourth Policy
+  query: SELECT 4
+`;
+
+	const policies = rawYamlToList(multiDocYaml);
+	expect(policies).toHaveLength(4);
+	expect(policies[0].name).toBe("First Policy");
+	expect(policies[1].name).toBe("Second Policy");
+	expect(policies[2].name).toBe("Third Policy");
+	expect(policies[3].name).toBe("Fourth Policy");
+});
+
+test("rawYamlToList provides context for validation errors in multiple documents", () => {
+	const multiDocWithError = `
+name: First Policy
+query: SELECT 1
+---
+platform: darwin  # Invalid - no name or query
+description: Invalid policy
+`;
+
+	expect(() => rawYamlToList(multiDocWithError)).toThrow(
+		"Validation failed for Invalid policy data in document 1 (single policy): expected object with 'name' or 'query' field, got object",
+	);
+});
+
+test("rawYamlToList throws clear error when no valid policies found", () => {
+	const emptyYaml = `
+metadata:
+  version: 1.0
+config:
+  setting: value
+`;
+
+	expect(() => rawYamlToList(emptyYaml)).toThrow(
+		"Validation failed for Invalid policy data in document 0 (single policy): expected object with 'name' or 'query' field, got object",
+	);
 });
