@@ -1,0 +1,14 @@
+- name: CIS - Ensure Firewall Stealth Mode Is Enabled
+  query: SELECT 1 FROM alf WHERE global_state >= 1 AND stealth_enabled = 1;
+  critical: false
+  description: |
+    While in Stealth mode, the computer will not respond to unsolicited probes, dropping that traffic.
+    Stealth mode on the firewall minimizes the threat of system discovery tools while connected to a network or the Internet.
+  resolution: |
+    Perform the following steps to enable firewall stealth mode:
+      1. Open System Settings
+      2. Select Network
+      3. Select Firewall
+      4. Select Options...
+      5. Set Enabled stealth mode to enabled
+  platform: darwin

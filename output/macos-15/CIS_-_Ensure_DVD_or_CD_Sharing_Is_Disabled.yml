@@ -1,0 +1,20 @@
+- name: CIS - Ensure DVD or CD Sharing Is Disabled
+  query: |
+    SELECT 1 WHERE NOT EXISTS (
+      SELECT * FROM plist WHERE
+        path = '/var/db/com.apple.xpc.launchd/disabled.plist' AND
+        key = 'com.apple.ODSAgent' AND
+        value = '0'
+    );
+  critical: false
+  description: |
+    DVD or CD Sharing allows users to remotely access the system's optical drive.
+    Disabling DVD or CD Sharing minimizes the risk of an attacker using the optical drive as
+    a vector for attack and exposure of sensitive data.
+  resolution: |
+    Graphical Method:
+    1. Open System Settings
+    2. Select General
+    3. Select Sharing
+    4. Set CD/DVD Sharing to disabled
+  platform: darwin

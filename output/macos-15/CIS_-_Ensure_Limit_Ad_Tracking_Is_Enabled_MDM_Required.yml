@@ -1,0 +1,26 @@
+- name: CIS - Ensure Limit Ad Tracking Is Enabled (MDM Required)
+  query: |
+    SELECT 1 WHERE 
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.applicationaccess' AND 
+            name='allowApplePersonalizedAdvertising' AND 
+            (value = 0 OR value = 'false')
+        )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.applicationaccess' AND 
+            name='allowApplePersonalizedAdvertising' AND 
+            (value != 0 AND value != 'false')
+        );  
+  critical: false
+  description: Checks that Ensure Limit Ad Tracking Is Enabled.
+  resolution: |
+    Automated method:
+    Ask your system administrator to deploy an MDM profile that disables apple personalized advertising.
+    Graphical method:
+      Perform the following steps to ensure Limit Ad Tracking Is Enabled:
+        1. Open Privacy & Security
+        2. Select Apple Advertising
+        3. Verify that Personalized Ads is not enabled
+  platform: darwin

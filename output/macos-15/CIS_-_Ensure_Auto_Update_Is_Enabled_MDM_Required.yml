@@ -1,0 +1,19 @@
+- name: CIS - Ensure Auto Update Is Enabled (MDM Required)
+  query: |
+    SELECT 1 WHERE 
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.SoftwareUpdate' AND 
+            name='AutomaticCheckEnabled' AND 
+            (value = 1 OR value = 'true')
+        )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.SoftwareUpdate' AND 
+            name='AutomaticCheckEnabled' AND 
+            (value != 1 AND value != 'true')
+        );  
+  critical: false
+  description: Checks that the system is configured via MDM to automatically install updates.
+  resolution: Ask your system administrator to deploy an MDM profile that enables automatic updates.
+  platform: darwin

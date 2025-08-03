@@ -1,0 +1,21 @@
+- name: CIS - Ensure Internet Sharing Is Disabled
+  query: |
+    SELECT 1 WHERE NOT EXISTS (
+      SELECT 1 FROM plist WHERE
+        path = '/Library/Preferences/SystemConfiguration/com.apple.nat.plist' AND
+        key = 'NAT' AND
+        subkey = 'Enabled' AND
+        value = '1'
+    );
+  critical: false
+  description: |
+    Internet Sharing uses the open source natd process to share an internet connection with other
+    computers and devices on a local network. This allows the Mac to function as a router and share
+    the connection to other, possibly unauthorized, devices.
+  resolution: |
+    Graphical Method:
+    1. Open System Settings
+    2. Select General
+    3. Select Sharing
+    4. Set Internet Sharing to disabled
+  platform: darwin

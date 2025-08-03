@@ -1,0 +1,15 @@
+- name: CIS - Ensure the "root" Account Is Disabled (Fleetd Required)
+  query: |
+    SELECT 1 from dscl WHERE command = 'read' AND path = '/Users/root' AND key = 'AuthenticationAuthority' AND value = '';
+  critical: false
+  description: |
+    Enabling and using the root account puts the system at risk since any successful exploit or mistake
+    while the root account is in use could have unlimited access privileges within the system.
+    Using the sudo command allows users to perform functions as a root user while limiting and password
+    protecting the access privileges. By default the root account is not enabled on a macOS computer.
+    An administrator can escalate privileges using the sudo command (use -s or -i to get a root shell).
+  resolution: |
+    Automated method:
+    Ask your system administrator to deploy the following script:
+      /usr/bin/sudo /usr/sbin/dsenableroot -d
+  platform: darwin

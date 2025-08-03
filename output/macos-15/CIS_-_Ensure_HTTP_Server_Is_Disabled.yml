@@ -1,0 +1,12 @@
+- name: CIS - Ensure HTTP Server Is Disabled
+  query: SELECT 1 WHERE NOT EXISTS(SELECT * FROM processes WHERE path = '/usr/sbin/httpd');
+  critical: false
+  description: |
+    Personal web sharing could be enabled to allow someone on another computer to download files or information from the user's computer.
+    Apache is still part of the Operating System and can be easily turned on to share files and provide remote connectivity
+    to an end-user computer. Web serving should not be done from a user desktop. Open ports make it easier to exploit the computer.
+  resolution: |
+    Automated method:
+    Ask your system administrator to deploy the following script which will disable the Apache service:
+    /usr/bin/sudo /bin/launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist
+  platform: darwin

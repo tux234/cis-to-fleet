@@ -1,0 +1,23 @@
+- name: CIS - Ensure Screen Sharing Is Disabled
+  query: |
+    SELECT 1 WHERE NOT EXISTS (
+      SELECT * FROM plist WHERE
+        path = '/var/db/com.apple.xpc.launchd/disabled.plist' AND
+        key = 'com.apple.screensharing' AND
+        value = '0'
+    );
+  critical: false
+  description: |
+    Screen Sharing allows a computer to connect to another computer on a network and
+    display the computer’s screen. While sharing the computer’s screen, the user can
+    control what happens on that computer, such as opening documents or applications,
+    opening, moving, or closing windows, and even shutting down the computer.
+    Disabling Screen Sharing mitigates the risk of remote connections being made without
+    the user of the console knowing that they are sharing the computer.
+  resolution: |
+    Graphical Method:
+    1. Open System Settings
+    2. Select General
+    3. Select Sharing
+    4. Set Screen Sharing to disabled
+  platform: darwin

@@ -1,0 +1,30 @@
+- name: CIS - Ensure Time Machine Volumes Are Encrypted If Time Machine Is Enabled (FDA Required)
+  query: |
+    SELECT 'no time machine destinations configured' as output
+    FROM (SELECT COUNT(*) as c FROM time_machine_destinations) t1 WHERE t1.c = 0
+    UNION
+    SELECT 'time machines destinations with encryption with automatic backup' as output
+    FROM (SELECT COUNT(*) as c FROM time_machine_destinations WHERE encryption <> 'Encrypted') t2 WHERE t2.c = 0;
+  critical: false
+  description: |
+    Backup solutions are only effective if the backups run on a regular basis.
+    The time to check for backups is before the hard drive fails or the computer goes missing.
+    In order to simplify the user experience so that backups are more likely to occur,
+    Time Machine should be on and set to Back Up Automatically whenever the target volume is available.
+
+    FDA (Full Disk Access) is required to read the /Library/Preferences/com.apple.TimeMachine.plist
+    file that contains the Time Machine configuration and backup destinations.
+  resolution: |
+    Graphical Method:
+    Perform the following steps to enable encryption on the Time Machine drive:
+      1. Open `System Settings`.
+      2. Select `General`.
+      3. Select `Time Machine`.
+      4. Select the unencrypted drive.
+      5. Select `-` to forget that drive as a destination.
+      6. Select `+` to add a different drive as the destination.
+      7. Select `Set Up Disk...`.
+      8. Set Encrypt Backup to enabled.
+      9. Enter a password in the `New Password` and the same password in the `Re-enter Password` fields.
+      10. A password hint is required, but it is recommended that you do not use any identifying information for the password
+  platform: darwin

@@ -1,0 +1,30 @@
+- name: CIS - Ensure Automatic Opening of Safe Files in Safari Is Disabled (MDM Required)
+  query: |
+    SELECT 1 WHERE 
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.Safari' AND 
+            name='AutoOpenSafeDownloads' AND 
+            (value = 0 OR value = 'false')
+        )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.Safari' AND 
+            name='AutoOpenSafeDownloads' AND 
+            (value != 0 AND value != 'false')
+        );  
+  critical: false
+  description: |
+    Safari will automatically run or execute what it considers safe files. This can include
+    installers and other files that execute on the operating system. Safari evaluates file safety by
+    using a list of filetypes maintained by Apple. The list of files include text, image, video and
+    archive formats that would be run in the context of the OS rather than the browser.
+    Hackers have taken advantage of this setting via drive-by attacks. These attacks occur when a
+    user visits a legitimate website that has been corrupted. The user unknowingly downloads a
+    malicious file either by closing an infected pop-up or hovering over a malicious banner. An
+    attacker can create a malicious file that will fall within Safari's safe file list that will
+    download and execute without user input.
+  resolution: |
+    Payload Method:
+    Ask your administrator to deploy a profile which disables AutoOpenSafeDownloads in Safari
+  platform: darwin

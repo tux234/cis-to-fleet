@@ -1,0 +1,21 @@
+- name: CIS - Ensure the Sudo Timeout Period Is Set to Zero (Fleetd Required)
+  query: |
+    SELECT 1 WHERE EXISTS(
+      SELECT * FROM file WHERE path = '/etc/sudoers.d' AND uid = 0 AND gid = 0
+    ) AND EXISTS(
+      SELECT
+        COALESCE(JSON_EXTRACT(
+          json_result, '$.Authentication timestamp timeout'
+        ), '') AS authentication_timestamp_timeout
+      FROM sudo_info WHERE authentication_timestamp_timeout = '0.0 minutes'
+    );
+  critical: false
+  description: |
+    The sudo command stays logged in as the root user for five minutes before timing out and re-requesting a password.
+    This five-minute window should be eliminated since it leaves the system extremely vulnerable.
+  resolution: |
+    Automated method:
+    Ask your system administrator to deploy the following script:
+    echo 'Defaults timestamp_timeout=0' | sudo tee -a /etc/sudoers.d/CIS_54_sudoconfiguration
+    /usr/bin/sudo /usr/sbin/chown -R root:wheel /etc/sudoers.d/
+  platform: darwin

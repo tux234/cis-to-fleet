@@ -1,0 +1,15 @@
+- name: CIS - Ensure Guest Account Is Disabled
+  query: |
+    SELECT 1 FROM plist WHERE path='/Library/Preferences/com.apple.loginwindow.plist' AND key='GuestEnabled' AND value = 0;
+  critical: false
+  description: Checks that Guest Account Is Disabled.
+  resolution: |
+    Automated method:
+    Ask your system administrator to deploy an MDM profile that disables Guest Account.
+    Graphical method:
+      Perform the following steps to ensure Guest Account Is Disabled:
+        1. Open System Settings
+        2. Select Users & Groups
+        3. Select the i next to the Guest User
+        4. Verify that Allow guests to log in to this computer is disable
+  platform: darwin
