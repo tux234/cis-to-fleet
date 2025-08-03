@@ -11,11 +11,12 @@ import { rawYamlToList, sanitizeAll, filterByLevel, toYaml, toYamlChunks } from 
 import { outputPath, write } from './writer.js';
 import { join } from 'node:path';
 import { mkdir } from 'node:fs/promises';
+import packageJson from '../package.json' with { type: 'json' };
 
 const program = new Command();
 
-// Package version - in a real setup this would come from package.json
-const VERSION = '0.1.0';
+// Read version dynamically from package.json
+const VERSION = packageJson.version;
 
 program
   .name('cis-to-fleet')
