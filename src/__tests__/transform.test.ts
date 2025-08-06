@@ -7,8 +7,9 @@ import {
 	rawYamlToList,
 	sanitize,
 	sanitizeAll,
-	toYaml,
 	toYamlChunks,
+	toYamlGitOps,
+	toYamlFleetctlChunks,
 } from "../transform.js";
 
 const samplePolicy = {
@@ -78,9 +79,9 @@ test("filterByLevel throws error for invalid level", () => {
 	expect(() => filterByLevel([], "3")).toThrow("Invalid level");
 });
 
-test("toYaml generates proper YAML output", () => {
+test("toYamlGitOps generates proper YAML output", () => {
 	const policies = [{ name: "Test", query: "SELECT 1" }];
-	const yaml = toYaml(policies);
+	const yaml = toYamlGitOps(policies);
 
 	expect(yaml).toContain("- name: Test");
 	expect(yaml).toContain("  query: SELECT 1");
@@ -303,6 +304,43 @@ tags: CIS_Level1,security
 	expect(policies[0].tags).toBe("CIS_Level1,security");
 });
 
+test("rawYamlToList handles null values in policy fields", () => {
+	const yamlWithNulls = `
+name: Policy with null description
+query: SELECT 1
+description: null
+resolution: Fix the issue
+`;
+
+	const policies = rawYamlToList(yamlWithNulls);
+	expect(policies[0].name).toBe("Policy with null description");
+	expect(policies[0].query).toBe("SELECT 1");
+	expect(policies[0].description).toBe(null);
+	expect(policies[0].resolution).toBe("Fix the issue");
+});
+
+test("sanitize filters out null values", () => {
+	const policyWithNulls = {
+		name: "Test Policy",
+		platform: null,
+		description: "Valid description",
+		resolution: null,
+		query: "SELECT 1",
+	};
+
+	const result = sanitize(policyWithNulls);
+
+	expect(result).toEqual({
+		name: "Test Policy",
+		description: "Valid description",
+		query: "SELECT 1",
+	});
+
+	// Should not have null fields
+	expect(result).not.toHaveProperty("platform");
+	expect(result).not.toHaveProperty("resolution");
+});
+
 test("rawYamlToList rejects invalid tags field type", () => {
 	const invalidYaml = `
 name: Policy with invalid tags
@@ -364,4 +402,201 @@ config:
 	expect(() => rawYamlToList(emptyYaml)).toThrow(
 		"Validation failed for Invalid policy data in document 0 (single policy): expected object with 'name' or 'query' field, got object",
 	);
+});
+
+// ========================================
+// GitOps Format Tests
+// ========================================
+
+test("toYamlGitOps generates GitOps-compatible YAML array", () => {
+	const policies = [
+		{
+			name: "Test Policy One",
+			platform: "darwin",
+			description: "First test policy",
+			resolution: "Fix issue one",
+			query: "SELECT 1",
+		},
+		{
+			name: "Test Policy Two",
+			platform: "linux",
+			description: "Second test policy",
+			resolution: "Fix issue two",
+			query: "SELECT 2",
+		},
+	];
+
+	const yaml = toYamlGitOps(policies);
+
+	// Should be a YAML array format
+	expect(yaml).toContain("- name: Test Policy One");
+	expect(yaml).toContain("  platform: darwin");
+	expect(yaml).toContain("  description: First test policy");
+	expect(yaml).toContain("  resolution: Fix issue one");
+	expect(yaml).toContain("  query: SELECT 1");
+
+	expect(yaml).toContain("- name: Test Policy Two");
+	expect(yaml).toContain("  platform: linux");
+
+	// Should NOT contain the critical field (GitOps format doesn't include it)
+	expect(yaml).not.toContain("critical:");
+});
+
+test("toYamlGitOps handles policies with missing fields", () => {
+	const policies = [
+		{
+			name: "Minimal Policy",
+			query: "SELECT 1",
+		},
+	];
+
+	const yaml = toYamlGitOps(policies);
+
+	expect(yaml).toContain("- name: Minimal Policy");
+	expect(yaml).toContain("  query: SELECT 1");
+	expect(yaml).not.toContain("platform:");
+	expect(yaml).not.toContain("description:");
+	expect(yaml).not.toContain("resolution:");
+});
+
+test("toYamlGitOps maintains proper field ordering", () => {
+	const policies = [
+		{
+			query: "SELECT 1", // Intentionally out of order
+			resolution: "Fix it",
+			name: "Test Policy",
+			description: "A test",
+			platform: "darwin",
+		},
+	];
+
+	const yaml = toYamlGitOps(policies);
+	const lines = yaml.split('\n').filter(line => line.trim());
+	
+	// Check that fields appear in the expected order
+	const nameIndex = lines.findIndex(line => line.includes('name: Test Policy'));
+	const platformIndex = lines.findIndex(line => line.includes('platform: darwin'));
+	const descriptionIndex = lines.findIndex(line => line.includes('description: A test'));
+	const resolutionIndex = lines.findIndex(line => line.includes('resolution: Fix it'));
+	const queryIndex = lines.findIndex(line => line.includes('query: SELECT 1'));
+
+	expect(nameIndex).toBeLessThan(platformIndex);
+	expect(platformIndex).toBeLessThan(descriptionIndex);
+	expect(descriptionIndex).toBeLessThan(resolutionIndex);
+	expect(resolutionIndex).toBeLessThan(queryIndex);
+});
+
+// ========================================
+// Fleetctl Format Tests
+// ========================================
+
+test("toYamlFleetctlChunks generates individual fleetctl-ready files", () => {
+	const policies = [
+		{
+			name: "Policy One",
+			platform: "darwin",
+			description: "First policy",
+			resolution: "Fix one",
+			query: "SELECT 1",
+		},
+		{
+			name: "Policy Two",
+			platform: "linux",
+			description: "Second policy",
+			resolution: "Fix two",
+			query: "SELECT 2",
+		},
+	];
+
+	const chunks = toYamlFleetctlChunks(policies);
+
+	expect(Object.keys(chunks)).toHaveLength(2);
+	expect(chunks).toHaveProperty("Policy_One");
+	expect(chunks).toHaveProperty("Policy_Two");
+
+	// Check Policy_One content
+	expect(chunks.Policy_One).toContain("name: Policy One");
+	expect(chunks.Policy_One).toContain("query: SELECT 1");
+	expect(chunks.Policy_One).toContain("critical: false");
+	expect(chunks.Policy_One).toContain("description: First policy");
+	expect(chunks.Policy_One).toContain("resolution: Fix one");
+	expect(chunks.Policy_One).toContain("platform: darwin");
+
+	// Should NOT be wrapped in array format (no leading dash)
+	expect(chunks.Policy_One).not.toContain("- name:");
+});
+
+test("toYamlFleetctlChunks maintains proper field ordering for Fleet", () => {
+	const policies = [
+		{
+			platform: "darwin", // Intentionally out of order
+			resolution: "Fix it",
+			description: "A test",
+			query: "SELECT 1",
+			name: "Test Policy",
+		},
+	];
+
+	const chunks = toYamlFleetctlChunks(policies);
+	const yaml = chunks.Test_Policy;
+	const lines = yaml.split('\n').filter(line => line.trim());
+	
+	// Check that fields appear in Fleet-preferred order: name, query, critical, description, resolution, platform
+	const nameIndex = lines.findIndex(line => line.includes('name:'));
+	const queryIndex = lines.findIndex(line => line.includes('query:'));
+	const criticalIndex = lines.findIndex(line => line.includes('critical:'));
+	const descriptionIndex = lines.findIndex(line => line.includes('description:'));
+	const resolutionIndex = lines.findIndex(line => line.includes('resolution:'));
+	const platformIndex = lines.findIndex(line => line.includes('platform:'));
+
+	expect(nameIndex).toBeLessThan(queryIndex);
+	expect(queryIndex).toBeLessThan(criticalIndex);
+	expect(criticalIndex).toBeLessThan(descriptionIndex);
+	expect(descriptionIndex).toBeLessThan(resolutionIndex);
+	expect(resolutionIndex).toBeLessThan(platformIndex);
+});
+
+test("toYamlFleetctlChunks creates safe filenames from policy names", () => {
+	const policies = [
+		{ name: "Policy with spaces", query: "SELECT 1" },
+		{ name: "Policy/with\\slashes", query: "SELECT 2" },
+		{ name: "Policy-with-special@chars!", query: "SELECT 3" },
+	];
+
+	const chunks = toYamlFleetctlChunks(policies);
+
+	expect(chunks).toHaveProperty("Policy_with_spaces");
+	expect(chunks).toHaveProperty("Policy_with_slashes");
+	expect(chunks).toHaveProperty("Policy-with-specialchars");
+});
+
+test("toYamlFleetctlChunks handles unknown policy names", () => {
+	const policies = [
+		{ query: "SELECT 1" }, // No name
+		{ name: "", query: "SELECT 2" }, // Empty name
+		{ name: "!!!@@@", query: "SELECT 3" }, // Name becomes empty after sanitization
+	];
+
+	const chunks = toYamlFleetctlChunks(policies);
+
+	expect(Object.keys(chunks)).toHaveLength(3); // All should get unique keys
+	
+	// All policies with missing/empty names become "unknown_policy" with unique suffixes
+	expect(chunks).toHaveProperty("unknown_policy");
+	expect(chunks).toHaveProperty("unknown_policy_1");
+	expect(chunks).toHaveProperty("unknown_policy_2");
+});
+
+test("toYamlFleetctlChunks rejects policy names with null bytes", () => {
+	const policies = [{ name: "bad\0name", query: "SELECT 1" }];
+	expect(() => toYamlFleetctlChunks(policies)).toThrow("Invalid policy name contains null bytes");
+});
+
+test("toYamlFleetctlChunks always includes critical field set to false", () => {
+	const policies = [
+		{ name: "Test Policy", query: "SELECT 1" },
+	];
+
+	const chunks = toYamlFleetctlChunks(policies);
+	expect(chunks.Test_Policy).toContain("critical: false");
 });

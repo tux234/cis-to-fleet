@@ -9,17 +9,20 @@ import { dirname, join } from "node:path";
  *
  * @param folder The original folder name (e.g., 'macos-15', 'windows-11')
  * @param outDir The output directory path
+ * @param format Optional format suffix to add to the filename
  * @returns Path string for the output file with hyphens stripped from folder name
  *
  * @example
  * ```typescript
  * outputPath('macos-15', './output') // returns './output/cis-benchmark-macos15.yml'
+ * outputPath('macos-15', './output', 'gitops') // returns './output/cis-benchmark-macos15-gitops.yml'
  * ```
  */
-export function outputPath(folder: string, outDir: string): string {
+export function outputPath(folder: string, outDir: string, format?: string): string {
 	validatePath(folder);
 	const cleanFolder = folder.replace(/-/g, "");
-	const filename = `cis-benchmark-${cleanFolder}.yml`;
+	const formatSuffix = format ? `-${format}` : "";
+	const filename = `cis-benchmark-${cleanFolder}${formatSuffix}.yml`;
 	return join(outDir, filename);
 }
 

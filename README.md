@@ -79,11 +79,17 @@ bun run src/cli.ts generate macos-15 --level all
 
 **Choose output format for GitOps workflows:**
 ```bash
-# Combined format - single file for bulk deployment (default)
-bun run src/cli.ts generate macos-15 --format combine
+# GitOps format - combined YAML array for GitOps workflows (default)
+bun run src/cli.ts generate macos-15 gitops
 
-# Split format - individual files for selective policy management
-bun run src/cli.ts generate macos-15 --format split
+# GitOps format with individual files for selective management
+bun run src/cli.ts generate macos-15 gitops split
+
+# Fleetctl format - ready for Fleet deployment
+bun run src/cli.ts generate macos-15 fleetctl
+
+# Fleetctl format with individual files for selective deployment
+bun run src/cli.ts generate macos-15 fleetctl split
 ```
 
 ### With Node.js
@@ -106,17 +112,26 @@ This tool fetches CIS (Center for Internet Security) benchmark policies from the
 ## Key Features
 
 ### 1. GitOps Repository Organization
-Choose how to structure your policy files for optimal GitOps workflows:
+Choose between two output formats and optionally split them into individual files:
 
-- **Combined format** (`--format combine`): Single YAML file containing all policies
-  - **Use case**: Bulk deployment and management
-  - **Output**: `output/cis-benchmark-macos15.yml`
-  - **Best for**: Organizations wanting to deploy all CIS policies at once
+**Output Formats:**
+- **GitOps format** (`gitops`): YAML array optimized for GitOps workflows
+  - Field order: name, platform, description, resolution, query
+  - **Use case**: Direct integration with GitOps repositories
+  - **Output**: `output/cis-benchmark-macos15-gitops.yml`
 
-- **Split format** (`--format split`): Individual YAML files per policy
-  - **Use case**: Selective policy management and cherry-picking
-  - **Output**: `output/macos-15/Policy_Name_1.yml`, `Policy_Name_2.yml`, etc.
-  - **Best for**: Organizations wanting to selectively choose and customize policies
+- **Fleetctl format** (`fleetctl`): Individual policies ready for Fleet deployment  
+  - Field order: name, query, critical, description, resolution, platform
+  - Includes `critical: false` field for Fleet compatibility
+  - **Use case**: Direct deployment with `fleetctl apply`
+  - **Output**: `output/cis-benchmark-macos15-fleetctl.yml`
+
+**File Organization:**
+- **Combined** (default): Single YAML file containing all policies
+  - **Best for**: Bulk deployment and management
+- **Split** (`split` flag): Individual YAML files per policy
+  - **Output**: `output/macos-15-gitops/Policy_Name_1.yml`, etc.
+  - **Best for**: Selective policy management and cherry-picking
 
 ### 2. CIS Level Filtering
 Filter policies by compliance level to match your security requirements:

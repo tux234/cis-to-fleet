@@ -24,16 +24,16 @@ function isPolicyItem(obj: unknown): obj is PolicyItem {
 
 	const item = obj as Record<string, unknown>;
 
-	// Check that all allowed keys are either string or undefined
+	// Check that all allowed keys are either string, null, or undefined
 	for (const key of ALLOWED_KEYS) {
 		const value = item[key];
-		if (value !== undefined && typeof value !== "string") {
+		if (value !== undefined && value !== null && typeof value !== "string") {
 			return false;
 		}
 	}
 
-	// Check that tags field (if present) is a string
-	if ("tags" in item && item.tags !== undefined && typeof item.tags !== "string") {
+	// Check that tags field (if present) is a string, null, or undefined
+	if ("tags" in item && item.tags !== undefined && item.tags !== null && typeof item.tags !== "string") {
 		return false;
 	}
 
@@ -261,25 +261,6 @@ export function filterByLevel(
 }
 
 /**
- * Convert list of policy items to YAML string format (array format).
- *
- * @param items List of policy item dictionaries
- * @returns YAML string representation with proper formatting
- */
-export function toYaml(items: SanitizedPolicyItem[]): string {
-	const options: yaml.ToStringOptions = {
-		indent: 2,
-		lineWidth: 0, // Prevent line wrapping
-		minContentWidth: 0,
-		doubleQuotedAsJSON: false,
-		doubleQuotedMinMultiLineLength: 40,
-		singleQuote: false,
-	};
-
-	return yaml.stringify(items, options);
-}
-
-/**
  * Convert list of policy items to individual YAML chunks.
  *
  * @param items List of policy item dictionaries
@@ -298,10 +279,11 @@ export function toYamlChunks(
 	};
 
 	const chunks: Record<string, string> = {};
+	const usedNames = new Set<string>();
 
 	for (const item of items) {
 		// Create a safe filename from the policy name
-		const policyName = item.name || "unknown";
+		const policyName = item.name || "unknown_policy";
 		if (policyName.includes("\0") || policyName.includes("\x00")) {
 			throw new Error("Invalid policy name contains null bytes");
 		}
@@ -314,6 +296,15 @@ export function toYamlChunks(
 		if (!safeName) {
 			safeName = "unknown_policy";
 		}
+
+		// Handle duplicate names by adding a counter
+		let finalName = safeName;
+		let counter = 1;
+		while (usedNames.has(finalName)) {
+			finalName = `${safeName}_${counter}`;
+			counter++;
+		}
+		usedNames.add(finalName);
 
 		// Reorder fields to match Fleet format: name, query, critical, description, resolution, platform
 		const orderedItem: Record<string, unknown> = {};
@@ -339,7 +330,181 @@ export function toYamlChunks(
 		}
 
 		// Generate individual YAML for this policy wrapped in array format
-		chunks[safeName] = yaml.stringify([orderedItem], options);
+		chunks[finalName] = yaml.stringify([orderedItem], options);
+	}
+
+	return chunks;
+}
+
+/**
+ * Convert list of policy items to GitOps-compatible YAML array format.
+ * 
+ * This format matches the output of the bash script from the Fleet article,
+ * producing a YAML array where each policy is formatted with proper indentation
+ * and field ordering for GitOps workflows.
+ * 
+ * @param items List of policy item dictionaries
+ * @returns YAML string in GitOps array format
+ */
+export function toYamlGitOps(items: SanitizedPolicyItem[]): string {
+	const options: yaml.ToStringOptions = {
+		indent: 2,
+		lineWidth: 0, // Prevent line wrapping
+		minContentWidth: 0,
+		doubleQuotedAsJSON: false,
+		doubleQuotedMinMultiLineLength: 40,
+		singleQuote: false,
+	};
+
+	// Transform items to match GitOps format with proper field ordering
+	const gitOpsItems = items.map(item => {
+		const orderedItem: Record<string, unknown> = {};
+		
+		// GitOps format field order: name, platform, description, resolution, query
+		if (item.name !== undefined) {
+			orderedItem.name = item.name;
+		}
+		if (item.platform !== undefined) {
+			orderedItem.platform = item.platform;
+		}
+		if (item.description !== undefined) {
+			orderedItem.description = item.description;
+		}
+		if (item.resolution !== undefined) {
+			orderedItem.resolution = item.resolution;
+		}
+		if (item.query !== undefined) {
+			orderedItem.query = item.query;
+		}
+		
+		return orderedItem;
+	});
+
+	return yaml.stringify(gitOpsItems, options);
+}
+
+/**
+ * Convert list of policy items to combined fleetctl-compatible YAML format.
+ * 
+ * Generates a multi-document YAML file where each policy is a separate document
+ * with proper Kubernetes-style apiVersion, kind, and spec structure, separated
+ * by document separators (---).
+ * 
+ * @param items List of policy item dictionaries
+ * @returns Combined YAML string with document separators
+ */
+export function toYamlFleetctl(items: SanitizedPolicyItem[]): string {
+	const options: yaml.ToStringOptions = {
+		indent: 2,
+		lineWidth: 0, // Prevent line wrapping
+		minContentWidth: 0,
+		doubleQuotedAsJSON: false,
+		doubleQuotedMinMultiLineLength: 40,
+		singleQuote: false,
+	};
+
+	const documents: string[] = [];
+
+	for (const item of items) {
+		// Fleetctl format requires Kubernetes-style YAML structure
+		const fleetctlDocument = {
+			apiVersion: "v1",
+			kind: "policy",
+			spec: {
+				name: item.name,
+				query: item.query,
+				critical: false,
+				description: item.description,
+				resolution: item.resolution,
+				platform: item.platform
+			}
+		};
+
+		// Remove undefined fields from spec
+		Object.keys(fleetctlDocument.spec).forEach(key => {
+			if (fleetctlDocument.spec[key as keyof typeof fleetctlDocument.spec] === undefined) {
+				delete fleetctlDocument.spec[key as keyof typeof fleetctlDocument.spec];
+			}
+		});
+
+		documents.push(yaml.stringify(fleetctlDocument, options).trim());
+	}
+
+	// Join documents with YAML document separators
+	return documents.join('\n---\n');
+}
+
+/**
+ * Convert list of policy items to individual fleetctl-compatible YAML chunks.
+ * 
+ * Each chunk is a standalone YAML document that can be applied individually
+ * with `fleetctl apply`. This format includes the `critical: false` field
+ * and proper field ordering for Fleet policy application.
+ * 
+ * @param items List of policy item dictionaries
+ * @returns Dictionary mapping policy names to individual fleetctl-ready YAML strings
+ */
+export function toYamlFleetctlChunks(items: SanitizedPolicyItem[]): Record<string, string> {
+	const options: yaml.ToStringOptions = {
+		indent: 2,
+		lineWidth: 0, // Prevent line wrapping
+		minContentWidth: 0,
+		doubleQuotedAsJSON: false,
+		doubleQuotedMinMultiLineLength: 40,
+		singleQuote: false,
+	};
+
+	const chunks: Record<string, string> = {};
+	const usedNames = new Set<string>();
+
+	for (const item of items) {
+		// Create a safe filename from the policy name
+		const policyName = item.name || "unknown_policy";
+		if (policyName.includes("\0") || policyName.includes("\x00")) {
+			throw new Error("Invalid policy name contains null bytes");
+		}
+		let safeName = policyName
+			.replace(/\s+/g, "_")
+			.replace(/[/\\]/g, "_")
+			.replace(/[^\w\-_]/g, "");
+
+		// Ensure the name is not empty
+		if (!safeName) {
+			safeName = "unknown_policy";
+		}
+
+		// Handle duplicate names by adding a counter
+		let finalName = safeName;
+		let counter = 1;
+		while (usedNames.has(finalName)) {
+			finalName = `${safeName}_${counter}`;
+			counter++;
+		}
+		usedNames.add(finalName);
+
+		// Fleetctl format requires Kubernetes-style YAML structure
+		const fleetctlDocument = {
+			apiVersion: "v1",
+			kind: "policy",
+			spec: {
+				name: item.name,
+				query: item.query,
+				critical: false,
+				description: item.description,
+				resolution: item.resolution,
+				platform: item.platform
+			}
+		};
+
+		// Remove undefined fields from spec
+		Object.keys(fleetctlDocument.spec).forEach(key => {
+			if (fleetctlDocument.spec[key as keyof typeof fleetctlDocument.spec] === undefined) {
+				delete fleetctlDocument.spec[key as keyof typeof fleetctlDocument.spec];
+			}
+		});
+
+		// Generate individual YAML for this policy as a Kubernetes-style document
+		chunks[finalName] = yaml.stringify(fleetctlDocument, options);
 	}
 
 	return chunks;

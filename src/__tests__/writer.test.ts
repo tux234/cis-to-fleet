@@ -18,6 +18,18 @@ test("outputPath generates correct file paths", () => {
 	);
 });
 
+test("outputPath generates correct file paths with format suffix", () => {
+	expect(outputPath("macos-15", "./output", "gitops")).toBe(
+		join("./output", "cis-benchmark-macos15-gitops.yml"),
+	);
+	expect(outputPath("windows-11", "/tmp", "fleetctl")).toBe(
+		join("/tmp", "cis-benchmark-windows11-fleetctl.yml"),
+	);
+	expect(outputPath("ubuntu", "./test", "custom")).toBe(
+		join("./test", "cis-benchmark-ubuntu-custom.yml"),
+	);
+});
+
 test("outputPath rejects dangerous folder names", () => {
 	expect(() => outputPath("../etc", "./out")).toThrow("Invalid folder name");
 	expect(() => outputPath("bad/dir", "./out")).toThrow("Invalid folder name");
