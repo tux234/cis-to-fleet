@@ -18,7 +18,7 @@ This implementation prioritizes **portability**, **simplicity**, and **ease of u
 
 ```bash
 # 1. Download and make executable
-curl -O https://raw.githubusercontent.com/your-org/cis-to-fleet/main/cis-to-fleet.sh
+curl -O https://raw.githubusercontent.com/tux234/cis-to-fleet/canonical/bash-implementation/cis-to-fleet.sh
 chmod +x cis-to-fleet.sh
 
 # 2. Install dependencies (if needed)
