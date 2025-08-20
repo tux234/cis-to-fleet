@@ -1,0 +1,271 @@
+name: Policy Validation
+
+on:
+  pull_request:
+    paths:
+      - 'policies/**'
+  workflow_call:
+    inputs:
+      policies_path:
+        required: false
+        type: string
+        default: 'policies'
+
+jobs:
+  validate-policies:
+    name: Validate Generated Policies
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install validation tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl jq
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Validate YAML syntax
+        run: |
+          echo "🔍 Validating YAML syntax for all policy files..."
+          
+          policies_path="${{ inputs.policies_path || 'policies' }}"
+          
+          if [[ ! -d "$policies_path" ]]; then
+            echo "⚠️ No policies directory found at $policies_path"
+            exit 0
+          fi
+          
+          yaml_files=$(find "$policies_path" -name "*.yml" -o -name "*.yaml" | wc -l)
+          
+          if [[ $yaml_files -eq 0 ]]; then
+            echo "⚠️ No YAML files found in $policies_path"
+            exit 0
+          fi
+          
+          echo "Found $yaml_files YAML files to validate"
+          
+          failed_files=()
+          
+          while IFS= read -r -d '' yaml_file; do
+            echo "Validating: $yaml_file"
+            
+            if ! yq eval '.' "$yaml_file" > /dev/null 2>&1; then
+              echo "❌ Invalid YAML syntax: $yaml_file"
+              failed_files+=("$yaml_file")
+            else
+              echo "✅ Valid YAML: $yaml_file"
+            fi
+          done < <(find "$policies_path" -name "*.yml" -o -name "*.yaml" -print0)
+          
+          if [[ ${#failed_files[@]} -gt 0 ]]; then
+            echo ""
+            echo "❌ YAML validation failed for ${#failed_files[@]} files:"
+            printf '%s\n' "${failed_files[@]}"
+            exit 1
+          fi
+          
+          echo "✅ All $yaml_files YAML files are syntactically valid"
+
+      - name: Validate Fleet policy schema
+        run: |
+          echo "🔍 Validating Fleet policy schema compliance..."
+          
+          policies_path="${{ inputs.policies_path || 'policies' }}"
+          
+          # Check GitOps format files
+          gitops_files=$(find "$policies_path" -name "*-gitops.yml" 2>/dev/null || true)
+          fleetctl_files=$(find "$policies_path" -name "*-fleetctl.yml" 2>/dev/null || true)
+          
+          validation_errors=0
+          
+          # Validate GitOps format files
+          if [[ -n "$gitops_files" ]]; then
+            echo "Validating GitOps format files..."
+            for file in $gitops_files; do
+              echo "Checking GitOps file: $file"
+              
+              # Should be an array
+              if ! yq eval 'type' "$file" | grep -q "!!seq"; then
+                echo "❌ GitOps file should be a YAML array: $file"
+                ((validation_errors++))
+                continue
+              fi
+              
+              # Check required fields in each policy
+              policy_count=$(yq eval '. | length' "$file")
+              echo "  Found $policy_count policies"
+              
+              for ((i = 0; i < policy_count; i++)); do
+                policy_name=$(yq eval ".[$i].name" "$file" 2>/dev/null || echo "null")
+                policy_query=$(yq eval ".[$i].query" "$file" 2>/dev/null || echo "null")
+                
+                if [[ "$policy_name" == "null" || "$policy_name" == "" ]]; then
+                  echo "❌ Policy $i missing 'name' field in $file"
+                  ((validation_errors++))
+                fi
+                
+                if [[ "$policy_query" == "null" || "$policy_query" == "" ]]; then
+                  echo "❌ Policy $i missing 'query' field in $file"
+                  ((validation_errors++))
+                fi
+              done
+              
+              echo "✅ GitOps file validation passed: $file"
+            done
+          fi
+          
+          # Validate Fleetctl format files
+          if [[ -n "$fleetctl_files" ]]; then
+            echo "Validating Fleetctl format files..."
+            for file in $fleetctl_files; do
+              echo "Checking Fleetctl file: $file"
+              
+              # Extract all documents
+              doc_count=$(yq eval-all 'length' "$file")
+              echo "  Found $doc_count documents"
+              
+              # Validate each document
+              yq eval-all '. as $doc | $doc' "$file" | while IFS= read -r line; do
+                if [[ "$line" == "---" ]] || [[ -z "$line" ]]; then
+                  continue
+                fi
+                
+                # Check for required Kubernetes fields
+                api_version=$(echo "$line" | yq eval '.apiVersion // ""' - 2>/dev/null)
+                kind=$(echo "$line" | yq eval '.kind // ""' - 2>/dev/null)
+                spec_name=$(echo "$line" | yq eval '.spec.name // ""' - 2>/dev/null)
+                spec_query=$(echo "$line" | yq eval '.spec.query // ""' - 2>/dev/null)
+                
+                if [[ "$api_version" != "v1" ]]; then
+                  echo "❌ Invalid or missing apiVersion in $file"
+                  ((validation_errors++))
+                fi
+                
+                if [[ "$kind" != "policy" ]]; then
+                  echo "❌ Invalid or missing kind in $file"
+                  ((validation_errors++))
+                fi
+                
+                if [[ -z "$spec_name" ]]; then
+                  echo "❌ Missing spec.name in $file"
+                  ((validation_errors++))
+                fi
+                
+                if [[ -z "$spec_query" ]]; then
+                  echo "❌ Missing spec.query in $file"
+                  ((validation_errors++))
+                fi
+              done
+              
+              echo "✅ Fleetctl file validation passed: $file"
+            done
+          fi
+          
+          if [[ $validation_errors -gt 0 ]]; then
+            echo ""
+            echo "❌ Schema validation failed with $validation_errors errors"
+            exit 1
+          fi
+          
+          echo "✅ All policies comply with Fleet schema requirements"
+
+      - name: Check for SQL injection patterns
+        run: |
+          echo "🔍 Scanning for potential SQL injection patterns..."
+          
+          policies_path="${{ inputs.policies_path || 'policies' }}"
+          
+          suspicious_patterns=(
+            "'; DROP"
+            "'; DELETE"
+            "'; UPDATE"
+            "'; INSERT"
+            "UNION SELECT"
+            "-- "
+            "/* "
+            "xp_cmdshell"
+            "sp_executesql"
+          )
+          
+          security_issues=0
+          
+          while IFS= read -r -d '' yaml_file; do
+            for pattern in "${suspicious_patterns[@]}"; do
+              if grep -qi "$pattern" "$yaml_file"; then
+                echo "⚠️ Suspicious SQL pattern '$pattern' found in: $yaml_file"
+                ((security_issues++))
+              fi
+            done
+          done < <(find "$policies_path" -name "*.yml" -o -name "*.yaml" -print0)
+          
+          if [[ $security_issues -gt 0 ]]; then
+            echo ""
+            echo "⚠️ Found $security_issues potential security issues"
+            echo "Please review the flagged patterns to ensure they are legitimate"
+            # Note: We don't fail here as some patterns might be legitimate in security queries
+          else
+            echo "✅ No suspicious SQL patterns detected"
+          fi
+
+      - name: Generate validation report
+        if: always()
+        run: |
+          echo "📊 Generating validation report..."
+          
+          policies_path="${{ inputs.policies_path || 'policies' }}"
+          
+          {
+            echo "# Policy Validation Report"
+            echo ""
+            echo "**Generated**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "**Commit**: ${{ github.sha }}"
+            echo "**PR**: #${{ github.event.number }}"
+            echo ""
+            
+            if [[ -d "$policies_path" ]]; then
+              total_files=$(find "$policies_path" -name "*.yml" -o -name "*.yaml" | wc -l)
+              gitops_files=$(find "$policies_path" -name "*-gitops.yml" | wc -l)
+              fleetctl_files=$(find "$policies_path" -name "*-fleetctl.yml" | wc -l)
+              individual_dirs=$(find "$policies_path" -type d -name "*-gitops" -o -name "*-fleetctl" | wc -l)
+              
+              echo "## Summary"
+              echo ""
+              echo "- **Total YAML files**: $total_files"
+              echo "- **GitOps format files**: $gitops_files"
+              echo "- **Fleetctl format files**: $fleetctl_files" 
+              echo "- **Individual policy directories**: $individual_dirs"
+              echo ""
+              
+              echo "## File Structure"
+              echo ""
+              echo "\`\`\`"
+              tree "$policies_path" -L 2 2>/dev/null || find "$policies_path" -type f -name "*.yml" | head -20
+              echo "\`\`\`"
+              echo ""
+              
+              # Count policies per platform
+              echo "## Policy Counts by Platform"
+              echo ""
+              
+              for gitops_file in $(find "$policies_path" -name "*-gitops.yml" 2>/dev/null); do
+                platform=$(basename "$gitops_file" | sed 's/cis-benchmark-\(.*\)-gitops\.yml/\1/')
+                count=$(yq eval '. | length' "$gitops_file" 2>/dev/null || echo "0")
+                echo "- **$platform**: $count policies"
+              done
+            else
+              echo "⚠️ No policies directory found at $policies_path"
+            fi
+          } > validation-report.md
+          
+          cat validation-report.md
+
+      - name: Upload validation report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: validation-report
+          path: validation-report.md
+          retention-days: 7

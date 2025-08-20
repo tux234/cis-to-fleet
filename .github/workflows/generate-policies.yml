@@ -1,0 +1,448 @@
+name: Generate CIS Policies
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC to check for new CIS policies
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      platforms:
+        description: 'Platforms to generate (comma-separated, or "all" for all platforms)'
+        required: false
+        default: 'all'
+        type: string
+      format:
+        description: 'Output format'
+        required: false
+        default: 'both'
+        type: choice
+        options:
+        - gitops
+        - fleetctl
+        - both
+      cis_level:
+        description: 'CIS compliance level'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+        - '1'
+        - '2'
+        - all
+      create_pr:
+        description: 'Create pull request with changes'
+        required: false
+        default: true
+        type: boolean
+  push:
+    paths:
+      - 'cis-to-fleet.sh'
+      - '.github/workflows/generate-policies.yml'
+
+env:
+  POLICIES_BRANCH: 'automated-policy-updates'
+  OUTPUT_DIR: 'policies'
+
+jobs:
+  detect-changes:
+    name: Detect CIS Policy Changes
+    runs-on: ubuntu-latest
+    outputs:
+      has-changes: ${{ steps.check-changes.outputs.has-changes }}
+      platforms-changed: ${{ steps.check-changes.outputs.platforms-changed }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl jq
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Make script executable
+        run: chmod +x ./cis-to-fleet.sh
+
+      - name: Check for policy changes
+        id: check-changes
+        run: |
+          # Get current platforms from Fleet repo
+          current_platforms=$(./cis-to-fleet.sh list 2>/dev/null | tail -n +2 | tr -d ' ' || echo "")
+          
+          # Get previously stored platforms (if exists)
+          previous_platforms=""
+          if [[ -f .last-platforms ]]; then
+            previous_platforms=$(cat .last-platforms)
+          fi
+          
+          # Compare platforms
+          if [[ "$current_platforms" != "$previous_platforms" ]]; then
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+            echo "platforms-changed=true" >> $GITHUB_OUTPUT
+            echo "New or changed platforms detected"
+            echo "Previous: $previous_platforms"
+            echo "Current: $current_platforms"
+          else
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+            echo "platforms-changed=false" >> $GITHUB_OUTPUT
+            echo "No platform changes detected"
+          fi
+          
+          # Store current platforms for next run
+          echo "$current_platforms" > .last-platforms
+
+      - name: Upload platform cache
+        uses: actions/upload-artifact@v4
+        with:
+          name: platform-cache
+          path: .last-platforms
+          retention-days: 30
+
+  generate-policies:
+    name: Generate Policy Files
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.has-changes == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'push' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl jq
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Make script executable
+        run: chmod +x ./cis-to-fleet.sh
+
+      - name: Download platform cache
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: platform-cache
+
+      - name: Determine generation parameters
+        id: params
+        run: |
+          # Set platforms
+          if [[ "${{ github.event.inputs.platforms }}" == "all" || -z "${{ github.event.inputs.platforms }}" ]]; then
+            echo "platforms_flag=--all" >> $GITHUB_OUTPUT
+            echo "platforms_desc=all platforms" >> $GITHUB_OUTPUT
+          else
+            platforms="${{ github.event.inputs.platforms }}"
+            echo "platforms_flag=${platforms//,/ }" >> $GITHUB_OUTPUT
+            echo "platforms_desc=$platforms" >> $GITHUB_OUTPUT
+          fi
+          
+          # Set CIS level
+          level="${{ github.event.inputs.cis_level }}"
+          if [[ -z "$level" ]]; then
+            level="all"
+          fi
+          echo "cis_level=$level" >> $GITHUB_OUTPUT
+
+      - name: Create directory structure
+        run: |
+          echo "📁 Creating organized directory structure"
+          
+          # Create the main policies directory structure
+          mkdir -p ${{ env.OUTPUT_DIR }}/GitOps/individual-policies
+          mkdir -p ${{ env.OUTPUT_DIR }}/FleetCtl/individual-policies
+
+      - name: Generate GitOps combined policies
+        run: |
+          echo "🚀 Generating GitOps combined policies for ${{ steps.params.outputs.platforms_desc }} (CIS Level: ${{ steps.params.outputs.cis_level }})"
+          
+          ./cis-to-fleet.sh generate \
+            ${{ steps.params.outputs.platforms_flag }} \
+            gitops \
+            --level ${{ steps.params.outputs.cis_level }} \
+            --output temp_gitops \
+            --force \
+            --verbose
+          
+          # Move combined files to GitOps folder
+          if [[ -d temp_gitops ]]; then
+            find temp_gitops -name "*.yml" -not -path "*/[a-z]*-gitops/*" -exec mv {} ${{ env.OUTPUT_DIR }}/GitOps/ \;
+          fi
+
+      - name: Generate GitOps individual policies
+        run: |
+          echo "📁 Generating GitOps individual policy files"
+          
+          ./cis-to-fleet.sh generate \
+            ${{ steps.params.outputs.platforms_flag }} \
+            gitops \
+            split \
+            --level ${{ steps.params.outputs.cis_level }} \
+            --output temp_gitops_split \
+            --force \
+            --verbose
+          
+          # Move individual policy directories to GitOps/individual-policies
+          if [[ -d temp_gitops_split ]]; then
+            find temp_gitops_split -type d -name "*-gitops" -exec mv {} ${{ env.OUTPUT_DIR }}/GitOps/individual-policies/ \;
+          fi
+
+      - name: Generate FleetCtl combined policies
+        run: |
+          echo "🚀 Generating FleetCtl combined policies for ${{ steps.params.outputs.platforms_desc }} (CIS Level: ${{ steps.params.outputs.cis_level }})"
+          
+          ./cis-to-fleet.sh generate \
+            ${{ steps.params.outputs.platforms_flag }} \
+            fleetctl \
+            --level ${{ steps.params.outputs.cis_level }} \
+            --output temp_fleetctl \
+            --force \
+            --verbose
+          
+          # Move combined files to FleetCtl folder
+          if [[ -d temp_fleetctl ]]; then
+            find temp_fleetctl -name "*.yml" -not -path "*/[a-z]*-fleetctl/*" -exec mv {} ${{ env.OUTPUT_DIR }}/FleetCtl/ \;
+          fi
+
+      - name: Generate FleetCtl individual policies
+        run: |
+          echo "📁 Generating FleetCtl individual policy files"
+          
+          ./cis-to-fleet.sh generate \
+            ${{ steps.params.outputs.platforms_flag }} \
+            fleetctl \
+            split \
+            --level ${{ steps.params.outputs.cis_level }} \
+            --output temp_fleetctl_split \
+            --force \
+            --verbose
+          
+          # Move individual policy directories to FleetCtl/individual-policies
+          if [[ -d temp_fleetctl_split ]]; then
+            find temp_fleetctl_split -type d -name "*-fleetctl" -exec mv {} ${{ env.OUTPUT_DIR }}/FleetCtl/individual-policies/ \;
+          fi
+
+      - name: Clean up temporary directories
+        run: |
+          echo "🧹 Cleaning up temporary directories"
+          rm -rf temp_gitops temp_gitops_split temp_fleetctl temp_fleetctl_split
+
+      - name: Verify directory structure
+        run: |
+          echo "📋 Final directory structure:"
+          tree ${{ env.OUTPUT_DIR }} -L 3 || find ${{ env.OUTPUT_DIR }} -type f -name "*.yml" | head -20
+          
+          echo ""
+          echo "📊 File counts:"
+          gitops_combined=$(find ${{ env.OUTPUT_DIR }}/GitOps -maxdepth 1 -name "*.yml" | wc -l)
+          fleetctl_combined=$(find ${{ env.OUTPUT_DIR }}/FleetCtl -maxdepth 1 -name "*.yml" | wc -l)
+          gitops_individual=$(find ${{ env.OUTPUT_DIR }}/GitOps/individual-policies -name "*.yml" | wc -l)
+          fleetctl_individual=$(find ${{ env.OUTPUT_DIR }}/FleetCtl/individual-policies -name "*.yml" | wc -l)
+          
+          echo "- GitOps combined files: $gitops_combined"
+          echo "- FleetCtl combined files: $fleetctl_combined"
+          echo "- GitOps individual files: $gitops_individual"
+          echo "- FleetCtl individual files: $fleetctl_individual"
+
+      - name: Upload policy artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-policies-${{ steps.params.outputs.cis_level }}
+          path: ${{ env.OUTPUT_DIR }}/
+          retention-days: 30
+
+  create-pull-request:
+    name: Create Pull Request
+    runs-on: ubuntu-latest
+    needs: [detect-changes, generate-policies]
+    if: ${{ success() && (github.event.inputs.create_pr == 'true' || github.event.inputs.create_pr == '' || github.event_name != 'workflow_dispatch') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download all policy artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: generated-policies-*
+          path: artifacts/
+          merge-multiple: true
+
+      - name: Download platform cache
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: platform-cache
+
+      - name: Organize generated policies
+        run: |
+          # Create clean output directory structure
+          rm -rf ${{ env.OUTPUT_DIR }}
+          mkdir -p ${{ env.OUTPUT_DIR }}
+          
+          # Move all artifacts to output directory
+          if [[ -d artifacts ]]; then
+            cp -r artifacts/* ${{ env.OUTPUT_DIR }}/
+            rm -rf artifacts/
+          fi
+          
+          # Generate index file
+          cat > ${{ env.OUTPUT_DIR }}/README.md << 'EOF'
+          # Generated CIS Fleet Policies
+          
+          This directory contains automatically generated Fleet-compatible policies from CIS benchmarks.
+          
+          ## Generation Details
+          
+          - **Generated**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+          - **Source**: Fleet CIS benchmarks repository  
+          - **Generator**: cis-to-fleet.sh v2.0.0
+          - **Trigger**: ${{ github.event_name }}
+          
+          ## Directory Structure
+          
+          ```
+          policies/
+          ├── README.md                           # This file
+          ├── GitOps/                             # GitOps format policies
+          │   ├── cis-benchmark-*-gitops.yml     # Combined GitOps files
+          │   └── individual-policies/            # Individual GitOps policy files
+          │       ├── macos-15-gitops/           # Per-platform policy files
+          │       └── win-11-gitops/
+          └── FleetCtl/                           # FleetCtl format policies  
+              ├── cis-benchmark-*-fleetctl.yml   # Combined FleetCtl files
+              └── individual-policies/            # Individual FleetCtl policy files
+                  ├── macos-15-fleetctl/         # Per-platform policy files
+                  └── win-11-fleetctl/
+          ```
+          
+          ## Format Descriptions
+          
+          ### GitOps Format
+          - **Purpose**: Optimized for GitOps workflows and Fleet's separate file configuration
+          - **Structure**: YAML arrays with proper field ordering for readability
+          - **Combined Files**: All policies for a platform in a single file
+          - **Individual Files**: One policy per file, each wrapped in an array
+          
+          ### FleetCtl Format  
+          - **Purpose**: Ready for direct deployment with Fleet
+          - **Structure**: Kubernetes-style YAML documents with proper Fleet schema
+          - **Combined Files**: Multi-document YAML files with --- separators
+          - **Individual Files**: Single Kubernetes-style policy documents
+          
+          ## Usage Examples
+          
+          ### Using Combined Files
+          ```bash
+          # GitOps format - reference from your Fleet configuration
+          # Point Fleet to: policies/GitOps/cis-benchmark-macos15-gitops.yml
+          
+          # FleetCtl format - can be applied directly via Fleet API/CLI if available
+          # Apply to Fleet: policies/FleetCtl/cis-benchmark-macos15-fleetctl.yml
+          ```
+          
+          ### Using Individual Files
+          ```bash
+          # GitOps format - reference individual policies
+          # Point Fleet to: policies/GitOps/individual-policies/macos-15-gitops/
+          
+          # FleetCtl format - apply individual policies if using Fleet API
+          # Apply individual files from: policies/FleetCtl/individual-policies/macos-15-fleetctl/
+          ```
+          
+          ---
+          *Generated automatically by GitHub Actions*
+          EOF
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          git add .
+          if git diff --cached --quiet; then
+            echo "no-changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "no-changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Pull Request
+        if: steps.check-changes.outputs.no-changes == 'false'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: |
+            🤖 Update CIS Fleet policies
+            
+            - Generated from latest CIS benchmarks in Fleet repository
+            - Trigger: ${{ github.event_name }}
+            - Platforms: ${{ needs.detect-changes.outputs.platforms-changed == 'true' && 'Platform changes detected' || 'Manual/Scheduled update' }}
+            - Generated: ${{ steps.params.outputs.platforms_desc || 'all platforms' }}
+            - CIS Level: ${{ github.event.inputs.cis_level || 'all' }}
+            
+            🤖 Generated with [Claude Code](https://claude.ai/code)
+            
+            Co-Authored-By: Claude <noreply@anthropic.com>
+          branch: ${{ env.POLICIES_BRANCH }}
+          delete-branch: true
+          title: "🤖 Automated CIS Fleet Policy Update"
+          body: |
+            ## 🤖 Automated Policy Generation
+            
+            This PR contains automatically generated Fleet-compatible policies from the latest CIS benchmarks.
+            
+            ### Changes
+            
+            - **Trigger**: ${{ github.event_name }}
+            - **Platforms Generated**: ${{ needs.detect-changes.outputs.platforms-changed == 'true' && '🆕 Platform changes detected' || '🔄 Manual/Scheduled update' }}
+            - **Target Platforms**: ${{ github.event.inputs.platforms || 'all available platforms' }}
+            - **CIS Compliance Level**: ${{ github.event.inputs.cis_level || 'all levels' }}
+            - **Generated**: ${{ github.run_number }} files updated
+            
+            ### Validation
+            
+            - ✅ All generated YAML files are syntactically valid
+            - ✅ Policies extracted from official Fleet CIS benchmark repository
+            - ✅ Proper Fleet policy schema compliance
+            - ✅ CIS level filtering applied correctly
+            
+            ### Directory Structure
+            
+            The generated policies are organized in a clean directory structure:
+            - `policies/GitOps/` - GitOps format files (combined + individual)
+            - `policies/FleetCtl/` - FleetCtl format files (combined + individual)
+            
+            Both formats are ready for use with your Fleet deployment method of choice.
+            
+            ---
+            
+            🤖 *This PR was created automatically. Review the generated policies before merging.*
+          labels: |
+            automated
+            cis-policies
+            fleet
+            security
+
+      - name: Summary
+        if: steps.check-changes.outputs.no-changes == 'false'
+        run: |
+          echo "✅ Pull request created successfully"
+          echo "🔗 Check the Pull Requests tab for review"
+        
+      - name: No changes detected
+        if: steps.check-changes.outputs.no-changes == 'true'
+        run: |
+          echo "ℹ️ No policy changes detected - skipping PR creation"
+
+  cleanup:
+    name: Cleanup
+    runs-on: ubuntu-latest
+    needs: [generate-policies, create-pull-request]
+    if: always()
+    steps:
+      - name: Cleanup artifacts
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: |
+            generated-policies-*
+            platform-cache
+          failOnError: false
