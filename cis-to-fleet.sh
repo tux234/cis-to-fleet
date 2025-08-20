@@ -541,7 +541,7 @@ parse_yaml_policies() {
   local yaml_file="$1"
   local policies_json="$TEMP_DIR/policies_$(basename "$yaml_file" .yml).json"
 
-  log_verbose "Parsing YAML policies from: $yaml_file"
+  log_debug "Parsing YAML policies from: $yaml_file"
 
   # Convert YAML to JSON and extract policies from Kubernetes-style documents
   if ! yq eval -o=json '.' "$yaml_file" | jq -s '[
@@ -808,7 +808,7 @@ generate_split_files() {
   local output_dir="$3"
   local platform="$4"
 
-  log_verbose "Generating individual policy files"
+  log_debug "Generating individual policy files"
 
   mkdir -p "$output_dir"
 
