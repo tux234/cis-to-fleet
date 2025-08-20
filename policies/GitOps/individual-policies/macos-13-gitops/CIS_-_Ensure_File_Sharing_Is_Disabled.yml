@@ -1,0 +1,19 @@
+- name: CIS - Ensure File Sharing Is Disabled
+  platform: darwin
+  description: |
+    File sharing from a user workstation creates additional risks by
+    increasing complexity and making security more difficult. Hardened
+    file servers should be used instead of workstations
+  resolution: |
+    Graphical Method:
+    1. Open System Settings
+    2. Select General
+    3. Select Sharing
+    4. Set File Sharing to disabled
+  query: |
+    SELECT 1 WHERE NOT EXISTS (
+      SELECT * FROM plist WHERE
+        path = '/var/db/com.apple.xpc.launchd/disabled.plist' AND
+        key = 'com.apple.smbd' AND
+        value = '0'
+    );

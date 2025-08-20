@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Limits print driver installation to Administrators' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting controls whether users that aren't Administrators can install print drivers on the system.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled.
+    'Computer Configuration\Policies\Administrative Templates\MS Security Guide\Limits print driver installation to Administrators'
+    Note: This Group Policy path does not exist by default. An additional Group Policy template (SecGuide.admx/adml) is required - it is available from Microsoft at this link (https://techcommunity.microsoft.com/t5/microsoft-security-baselines/security-baseline-final-for-windows-10-v1903-and-windows-server/ba-p/701084).
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Printers\\PointAndPrint\RestrictDriverInstallationToAdministrators' AND data = 1);

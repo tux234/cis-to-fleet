@@ -1,0 +1,11 @@
+- name: CIS - Ensure 'Microsoft FTP Service (FTPSVC)' is set to 'Disabled' or 'Not Installed'
+  platform: windows
+  description: |
+    Enables the server to be a File Transfer Protocol (FTP) server.
+    The recommended state for this setting is: Disabled or Not Installed.
+    Note: This service is not installed by default. It is supplied with Windows, but is installed by enabling an optional Windows feature (Internet Information Services - FTP Server).
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to Disabled or Not Installed.:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\Microsoft FTP Service'
+  query: "SELECT 1 WHERE \nNOT EXISTS ( SELECT 1 FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Services\\\\FTPSVC\\\\Start' )\nOR \nEXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Services\\\\FTPSVC\\\\Start' AND data == 4 );\n"

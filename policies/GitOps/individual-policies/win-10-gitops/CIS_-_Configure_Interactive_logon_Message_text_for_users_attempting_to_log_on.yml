@@ -1,0 +1,13 @@
+- name: CIS - Configure 'Interactive logon Message text for users attempting to log on'
+  platform: windows
+  description: |
+    This policy setting specifies a text message that displays to users when they log on. Set the
+    following group policy to a value that is consistent with the security and operational
+    requirements of your organization.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to a value that is consistent with the security and operational requirements
+    of your organization:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Interactive logon: Message text for users attempting to log on'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\legalnoticetext' AND data != "");

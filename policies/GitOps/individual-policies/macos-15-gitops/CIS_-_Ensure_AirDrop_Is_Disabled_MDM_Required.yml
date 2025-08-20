@@ -1,0 +1,12 @@
+- name: CIS - Ensure AirDrop Is Disabled (MDM Required)
+  platform: darwin
+  description: |
+    AirDrop can allow malicious files to be downloaded from unknown sources.
+    Contacts Only limits may expose personal information to devices in the same area.
+  resolution: |
+    Ask your system administrator to deploy an MDM profile that disables AirDrop.
+    Ask your administrator to deploy a profile with the following configuration:
+      1. The PayloadType string is com.apple.applicationaccess
+      2. The key to include is allowAirDrop
+      3. The key must be set to <false/>
+  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.applicationaccess' AND \n        name='allowAirDrop' AND \n        (value = 0 OR value = 'false')\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.applicationaccess' AND \n        name='allowAirDrop' AND \n        (value != 0 AND value != 'false')\n    );  \n"

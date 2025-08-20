@@ -1,0 +1,6 @@
+- name: CIS - Ensure Automatic Login Is Disabled (MDM Required)
+  platform: darwin
+  description: |
+    The automatic login feature saves a user's system access credentials and bypasses the login screen. Instead, the system automatically loads to the user's desktop screen
+  resolution: "Automated method:\nAsk your system administrator to deploy an MDM profile that Ensure Automatic Login Is Disabled\nGraphical method:\n  Perform the following steps to ensure Automatic Login Is Disabled:\n    1. Open System Settings\n    2. Select Users & Groups\n    3. Set Automatic login in as... to Off\nProfile Method:\n    Create or edit a configuration profile with the following information:\n    1. The Payload Type string is com.apple.loginwindow\n    2. The key to include is com.apple.login.mcx.DisableAutoLoginClient \n    3. The key must be set to <true/>\n"
+  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.login.mcx.DisableAutoLoginClient' AND \n        name='Disable' AND \n        (value = 1 OR value = 'true') AND \n        username = ''\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.login.mcx.DisableAutoLoginClient' AND \n        name='Disable' AND \n        (value != 1 AND value != 'true')\n    );  \n"

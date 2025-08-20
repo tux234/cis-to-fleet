@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Windows Firewall: Private: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\privatefw.log'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile\\Logging\LogFilePath' AND data ='%systemroot%\system32\logfiles\firewall\pfirewall.log');
+  critical: false
+  description: |
+    Use this option to specify the path and name of the file in which Windows Firewall will write its log information.
+    The recommended state for this setting is: %SystemRoot%\System32\logfiles\firewall\privatefw.log.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to '%SystemRoot%\System32\logfiles\firewall\privatefw.log':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Windows Defender Firewall with Advanced Security\Windows Defender Firewall with Advanced Security - Local Group Policy Object\Windows Defender Firewall Properties\Private Profile\Logging Customize\Name'
+  platform: windows

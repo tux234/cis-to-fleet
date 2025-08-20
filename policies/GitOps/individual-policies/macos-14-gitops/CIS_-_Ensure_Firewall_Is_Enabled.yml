@@ -1,0 +1,5 @@
+- name: CIS - Ensure Firewall Is Enabled
+  platform: darwin
+  description: A firewall minimizes the threat of unauthorized users gaining access to your system while connected to a network or the Internet.
+  resolution: Go to the Network pane in System Settings and ensure Firewall is active.
+  query: SELECT 1 FROM alf WHERE global_state >= 1;

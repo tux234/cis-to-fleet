@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'User Account Control: Behavior of the elevation prompt for standard users' is set to 'Automatically deny elevation requests'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\ConsentPromptBehaviorUser' AND data == 0);
+  critical: false
+  description: |
+    This policy setting controls the behavior of the elevation prompt for standard users.
+    The recommended state for this setting is: Automatically deny elevation requests.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Automatically deny elevation requests:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\User Account Control: Behavior of the elevation prompt for standard users'
+  platform: windows

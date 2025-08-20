@@ -1,0 +1,5 @@
+- name: CIS - Ensure Install of macOS Updates Is Enabled (MDM Required)
+  platform: darwin
+  description: Ensure that macOS updates are installed after they are available from Apple.
+  resolution: Ask your system administrator to deploy an MDM profile that enables automatic install of macOS updates.
+  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.SoftwareUpdate' AND \n        name='AutomaticallyInstallMacOSUpdates' AND \n        (value = 1 OR value = 'true') AND \n        username = ''\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.SoftwareUpdate' AND \n        name='AutomaticallyInstallMacOSUpdates' AND \n        (value != 1 AND value != 'true')\n    );  \n"

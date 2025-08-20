@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'IIS Admin Service (IISADMIN)' is set to 'Disabled' or 'Not Installed'
+  query: |
+    SELECT 1 WHERE 
+    NOT EXISTS ( SELECT 1 FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\IISADMIN\\Start' )
+    OR 
+    EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\IISADMIN\\Start' AND data == 4 );
+  critical: false
+  description: |
+    Enables the server to administer the IIS metabase. The IIS metabase stores configuration for the SMTP and FTP services.
+    The recommended state for this setting is: Disabled or Not Installed.
+    Note: This service is not installed by default. It is supplied with Windows, but is installed
+    by enabling an optional Windows feature (Internet Information Services).
+    Note #2: An organization may choose to selectively grant exceptions to web developers to allow IIS (or another web server) on their workstation, in order for them to locally test & develop web pages. However, the organization should track those machines and ensure the security controls and mitigations are kept up to date, to reduce risk of compromise.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to Disabled or Not Installed.:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\IIS Admin Service'
+  platform: windows

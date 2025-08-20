@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure an Administrator Account Cannot Login to Another User's Active and Locked Session (Fleetd Required)
+  query: |
+    SELECT 1 WHERE EXISTS (
+      SELECT JSON_EXTRACT(json_result, '$.rule') AS rule
+      FROM authdb
+      WHERE right_name = 'system.login.screensaver' AND 
+      rule LIKE '%authenticate-session-owner%'
+    );
+  critical: false
+  description: |
+    macOS has a privilege that can be granted to any user that will allow that
+    user to unlock active users' sessions. Disabling the administrator's and/or
+    user's ability to log into another user's active and locked session prevents
+    unauthorized persons from viewing potentially sensitive and/or personal
+    information.
+    Note: For organizations that are using Platform Single-Sign-On (PSSO), this
+    setting can cause issues with syncing with your PSSO. Verify if you are
+    using PSSO by running: /usr/bin/sudo app-sso platform -s
+  resolution: |
+    Automated method:
+    Ask your administrator to deploy a script that runs the following command:
+    /usr/bin/sudo /usr/bin/security authorizationdb write system.login.screensaver authenticate-session-owner
+    # Note: Running this command will disable Touch ID to unlock the screen
+    # saver. To re-enable Touch ID for users, run:
+    /usr/bin/sudo /usr/bin/defaults write /Library/Preferences/com.apple.loginwindow screenUnlockMode -int 1
+  platform: darwin

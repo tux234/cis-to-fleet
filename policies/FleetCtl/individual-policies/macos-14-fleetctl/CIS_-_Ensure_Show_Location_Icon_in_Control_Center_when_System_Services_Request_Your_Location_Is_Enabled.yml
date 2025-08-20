@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Show Location Icon in Control Center when System Services Request Your Location' Is Enabled
+  query: SELECT 1 FROM plist WHERE path='/Library/Preferences/com.apple.locationmenu.plist' AND key='ShowSystemServices' AND value=1;
+  critical: false
+  description: This setting provides the user an understanding of the current status of Location Services and which applications are using it.
+  resolution: |
+    Automated method:
+    Ask your system administrator to deploy an MDM profile that enables the "location services" icon in menu bar when System Services request your location.
+    Graphical method:
+      Perform the following steps to enable Location Services:
+        1. Open System Settings
+        2. Select Privacy & Security
+        3. Select Location Services
+        4. Select Details...
+        5. Verify Show location icon in menu bar when System Services request your
+        location is set to your organization's parameters
+  platform: darwin

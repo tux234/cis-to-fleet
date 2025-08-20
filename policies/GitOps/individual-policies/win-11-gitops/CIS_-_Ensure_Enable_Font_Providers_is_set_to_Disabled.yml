@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Enable Font Providers' is set to 'Disabled'
+  platform: windows
+  description: |
+    This policy setting determines whether Windows is allowed to download fonts and font catalog data from an online font provider.
+    The recommended state for this setting is: Disabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Disabled:
+    'Computer Configuration\Policies\Administrative Templates\Network\Fonts\Enable Font Providers'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System\EnableFontProviders' AND data = 0);

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Audit insecure guest logon' is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\AuditInsecureGuestLogon' AND data = 1);
+  critical: false
+  description: |
+    This policy determines whether the Server Message Block (SMB) client will log events when the client is logged on as guest account.
+    Enabling this will create event log entries in 'Applications and Service Logs\Microsoft\Windows\SMBClient\Security', with Event IDs 3023, 31017, 31018, and 31022.
+    The recommended state for this setting is: Enabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Network\Lanman Workstation\Audit insecure guest logon'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy
+    template LanmanWorkstation.admx/adml that is included with the Microsoft Windows 11 Release 24H2 Administrative Templates (or newer).
+  platform: windows

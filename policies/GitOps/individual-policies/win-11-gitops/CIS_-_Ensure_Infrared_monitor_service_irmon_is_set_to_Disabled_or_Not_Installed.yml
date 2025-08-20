@@ -1,0 +1,10 @@
+- name: CIS - Ensure 'Infrared monitor service (irmon)' is set to 'Disabled' or 'Not Installed'
+  platform: windows
+  description: |
+    Detects other Infrared devices that are in range and launches the file transfer application.
+    The recommended state for this setting is: Disabled or Not Installed.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to Disabled or Not Installed.:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\Infrared monitor service'
+  query: "SELECT 1 WHERE \nNOT EXISTS ( SELECT 1 FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Services\\\\irmon\\\\Start' )\nOR \nEXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Services\\\\irmon\\\\Start' AND data == 4 );\n"

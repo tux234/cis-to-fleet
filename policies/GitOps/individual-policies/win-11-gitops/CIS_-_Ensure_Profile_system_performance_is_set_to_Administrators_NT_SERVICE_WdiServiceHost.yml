@@ -1,0 +1,12 @@
+- name: CIS - Ensure 'Profile system performance' is set to 'Administrators, NT SERVICE\WdiServiceHost'
+  platform: windows
+  description: |
+    This policy setting allows users to use tools to view the performance of different system
+    processes, which could be abused to allow attackers to determine a system's active processes and
+    provide insight into the potential attack surface of the computer.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'Administrators, NT SERVICE\WdiServiceHost'
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Profile system performance'
+  query: |
+    SELECT 1 FROM cis_audit where item = "2.2.35" AND (regex_match(value,".*(?=.*Administrators)(?=.*WdiServiceHost).*",0) is not null);

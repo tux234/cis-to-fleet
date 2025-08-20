@@ -1,0 +1,31 @@
+- name: CIS - Ensure external intelligence extensions is disabled (MDM required)
+  platform: darwin
+  description: |
+    In macOS 15.0 Sequoia, Apple has introduced what it calls Apple Intelligence,
+    which includes new capabilities for processing language and images with AI
+    technologies. While Apple Intelligence integrates deeply with personal context
+    and generally runs on-device, external intelligence extensions are able to
+    connect to external services like ChatGPT or other third-party AI providers.
+    These external connections may send user data to third-party servers outside
+    of Apple's control.
+    Organizations handling sensitive or confidential information should disable
+    external intelligence extensions to prevent potential data leakage to
+    third-party AI services.
+  resolution: |
+    Profile Method:
+    Ask your administrator to deploy a profile with the following configuration:
+    1. The PayloadType string is com.apple.applicationaccess
+    2. The key to include is allowIntelligenceExtensions
+    3. The key must be set to <false/>
+  query: |
+    SELECT 1 WHERE EXISTS(
+      SELECT 1 FROM managed_policies WHERE
+        domain = 'com.apple.applicationaccess' AND
+        name = 'allowIntelligenceExtensions' AND
+        (value = 0 OR value = 'false')
+    ) AND NOT EXISTS (
+      SELECT 1 FROM managed_policies WHERE
+        domain = 'com.apple.applicationaccess' AND
+        name = 'allowIntelligenceExtensions' AND
+        (value != 0 AND value != 'false')
+    );

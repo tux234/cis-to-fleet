@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Audit Special Logon' is set to include 'Success'
+  platform: windows
+  description: |
+    This subcategory reports when a special logon is used. A special logon is a logon that has administrator-equivalent privileges and can be used to elevate a process to a higher level. Events for this subcategory include:
+    - 4964 : Special groups have been assigned to a new logon.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to include Success:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Advanced Audit Policy Configuration\Audit Policies\Logon/Logoff\Audit Special Logon'
+  query: |
+    SELECT 1 FROM cis_audit where item = "17.5.6" AND (regex_match(value,".*(?=.*Success).*",0) is not null);

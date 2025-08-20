@@ -1,0 +1,10 @@
+- name: |
+    CIS - Ensure 'Allow UI Automation redirection' is set to 'Disabled'
+  platform: windows
+  description: |
+    This policy setting determines whether User Interface (UI) Automation client applications running on the local computer can access UI elements on the server.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Disabled':
+    'Computer Configuration\\Administrative Templates\\Windows Components\\Remote Desktop Services\\Remote Desktop Session Host\\Device and Resource Redirection\\Allow UI Automation redirection'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services\\EnableUiaRedirection' AND data = 0);

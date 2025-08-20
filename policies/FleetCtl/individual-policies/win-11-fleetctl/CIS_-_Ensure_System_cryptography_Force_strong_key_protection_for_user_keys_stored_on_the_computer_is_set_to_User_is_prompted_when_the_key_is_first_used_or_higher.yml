@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'System cryptography Force strong key protection for user keys stored on the computer' is set to 'User is prompted when the key is first used or higher'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Cryptography\\ForceKeyProtection' AND CAST(data AS INTEGER) >= 1);
+  critical: false
+  description: This policy setting determines whether users' private keys (such as their S-MIME keys) require a password to be used.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'User is prompted when the key is first used or higher':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\System cryptography: Force strong key protection for user keys stored on the computer'
+  platform: windows

@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Prevent users and apps from accessing dangerous websites' is set to 'Enabled: Block'
+  platform: windows
+  description: |
+    This policy setting controls Microsoft Defender Exploit Guard network protection.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled: Block'
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Windows Defender Antivirus\Windows Defender Exploit Guard\Network Protection\Prevent users and apps from accessing dangerous websites'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy template WindowsDefender.admx/adml that is included with the Microsoft Windows 10 Release 1709 Administrative Templates (or newer).
+  query: |
+    SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Windows Defender Exploit Guard\\Network Protection\\EnableNetworkProtection' AND data = 1;

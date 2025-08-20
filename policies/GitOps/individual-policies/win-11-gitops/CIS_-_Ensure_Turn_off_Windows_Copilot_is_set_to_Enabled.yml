@@ -1,0 +1,15 @@
+- name: |
+    CIS - Ensure 'Turn off Windows Copilot' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting configures the use of Windows Copilot. Windows Copilot is an
+    artificial intelligence (AI) assistant that's integrated in Microsoft Windows workstation
+    OSes, beginning with Windows 11 Release 23H2.
+    The recommended state for this setting is: Enabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'User Configuration\Policies\Administrative Templates\Windows Components\Windows Copilot\Turn off Windows Copilot'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy
+    template 'WindowsCopilot.admx/adml' that is included with the Microsoft Windows 11 Release 23H2 Administrative Templates (or newer).
+  query: |
+    SELECT 1 FROM registry WHERE (path LIKE 'HKEY_USERS\%\SOFTWARE\Policies\Microsoft\Windows\WindowsCopilot\TurnOffWindowsCopilot' AND data = 1);

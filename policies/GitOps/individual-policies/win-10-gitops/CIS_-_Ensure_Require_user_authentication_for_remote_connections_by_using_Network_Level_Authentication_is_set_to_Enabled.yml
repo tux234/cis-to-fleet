@@ -1,0 +1,10 @@
+- name: |
+    CIS - Ensure 'Require user authentication for remote connections by using Network Level Authentication' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting allows you to specify whether to require user authentication for remote connections to the RD Session Host server by using Network Level Authentication.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled':
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Remote Desktop Services\Remote Desktop Session Host\Security\Require user authentication for remote connections by using Network Level Authentication'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services\\UserAuthentication' AND data = 1);

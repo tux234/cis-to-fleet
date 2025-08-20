@@ -1,0 +1,17 @@
+- name: |
+    CIS - Ensure 'Download Mode' is NOT set to 'Enabled: Internet'
+  platform: windows
+  description: |
+    This policy setting specifies the download method that Delivery Optimization can use in downloads of Windows Updates, Apps and App updates. The following methods are supported:
+    0 = HTTP only, no peering.
+    1 = HTTP blended with peering behind the same NAT.
+    2 = HTTP blended with peering across a private group. Peering occurs on devices in the same Active Directory Site (if exist) or the same domain by default. When this option is selected, peering will cross NATs. To create a custom group use Group ID in combination with Mode 2.
+    3 = HTTP blended with Internet Peering.
+    99 = Simple download mode with no peering. Delivery Optimization downloads using HTTP only and does not attempt to contact the Delivery Optimization cloud services.
+    100 = Bypass mode. Do not use Delivery Optimization and use BITS instead.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to any value other than Enabled: Internet (3):
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Delivery Optimization\Download Mode'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy template DeliveryOptimization.admx/adml that is included with the Microsoft Windows 10 RTM (Release 1507) Administrative Templates (or newer).
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization\DODownloadMode' AND data = 3);

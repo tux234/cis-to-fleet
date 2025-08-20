@@ -1,0 +1,10 @@
+- name: |
+    CIS - Ensure 'Turn off cloud consumer account state content' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting determines whether cloud consumer account state content is allowed in all Windows experiences.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Cloud Content\Turn off cloud consumer account state content'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\\Windows\\CloudContent\DisableConsumerAccountStateContent' AND data = 1);

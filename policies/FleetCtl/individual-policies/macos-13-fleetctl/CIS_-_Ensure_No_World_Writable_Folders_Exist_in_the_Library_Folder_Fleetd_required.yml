@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure No World Writable Folders Exist in the Library Folder (Fleetd required)
+  query: |
+    SELECT 1 WHERE NOT EXISTS (
+      SELECT 1 FROM file f
+      WHERE 
+        f.path LIKE '/Library/%'
+        AND f.type = 'directory'
+        AND (CAST(SUBSTR(f.mode,-1) AS INTEGER) & 2) = 2
+        AND NOT ((CAST(f.mode AS INTEGER) & 01000) = 01000)
+        AND NOT EXISTS (
+          SELECT 1 FROM extended_attributes ea
+          WHERE ea.path = f.path
+          AND ea.key = 'com.apple.rootless'
+        )
+    );
+  critical: false
+  description: |
+    Software sometimes insists on being installed in the
+    /System/Volumes/Data/Library directory and has inappropriate world-writable
+    permissions. This software could be compromised with the folder(s) being
+    world-writable by unauthorized actions.
+    Folders in /System/Volumes/Data/Library should not be world-writable. The
+    audit check excludes folders where the sticky bit is set by Apple. These
+    folders are required by the operating system to run and should not be
+    modified. Some security vendors use a world-writable folder for their
+    security extension tool. This will be considered compliant due to the tools
+    themselves not allowing a user to write to their folders. This is against
+    the standard practice on POSIX systems. It is considered compliant here
+    because of additional security vendor controls that are controlled through
+    industry standard mitigations.
+  resolution: |
+    Ask your system administrator to deploy a script that will ensure folders
+    are not world-writable in the /Library folder. 
+    /usr/bin/sudo IFS=$'\n'
+    for libPermissions in $(/usr/bin/find /Library -type d -perm -002 ! -perm -1000 ! -xattrname com.apple.rootless 2>/dev/null); do
+      /bin/chmod -R o-w "$libPermissions"
+    done
+    Note: Applications that are not following standard practices, and have
+    world-writable files in /System/Volumes/Data/Library may not launch or
+    operate correctly after the remediation has been run.
+  platform: darwin

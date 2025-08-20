@@ -1,0 +1,11 @@
+- name: CIS - Ensure 'Interactive logon Smart card removal behavior' is set to 'Lock Workstation' or higher
+  platform: windows
+  description: |
+    This policy setting determines what happens when the smart card for a logged-on user is removed from the smart card reader.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the
+    following UI path to 'Lock Workstation (or, if applicable for your environment, Force Logoff or Disconnect if a Remote Desktop Services session)':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Interactive logon: Smart card removal behavior'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\\scremoveoption' AND CAST(data AS INTEGER) >= 1 AND CAST(data AS INTEGER) <= 3);

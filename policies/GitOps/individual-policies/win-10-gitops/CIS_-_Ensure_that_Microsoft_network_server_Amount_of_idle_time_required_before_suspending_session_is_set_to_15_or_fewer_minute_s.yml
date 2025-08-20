@@ -1,0 +1,13 @@
+- name: CIS - Ensure that 'Microsoft network server Amount of idle time required before suspending session' is set to '15 or fewer minute(s)'
+  platform: windows
+  description: |
+    This policy setting allows you to specify the amount of continuous idle time that must pass in
+    an SMB session before the session is suspended because of inactivity. Administrators can use
+    this policy setting to control when a computer suspends an inactive SMB session. If client
+    activity resumes, the session is automatically reestablished.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Disabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Microsoft network server: Amount of idle time required before suspending session'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\CurrentControlSet\\Services\\LanManServer\\Parameters\\autodisconnect' AND CAST(data AS INTEGER) <= 15 AND CAST(data AS INTEGER) >= 0);

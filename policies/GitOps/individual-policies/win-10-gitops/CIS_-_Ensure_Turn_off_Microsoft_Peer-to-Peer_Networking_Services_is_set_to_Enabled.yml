@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Turn off Microsoft Peer-to-Peer Networking Services' is set to 'Enabled'
+  platform: windows
+  description: |
+    The Peer Name Resolution Protocol (PNRP) allows for distributed resolution of a name to an IPv6 address and port number. The protocol operates in the context of clouds. A cloud is a set of peer computers that can communicate with each other by using the same IPv6 scope.Peer-to-Peer protocols allow for applications in the areas of RTC, collaboration, content distribution and distributed processing.
+    The recommended state for this setting is: Enabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Network\Microsoft Peer-to-Peer Networking Services\Turn off Microsoft Peer-to-Peer Networking Services'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Peernet\Disabled' AND data = 1);

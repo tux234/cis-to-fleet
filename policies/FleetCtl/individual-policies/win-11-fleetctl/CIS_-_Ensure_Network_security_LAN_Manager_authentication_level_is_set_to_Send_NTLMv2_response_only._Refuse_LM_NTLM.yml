@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Network security LAN Manager authentication level' is set to 'Send NTLMv2 response only. Refuse LM & NTLM'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\LmCompatibilityLevel' COLLATE NOCASE AND data == 5);
+  critical: false
+  description: |
+    LAN Manager (LM) was a family of early Microsoft client/server software (predating Windows NT)
+    that allowed users to link personal computers together on a single network. LM network
+    capabilities included transparent file and print sharing, user security features, and network
+    administration tools. In Active Directory domains, the Kerberos protocol is the default
+    authentication protocol.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Send NTLMv2 response only. Refuse LM & NTLM':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Network security: LAN Manager authentication level'
+  platform: windows

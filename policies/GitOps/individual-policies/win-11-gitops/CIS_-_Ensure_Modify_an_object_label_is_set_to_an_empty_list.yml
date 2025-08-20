@@ -1,0 +1,12 @@
+- name: CIS - Ensure 'Modify an object label' is set to an empty list
+  platform: windows
+  description: |
+    This privilege determines which user accounts can modify the integrity label of objects, such as
+    files, registry keys, or processes owned by other users. Processes running under a user account
+    can modify the label of an object owned by that user to a lower level without this privilege.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Modify an object label'
+  query: |
+    SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/ModifyObjectLabel</LocURI></Target></Item></Get></SyncBody>" AND mdm_command_output == "";

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'SSDP Discovery (SSDPSRV)' is set to 'Disabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\SSDPSRV\\Start' AND data == 4);
+  critical: false
+  description: |
+    This service discovers networked devices and services that use the SSDP discovery protocol, such
+    as UPnP devices. Also announces SSDP devices and services running on the local computer.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to 'Disabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\SSDP Discovery'
+  platform: windows

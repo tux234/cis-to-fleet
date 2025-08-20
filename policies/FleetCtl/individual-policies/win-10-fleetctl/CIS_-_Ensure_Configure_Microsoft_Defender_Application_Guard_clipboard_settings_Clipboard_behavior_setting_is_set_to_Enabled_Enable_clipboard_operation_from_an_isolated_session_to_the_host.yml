@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Configure Microsoft Defender Application Guard clipboard settings: Clipboard behavior setting' is set to 'Enabled: Enable clipboard operation from an isolated session to the host'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\AppHVSI\AppHVSIClipboardSettings' AND data = 1);
+  critical: false
+  description: This policy setting allows you to decide how the clipboard behaves while in Microsoft Defender Application Guard.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled: Enable clipboard operation from an isolated session to the host':
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Microsoft Defender Application Guard\Configure Microsoft Defender Application Guard clipboard settings: Clipboard behavior setting'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy template AppHVSI.admx/adml that is included with the Microsoft Windows 10 Release 1703 Administrative Templates (or newer).
+  platform: windows

@@ -1,0 +1,12 @@
+- name: CIS - Ensure 'Network security Force logoff when logon hours expire' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting determines whether to disconnect users who are connected to the local
+    computer outside their user account's valid logon hours. This setting affects the Server Message
+    Block (SMB) component.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Enabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Network security: Force logoff when logon hours expire'
+  query: |
+    SELECT 1 FROM cis_audit where item = "2.3.11.6" AND value = "1";

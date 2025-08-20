@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Turn off Install Tracing' is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat\DisableInstallTracing' AND data = 1);
+  critical: false
+  description: |
+    This policy setting determines if Install Tracing data is sent to Microsoft. Install Tracing
+    tracks application installs to help diagnose compatibility problems.
+    The recommended state for this setting is: Enabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\App and Device Inventory\Turn off Install Tracing'
+    Note: This Group Policy path is provided by the Group Policy template
+    'AppDeviceInventory.admx/adml' that is included with the Microsoft Windows 11 Release 24H2 Administrative Templates (or newer).
+  platform: windows

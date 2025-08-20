@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Prevent Codec Download' is set to 'Enabled'
+  platform: windows
+  description: |
+    This setting controls whether Windows Media Player is allowed to download additional codecs for decoding media files it does not already understand.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'User Configuration\Policies\Administrative Templates\Windows Components\Windows Media Player\Playback\Prevent Codec Download'
+    Note: This Group Policy path is provided by the Group Policy template WindowsMediaPlayer.admx/adml that is included with all versions of the Microsoft Windows Administrative Templates.
+  query: |
+    SELECT 1 FROM registry WHERE (path LIKE 'HKEY_USERS\%\Software\Policies\Microsoft\WindowsMediaPlayer\PreventCodecDownload' AND data = 1);

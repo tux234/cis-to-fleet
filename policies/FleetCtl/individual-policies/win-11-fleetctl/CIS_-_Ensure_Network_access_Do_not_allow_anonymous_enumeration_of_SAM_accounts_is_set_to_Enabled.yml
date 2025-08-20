@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Network access: Do not allow anonymous enumeration of SAM accounts' is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\restrictanonymoussam' AND data != 0);
+  critical: false
+  description: |
+    This policy setting controls the ability of anonymous users to enumerate the accounts in
+    the Security Accounts Manager (SAM). If you enable this policy setting, users with
+    anonymous connections will not be able to enumerate domain account user names on the
+    systems in your environment. This policy setting also allows additional restrictions on
+    anonymous connections.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Network access: Do not allow anonymous enumeration of SAM accounts'
+  platform: windows

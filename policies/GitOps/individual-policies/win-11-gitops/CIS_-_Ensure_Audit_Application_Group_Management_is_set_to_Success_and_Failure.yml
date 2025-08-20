@@ -1,0 +1,10 @@
+- name: CIS - Ensure 'Audit Application Group Management' is set to 'Success and Failure'
+  platform: windows
+  description: |
+    Creates audit events whenever an application group is changed, e.g. by adding members.
+    This makes it easier to investigate a future security incident if required.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Success and Failure:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Advanced Audit Policy Configuration\Audit Policies\Account Management\Audit Application Group Management'
+  query: "SELECT 1 FROM mdm_bridge where mdm_command_input =\n\"<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Audit/AccountManagement_AuditApplicationGroupManagement</LocURI></Target></Item></Get></SyncBody>\" \nAND mdm_command_output = \"3\";\n"

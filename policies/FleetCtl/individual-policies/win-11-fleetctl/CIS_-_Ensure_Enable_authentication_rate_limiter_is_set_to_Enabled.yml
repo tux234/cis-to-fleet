@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Enable authentication rate limiter' is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\EnableAuthRateLimiter' AND data = 1);
+  critical: false
+  description: |
+    This policy settings configures the Server Message Block (SMB) server authentication rate limiter.
+    The authentication rate limiter is a feature of SMB that is designed to address brute force attacks.
+    The recommended state for this setting is: Enabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Network\Lanman Server\Enable authentication rate limiter'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy
+    template 'LanmanServer.admx/adml' that is included with the Microsoft Windows 11 Release 24H2 Administrative Templates (or newer).
+  platform: windows

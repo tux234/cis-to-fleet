@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Deny log on as a service' includes 'Guests'
+  query: SELECT 1 FROM cis_audit where item = "2.2.18" AND (regex_match(value,".*(?=.*Guests).*",0) is not null);
+  critical: false
+  description: |
+    This security setting determines which service accounts are prevented from registering a process
+    as a service. This user right supersedes the Log on as a service user right if an account is subject to both policies.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path includes 'Guests'
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Deny log on as a service'
+  platform: windows

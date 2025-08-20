@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Point and Print Restrictions: When installing drivers for a new connection' is set to 'Enabled: Show warning and elevation prompt'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\Software\\Policies\\Microsoft\\Windows NT\\Printers\PointAndPrint\\NoWarningNoElevationOnInstall' AND data = 0);
+  critical: false
+  description: This policy setting controls whether computers will show a warning and a security elevation prompt when users create a new printer connection using Point and Print.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled: Show warning and elevation prompt':
+    'Computer Configuration\Policies\Administrative Templates\Printers\Point and Print Restrictions: When installing drivers for a new connection'
+  platform: windows

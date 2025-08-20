@@ -1,0 +1,10 @@
+- name: |
+    CIS - Ensure 'Configure Offer Remote Assistance' is set to 'Disabled'
+  platform: windows
+  description: |
+    This policy setting allows you to turn on or turn off Offer (Unsolicited) Remote Assistance on this computer. Help desk and support personnel will not be able to proactively offer assistance, although they can still respond to user assistance requests.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Disabled:
+    'Computer Configuration\Policies\Administrative Templates\System\Remote Assistance\Configure Offer Remote Assistance'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services\fAllowUnsolicited' AND data = 0);

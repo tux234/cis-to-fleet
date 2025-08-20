@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Block NetBIOS-based discovery for domain controller location' is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Netlogon\Parameters\BlockNetbiosDiscovery' AND data = 1);
+  critical: false
+  description: |
+    This policy setting determines whether the Domain Controller (DC) location algorithm uses NetBIOS-based discovery for the Domain Controller's location.
+    The recommended state for this setting is: Enabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\System\Net Logon\DC Locator DNS Records\Block NetBIOS-based discovery for domain controller location'
+    Note: This Group Policy path is provided by the Group Policy template
+    'Netlogon.admx/adml' that is included with the Microsoft Windows 11 Release 24H2 Administrative Templates (or newer).
+  platform: windows

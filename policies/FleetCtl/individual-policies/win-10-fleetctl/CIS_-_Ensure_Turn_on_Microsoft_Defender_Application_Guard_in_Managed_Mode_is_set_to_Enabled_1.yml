@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Turn on Microsoft Defender Application Guard in Managed Mode' is set to 'Enabled: 1'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\AppHVSI\AllowAppHVSI_ProviderSet' AND data = 1);
+  critical: false
+  description: |
+    This policy setting enables application isolation through Microsoft Defender Application Guard (Application Guard).
+    There are 4 options available:
+    - 0. Disable Microsoft Defender Application Guard
+    - 1. Enable Microsoft Defender Application Guard for Microsoft Edge ONLY
+    - 2. Enable Microsoft Defender Application Guard for Microsoft Office ONLY
+    - 3. Enable Microsoft Defender Application Guard for Microsoft Edge AND Microsoft Office
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled: 1':
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Microsoft Defender Application Guard\Turn on Microsoft Defender Application Guard in Managed Mode'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy template AppHVSI.admx/adml that is included with the Microsoft Windows 10 Release 1703 Administrative Templates (or newer).
+  platform: windows

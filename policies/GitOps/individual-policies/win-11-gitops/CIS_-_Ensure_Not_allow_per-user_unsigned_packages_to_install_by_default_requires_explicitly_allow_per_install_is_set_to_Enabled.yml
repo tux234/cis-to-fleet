@@ -1,0 +1,14 @@
+- name: |
+    CIS - Ensure 'Not allow per-user unsigned packages to install by default (requires explicitly allow per install)' is set to 'Enabled'
+  platform: windows
+  description: |
+    This setting manages a user's ability to install unsigned Windows App packages.
+    The recommended state for this setting is: Enabled.
+    Note: Unsigned Windows App packages will require an explicit allow per install if this setting is disabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\App Package Deployment\Not allow per-user unsigned packages to install by default (requires explicitly allow per install)'
+    Note: This Group Policy path is provided by the Group Policy template
+    'AppxPackageManager.admx/adml' that is included with the Microsoft Windows 11 Release 24H2 Administrative Templates (or newer).
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Appx\DisablePerUserUnsignedPackagesByDefault' AND data = 1);

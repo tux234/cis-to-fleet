@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Network security LDAP client signing requirements' is set to 'Negotiate signing or higher'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\ldap\\ldapclientintegrity' AND data >= 1);
+  critical: false
+  description: This policy setting determines the level of data signing that is requested on behalf of clients that issue LDAP BIND requests.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Negotiate signing or higher':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Network security: LDAP client signing requirements'
+  platform: windows

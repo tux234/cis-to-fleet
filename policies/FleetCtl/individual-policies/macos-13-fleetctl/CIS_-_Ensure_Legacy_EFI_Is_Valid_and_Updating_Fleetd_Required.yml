@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Legacy EFI Is Valid and Updating (Fleetd Required)
+  query: |
+    SELECT 1 FROM firmware_eficheck_integrity_check
+    WHERE chip != 'intel-t1' OR (
+      chip = 'intel-t1' AND
+      output LIKE '%Primary allowlist version match found. No changes detected in primary hashes%' AND
+      NOT EXISTS (
+          SELECT * FROM plist WHERE
+          path = '/var/db/com.apple.xpc.launchd/disabled.plist' AND
+          key = 'com.apple.driver.eficheck' AND
+          value = '0'
+      )
+    );
+  critical: false
+  description: |
+    In order to mitigate firmware attacks, Apple has created an automated Firmware check to ensure that the EFI version
+    running is a known good version from Apple. There is also an automated process to check it every seven days.
+    This check is only valid on T1 chips and prior. Neither T2 chips nor Apple silicon require this control check
+    If the Firmware of a computer has been compromised, the Operating System that the Firmware loads cannot be trusted, either.
+  resolution: |
+    If EFI does not pass the integrity check, you may send a report to Apple. Backing up files and clean installing a
+    known good Operating System and Firmware is recommended.
+  platform: darwin

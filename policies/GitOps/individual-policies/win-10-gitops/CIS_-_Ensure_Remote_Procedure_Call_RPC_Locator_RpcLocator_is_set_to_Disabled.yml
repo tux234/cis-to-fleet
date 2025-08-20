@@ -1,0 +1,12 @@
+- name: CIS - Ensure 'Remote Procedure Call (RPC) Locator (RpcLocator)' is set to 'Disabled'
+  platform: windows
+  description: |
+    In Windows 2003 and older versions of Windows, the Remote Procedure Call (RPC) Locator service
+    manages the RPC name service database. In Windows Vista and newer versions of Windows, this
+    service does not provide any functionality and is present for application compatibility.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to 'Disabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\Remote Procedure Call (RPC) Locator'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\RpcLocator\\Start' AND data == 4);

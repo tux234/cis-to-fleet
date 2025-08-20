@@ -1,0 +1,10 @@
+- name: |
+    CIS - Ensure 'Audit Group Membership' is set to include 'Success'
+  platform: windows
+  description: |
+    This policy allows you to audit the group membership information in the user's logon token. Events in this subcategory are generated on the computer on which a logon session is created. For an interactive logon, the security audit event is generated on the computer that the user logged on to. For a network logon, such as accessing a shared folder on the network, the security audit event is generated on the computer hosting the resource.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to include Success:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Advanced Audit Policy Configuration\Audit Policies\Logon/Logoff\Audit Group Membership'
+  query: |
+    SELECT 1 FROM cis_audit where item = "17.5.2" AND (regex_match(value,".*(?=.*Success).*",0) is not null);

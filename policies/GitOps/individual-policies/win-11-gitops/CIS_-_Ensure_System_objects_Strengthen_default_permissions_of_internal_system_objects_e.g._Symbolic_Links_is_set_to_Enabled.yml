@@ -1,0 +1,14 @@
+- name: CIS - Ensure 'System objects Strengthen default permissions of internal system objects (e.g. Symbolic Links)' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting determines the strength of the default discretionary access control list
+    (DACL) for objects. Active Directory maintains a global list of shared system resources, such as
+    DOS device names, mutexes, and semaphores. In this way, objects can be located and shared among
+    processes. Each type of object is created with a default DACL that specifies who can access the
+    objects and what permissions are granted.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Enabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\System objects: Strengthen default permissions of internal system objects (e.g. Symbolic Links)
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\ProtectionMode' AND data != 0);

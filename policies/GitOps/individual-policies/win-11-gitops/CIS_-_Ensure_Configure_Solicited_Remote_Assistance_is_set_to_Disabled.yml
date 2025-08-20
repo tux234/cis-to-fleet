@@ -1,0 +1,10 @@
+- name: |
+    CIS - Ensure 'Configure Solicited Remote Assistance' is set to 'Disabled'
+  platform: windows
+  description: |
+    This policy setting allows you to turn on or turn off Solicited (Ask for) Remote Assistance on this computer.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Disabled:
+    'Computer Configuration\Policies\Administrative Templates\System\Remote Assistance\Configure Solicited Remote Assistance'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services\fAllowToGetHelp' AND data = 0);

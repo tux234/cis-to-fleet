@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Shut down the system' is set to 'Administrators, Users'
+  query: SELECT 1 FROM cis_audit where item = "2.2.38" AND (regex_match(value,".*(?=.*Administrators)(?=.*Users).*",0) is not null);
+  critical: false
+  description: |
+    This policy setting determines which users who are logged on locally to the computers in your
+    environment can shut down the operating system with the Shut Down command. Misuse of this user right can result in a denial of service condition.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'Administrators, Users'
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Shut down the system'
+  platform: windows

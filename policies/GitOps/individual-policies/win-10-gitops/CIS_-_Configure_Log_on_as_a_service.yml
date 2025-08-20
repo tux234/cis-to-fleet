@@ -1,0 +1,14 @@
+- name: CIS - Configure 'Log on as a service'
+  platform: windows
+  description: |
+    This policy setting allows accounts to launch network services or to register a process as a
+    service running on the system. This user right should be restricted on any computer in a high
+    security environment, but because many applications may require this privilege, it should be
+    carefully evaluated and tested before configuring it in an enterprise environment. On Windows
+    Vista-based (and newer) computers, no users or groups have this privilege by default.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Log on as a service'
+  query: |
+    SELECT 1 FROM cis_audit where item = "2.2.29" AND value IN (",", "WDAGUtilityAccount,");

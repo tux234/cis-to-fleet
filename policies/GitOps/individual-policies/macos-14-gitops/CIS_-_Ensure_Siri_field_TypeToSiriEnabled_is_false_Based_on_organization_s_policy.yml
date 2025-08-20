@@ -1,0 +1,8 @@
+- name: CIS - Ensure Siri field TypeToSiriEnabled is false (Based on organization's policy)
+  platform: darwin
+  description: |
+    Extention of CIS-2.5.1. This will check that Siri TypeToSiriEnabled field is false.
+  resolution: |
+    Ask your system administrator to deploy a script that will configure
+    $ /usr/bin/sudo -u <username> /usr/bin/defaults write com.apple.Siri.plist TypeToSiriEnabled -bool false
+  query: "SELECT 1 WHERE NOT EXISTS (\n  SELECT 1 FROM users AS u\n  LEFT JOIN (\n    SELECT * FROM plist WHERE\n      path LIKE '/Users/%/Library/Preferences/com.apple.Siri.plist' AND\n      key = 'TypeToSiriEnabled' AND\n      value = '0') AS p\n  ON p.path = CONCAT(u.directory, '/Library/Preferences/com.apple.Siri.plist')\n  WHERE u.directory LIKE '/Users/%' AND\n  p.value IS NULL\n);\n/*CIS does not make a hard recommendation for this policy. Fleet has provided two policies (one failing, one succeeding). \n  Depending on your organization's decision, you can delete this policy or its counterpart.*/\n"

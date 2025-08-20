@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Enable Certificate Padding' is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography\Wintrust\Config\EnableCertPaddingCheck' AND data = 1);
+  critical: false
+  description: |
+    This policy setting configures whether the WinVerifyTrust function performs strict
+    Windows Authenticode signature verification for Portable Executable files (PE files). If
+    enabled, PE files will be considered "unsigned" if Windows identifies content in them
+    that does not conform to the Authenticode specification.
+    The recommended state for this setting is: Enabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\MS Security Guide\Enable Certificate Padding'
+    Note: This Group Policy path does not exist by default. An additional Group Policy template (SecGuide.admx/adml) is required
+  platform: windows
