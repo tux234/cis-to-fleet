@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Location Services Is Enabled
+  query: SELECT 1 FROM location_services where enabled=1;
+  critical: false
+  description: Checks that Location Services option is enabled.
+  resolution: |
+    Automated method:
+    Ask your system administrator to deploy an MDM profile that enables automatic updates of Apple apps.
+    Graphical method:
+      Perform the following steps to enable Location Services:
+        1. Open System Settings
+        2. Select Privacy & Security
+        3. Select Location Services
+        4. Verify Location Services is enabled
+  platform: darwin

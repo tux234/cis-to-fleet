@@ -1,0 +1,15 @@
+- name: |
+    CIS - Ensure 'Audit client does not support encryption' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting determines whether the Server Message Block (SMB) server will log events when the SMB client doesn't support encryption.
+    Enabling this will create event log entries in
+    'Applications and Services Logs\Microsoft\Windows\SMBClient\Audit', with Event ID 31998.
+    The recommended state for this setting is: Enabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Network\Lanman Server\Audit client does not support encryption'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy
+    template 'LanmanServer.admx/adml' that is included with the Microsoft Windows 11 Release 24H2 Administrative Templates (or newer).
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\AuditClientDoesNotSupportEncryption' AND data = 1);

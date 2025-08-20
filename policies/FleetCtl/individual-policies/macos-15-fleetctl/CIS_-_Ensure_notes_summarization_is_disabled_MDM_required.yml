@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure notes summarization is disabled (MDM required)
+  query: |
+    SELECT 1 WHERE EXISTS(
+      SELECT 1 FROM managed_policies WHERE
+        domain = 'com.apple.mobilenotes' AND
+        name = 'allowNotesIntelligence' AND
+        (value = 0 OR value = 'false')
+    ) AND NOT EXISTS (
+      SELECT 1 FROM managed_policies WHERE
+        domain = 'com.apple.mobilenotes' AND
+        name = 'allowNotesIntelligence' AND
+        (value != 0 AND value != 'false')
+    );
+  critical: false
+  description: |
+    Notes Summarization is a feature of Apple Intelligence that uses AI to
+    automatically generate summaries of notes content. This feature processes
+    notes through AI models which may include sensitive or confidential
+    information.
+    Organizations should disable Notes Summarization to prevent AI processing of
+    potentially sensitive notes and documentation.
+  resolution: |
+    Profile Method:
+    Ask your administrator to deploy a profile with the following configuration:
+    1. The PayloadType string is com.apple.mobilenotes
+    2. The key to include is allowNotesIntelligence
+    3. The key must be set to <false/>
+  platform: darwin

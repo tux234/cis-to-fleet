@@ -1,0 +1,10 @@
+- name: CIS - Ensure 'Network security Allow Local System to use computer identity for NTLM' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting determines whether Local System services that use Negotiate when reverting to NTLM authentication can use the computer identity.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Enabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Network security: Allow Local System to use computer identity for NTLM'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\UseMachineId' COLLATE NOCASE AND data != 0);

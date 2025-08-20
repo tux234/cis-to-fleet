@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure a Login Window Banner Exists
+  query: |
+    SELECT 1 FROM file
+    WHERE (path = '/Library/Security/PolicyBanner.txt' OR
+    path = '/Library/Security/PolicyBanner.rtf') AND mode = '0644'
+    AND uid = 0 AND gid = 0;
+  critical: false
+  description: |
+    An access warning may reduce a casual attacker's tendency to target the system. Access warnings may also aid
+    in the prosecution of an attacker by evincing the attacker's knowledge of the system's private status,
+    acceptable use policy, and authorization requirements.
+  resolution: |
+    Automated method:
+    Ask your system administrator to deploy the following script:
+      echo "Content of the banner" | sudo tee /Library/Security/PolicyBanner.txt
+      /usr/bin/sudo /usr/sbin/chown root:wheel /Library/Security/PolicyBanner.txt
+      /usr/bin/sudo /bin/chmod o+r /Library/Security/PolicyBanner.txt
+  platform: darwin

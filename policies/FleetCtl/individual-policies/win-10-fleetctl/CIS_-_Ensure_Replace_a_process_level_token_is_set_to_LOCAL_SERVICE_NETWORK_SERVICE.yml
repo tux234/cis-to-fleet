@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Replace a process level token' is set to 'LOCAL SERVICE, NETWORK SERVICE'
+  query: SELECT 1 FROM cis_audit where item = "2.2.36" AND (regex_match(value,".*(?=.*LOCAL SERVICE)(?=.*NETWORK SERVICE).*",0) is not null);
+  critical: false
+  description: |
+    This policy setting allows one process or service to start another service or process with a
+    different security access token, which can be used to modify the security access token of that sub-process and result in the escalation of privileges.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'LOCAL SERVICE, NETWORK SERVICE'
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Replace a process level token'
+  platform: windows

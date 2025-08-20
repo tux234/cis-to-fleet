@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Require strong (Windows 2000 or later) session key' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE
+      path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\RequireStrongKey' AND data != 0;
+  critical: false
+  description: |
+    When this policy setting is enabled, a secure channel can only be established with Domain
+    Controllers that are capable of encrypting secure channel data with a strong (128-bit) session
+    key. To enable this policy setting, all Domain Controllers in the domain must be able to encrypt
+    secure channel data with a strong key, which means all Domain Controllers must be running
+    Microsoft Windows 2000 or newer.
+    
+    Session keys that are used to establish secure channel communications between Domain Controllers
+    and member computers are much stronger in Windows 2000 than they were in previous Microsoft
+    operating systems. Whenever possible, you should take advantage of these stronger session keys
+    to help protect secure channel communications from attacks that attempt to hijack network
+    sessions and eavesdropping. (Eavesdropping is a form of hacking in which network data is read or
+    altered in transit. The data can be modified to hide or change the sender, or be redirected.)
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the
+    following UI path to 'Enabled'
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Domain member: Require strong (Windows 2000 or later) session key'
+  platform: windows

@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Network access: Let Everyone permissions apply to anonymous users' is set to 'Disabled'
+  platform: windows
+  description: |
+    This policy setting determines what additional permissions are assigned for anonymous
+    connections to the computer.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Disabled:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Network access: Let Everyone permissions apply to anonymous users'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\everyoneincludesanonymous' AND data == 0);

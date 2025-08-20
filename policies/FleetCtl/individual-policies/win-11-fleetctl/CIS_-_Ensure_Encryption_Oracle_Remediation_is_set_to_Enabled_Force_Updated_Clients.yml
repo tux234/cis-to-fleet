@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Encryption Oracle Remediation' is set to 'Enabled: Force Updated Clients'
+  query: SELECT 1 FROM REGISTRY WHERE (PATH = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\CredSSP\\Parameters\AllowEncryptionOracle' AND data = 0);
+  critical: false
+  description: Some versions of the CredSSP protocol that is used by some applications (such as Remote Desktop Connection) are vulnerable to an encryption oracle attack against the client. This policy controls compatibility with vulnerable clients and servers and allows you to set the level of protection desired for the encryption oracle vulnerability.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled: Force Updated Clients':
+    'Computer Configuration\Policies\Administrative Templates\System\Credentials Delegation\Encryption Oracle Remediation'
+  platform: windows

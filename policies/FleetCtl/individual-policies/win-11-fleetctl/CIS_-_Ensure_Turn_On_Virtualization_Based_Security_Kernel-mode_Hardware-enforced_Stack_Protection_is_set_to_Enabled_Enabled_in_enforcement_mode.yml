@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Turn On Virtualization Based Security: Kernel-mode Hardware-enforced Stack Protection' is set to 'Enabled: Enabled in enforcement mode'
+  query: SELECT 1 FROM REGISTRY WHERE (PATH = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceGuard\ConfigureKernelShadowStacksLaunch' AND data = 1);
+  critical: false
+  description: |
+    This policy setting enables Hardware-enforced Stack Protection for kernel-mode code. Kernel-mode data stacks are hardened with hardware-based shadow stacks, which store intended return address targets to ensure that program control flow is not tampered. The recommended state for this setting is: Enabled: Enabled in enforcement mode.
+    
+    Note: Virtualization Based Security (VBS) requires a 64-bit version of Windows with Secure Boot enabled, which in turn requires that Windows was installed with a UEFI BIOS configuration, not a Legacy BIOS configuration. In addition, if running Windows on a virtual machine, the hardware-assisted CPU virtualization feature (Intel VT-x or AMD- V) must be exposed by the host to the guest VM. More information on system requirements for this feature can be found at Windows Defender Credential Guard Requirements (Windows 10) | Microsoft Docs
+    Note #2: This specific security feature of VBS is only compatible with Windows 11 Release 22H2 (and newer).
+    Note #3: Only Intel CPUs from Tiger Lake and beyond or AMD CPUs Zen3 and beyond (both were release in fall 2020) are compatible with this security feature.
+    Note #4: Credential Guard and Device Guard are not currently supported when using Azure IaaS VMs.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled: Enabled in enforcement mode:
+    'Computer Configuration\Policies\Administrative Templates\System\Device Guard\Turn On Virtualization Based Security: Kernel-mode Hardware-enforced Stack Protection'
+  platform: windows

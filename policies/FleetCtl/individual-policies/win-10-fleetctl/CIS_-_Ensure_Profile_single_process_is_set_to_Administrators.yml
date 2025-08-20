@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Profile single process' is set to 'Administrators'
+  query: SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/ProfileSingleProcess</LocURI></Target></Item></Get></SyncBody>" AND mdm_command_output == "Administrators";
+  critical: false
+  description: |
+    This policy setting determines which users can use tools to monitor the performance of
+    non-system processes. Typically, you do not need to configure this user right to use the
+    Microsoft Management Console (MMC) Performance snap-in. However, you do need this user right if
+    System Monitor is configured to collect data using Windows Management Instrumentation (WMI).
+    Restricting the Profile single process user right prevents intruders from gaining additional
+    information that could be used to mount an attack on the system.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Profile single process'
+  platform: windows

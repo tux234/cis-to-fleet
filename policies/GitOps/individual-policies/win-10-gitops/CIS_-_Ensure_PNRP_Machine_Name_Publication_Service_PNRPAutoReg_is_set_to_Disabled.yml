@@ -1,0 +1,11 @@
+- name: CIS - Ensure 'PNRP Machine Name Publication Service (PNRPAutoReg)' is set to 'Disabled'
+  platform: windows
+  description: |
+    This service publishes a machine name using the Peer Name Resolution Protocol. Configuration is managed via the netsh context ‘p2p pnrp peer’.
+    The recommended state for this setting is: Disabled.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to 'Disabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\PNRP Machine Name Publication Service'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\PNRPAutoReg\\Start' AND data == 4);

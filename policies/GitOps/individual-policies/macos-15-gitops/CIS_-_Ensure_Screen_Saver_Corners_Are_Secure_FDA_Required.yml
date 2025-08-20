@@ -1,0 +1,28 @@
+- name: CIS - Ensure Screen Saver Corners Are Secure (FDA Required)
+  platform: darwin
+  description: |
+    Setting a hot corner to disable the screen saver poses a potential security risk since an
+    unauthorized person could use this to bypass the login screen and gain access to the system.
+
+    FDA (Full Disk Access) is required to read the configuration of all the users in the device
+    ('/Users/*/Library/Preferences/com.apple.dock.plist')
+  resolution: |
+    Ask your system administrator to deploy a script that will configure
+    `wvous-tl-corner`, `wvous-bl-corner`, `wvous-tr-corner`, and `wvous-br-corner` in
+    domain `com.apple.dock` to a value that is not 6 (for all users of the device).
+
+    Graphical Method:
+      Perform the following steps to ensure that a Hot Corner is not set to Disable Screen Saver:
+        1. Open System Settings
+        2. Select Desktop & Dock
+        3. Select`Hot Corners...`
+        4. Verify that `Disable Screen Saver` is not set to any of the corners.
+  query: |
+    SELECT 1 WHERE NOT EXISTS(
+      SELECT 1 FROM plist
+      WHERE path LIKE '/Users/%/Library/Preferences/com.apple.dock.plist' AND (
+        key = 'wvous-br-corner' OR
+        key = 'wvous-bl-corner' OR
+        key = 'wvous-tr-corner' OR
+        key = 'wvous-tl-corner'
+    ) AND value = 6);

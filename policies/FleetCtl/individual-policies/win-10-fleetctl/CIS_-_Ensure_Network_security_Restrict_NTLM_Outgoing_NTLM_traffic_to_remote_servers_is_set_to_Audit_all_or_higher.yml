@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Network security: Restrict NTLM: Outgoing NTLM traffic to remote servers' is set to 'Audit all' or higher
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0\RestrictSendingNTLMTraffic' AND data = 2);
+  critical: false
+  description: |
+    This policy setting allows the auditing of outgoing NTLM traffic. Events for this setting are recorded in the operational event log (e.g. Applications and Services Log\Microsoft\Windows\NTLM).
+    The recommended state for this setting is: 'Audit all'. Configuring this setting to 'Deny All' also conforms to the benchmark.
+    Note: Configuring this setting to Deny All is more secure, however it could have a
+    negative impact on applications that still require NTLM. Test carefully before
+    implementing the Deny All value.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Audit all' or higher:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Restrict NTLM: Outgoing NTLM traffic to remote servers'
+  platform: windows

@@ -1,0 +1,13 @@
+- name: |
+    CIS - Ensure 'Select when Preview Builds and Feature Updates are received' is set to 'Enabled: 180 or more days'
+  platform: windows
+  description: |
+    This policy setting determines when Preview Build or Feature Updates are received.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled: 180 or more days':
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Windows Update\Manage updates offered from Windows Update\Windows Update for Business\Select when Preview Builds and Feature Updates are received'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\DeferFeatureUpdates' AND CAST(data AS INTEGER) = 1)
+    AND EXISTS (
+      SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\DeferFeatureUpdatesPeriodInDays' AND CAST(data AS INTEGER) >= 180)
+    );

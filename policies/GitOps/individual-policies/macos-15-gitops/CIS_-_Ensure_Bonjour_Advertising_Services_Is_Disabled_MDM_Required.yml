@@ -1,0 +1,14 @@
+- name: CIS - Ensure Bonjour Advertising Services Is Disabled (MDM Required)
+  platform: darwin
+  description: |
+    Bonjour is an auto-discovery mechanism for TCP/IP devices which enumerate devices and services within a local subnet.
+    DNS on macOS is integrated with Bonjour and should not be turned off, but the Bonjour advertising service can be disabled.
+  resolution: |
+    Automated method:
+    Ask your system administrator to deploy an MDM profile that disables Bonjour advertising service.
+    Profile Method:
+        Ask your administrator to deploy a profile with the following configuration:
+        1. The Payload Type string is `com.apple.mDNSResponder`.
+        2. The key to include is `NoMulticastAdvertisements`.
+        3. The key must be set to `<true/>`.
+  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.mDNSResponder' AND \n        name='NoMulticastAdvertisements' AND \n        (value = 1 OR value = 'true')\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.mDNSResponder' AND \n        name='NoMulticastAdvertisements' AND \n        (value != 1 AND value != 'true')\n    );  \n"

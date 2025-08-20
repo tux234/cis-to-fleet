@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Boot-Start Driver Initialization Policy' is set to 'Enabled: Good, unknown and bad but critical' (Automated)
+  query: SELECT 1 FROM REGISTRY WHERE (PATH = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Policies\\EarlyLaunch\DriverLoadPolicy' AND data = 3);
+  critical: false
+  description: |
+    This policy setting allows you to specify which boot-start drivers are initialized based on a classification determined by an Early Launch Antimalware boot-start driver. The Early Launch Antimalware boot-start driver can return the following classifications for each boot-start driver:
+    Good: The driver has been signed and has not been tampered with.
+    Bad: The driver has been identified as malware. It is recommended that you do not allow known bad drivers to be initialized.
+    Bad, but required for boot: The driver has been identified as malware, but the computer cannot successfully boot without loading this driver.
+    Unknown: This driver has not been attested to by your malware detection application and has not been classified by the Early Launch Antimalware boot-start driver.
+    If you enable this policy setting you will be able to choose which boot-start drivers to initialize the next time the computer is started.
+    If your malware detection application does not include an Early Launch Antimalware boot- start driver or if your Early Launch Antimalware boot-start driver has been disabled, this setting has no effect and all boot-start drivers are initialized.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled: 'Good, unknown and bad but critical':
+    'Computer Configuration\Policies\Administrative Templates\System\Early Launch Antimalware\Boot-Start Driver Initialization Policy'
+  platform: windows

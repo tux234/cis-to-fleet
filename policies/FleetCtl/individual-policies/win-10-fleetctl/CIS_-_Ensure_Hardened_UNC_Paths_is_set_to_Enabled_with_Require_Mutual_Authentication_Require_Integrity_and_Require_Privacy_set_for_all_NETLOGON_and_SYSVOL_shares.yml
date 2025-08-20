@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Hardened UNC Paths' is set to 'Enabled, with "Require Mutual Authentication", "Require Integrity", and “Require Privacy” set for all NETLOGON and SYSVOL shares'
+  query: |
+    SELECT 1 WHERE
+    EXISTS (SELECT * FROM registry WHERE (path LIKE 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths\%' AND name = '\\*\SYSVOL' AND data = 'RequireMutualAuthentication=1, RequireIntegity=1, RequirePrivacy=1')) AND
+    EXISTS (SELECT * FROM registry WHERE (path LIKE 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\HardenedPaths\%' AND name = '\\*\NETLOGON' AND data = 'RequireMutualAuthentication=1, RequireIntegity=1, RequirePrivacy=1'))
+  critical: false
+  description: This policy setting configures secure access to UNC paths. The recommended state for this setting is: Enabled, with "Require Mutual Authentication", "Require Integrity", and “Require Privacy” set for all  NETLOGON and SYSVOL shares.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled with the following paths configured, at a minimum:
+    '\\*\NETLOGON RequireMutualAuthentication=1, RequireIntegrity=1, RequirePrivacy=1'
+    '\\*\SYSVOL RequireMutualAuthentication=1, RequireIntegrity=1, RequirePrivacy=1'
+    'Computer Configuration\Policies\Administrative Templates\Network\Network Provider\Hardened UNC Paths'
+    Note: This Group Policy path does not exist by default. An additional Group Policy
+    template (NetworkProvider.admx/adml) is required - it is included with the MS15-011 /
+    MSKB 3000483 security update or with the Microsoft Windows 10 RTM (Release 1507) Administrative Templates (or newer).
+  platform: windows

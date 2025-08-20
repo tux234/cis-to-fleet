@@ -1,0 +1,16 @@
+- name: |
+    CIS - Ensure 'Enable remote mailslots' is set to 'Disabled'
+  platform: windows
+  description: |
+    This policy settings controls whether the SMB server will use remote mailslots over the
+    computer browser service. The remote mailslots protocol is an old, simple, unreliable,
+    and insecure inter-process communication method.
+    The recommended state for this setting is: Disabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Disabled:
+    'Computer Configuration\Policies\Administrative Templates\Network\Lanman Server\Enable remote mailslots'
+    Note: A reboot is required after the setting is applied.
+    Note 2: This Group Policy path may not exist by default. It is provided by the Group
+    Policy template 'LanmanServer.admx/adml' that is included with the Microsoft Windows 11 Release 24H2 Administrative Templates (or newer).
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Bowser\EnableMailslots' AND data = 0);

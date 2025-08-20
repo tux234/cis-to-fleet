@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Prevent enabling lock screen slide show' is set to 'Enabled'
+  query: SELECT 1 FROM registry where (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Personalization\NoLockScreenSlideshow' AND data == 1);
+  critical: false
+  description: |
+    Disables the lock screen slide show settings in PC Settings and prevents a slide show from playing on the lock screen.
+    The recommended state for this setting is: Enabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Control Panel\Personalization\Prevent enabling lock screen slide show'
+  platform: windows

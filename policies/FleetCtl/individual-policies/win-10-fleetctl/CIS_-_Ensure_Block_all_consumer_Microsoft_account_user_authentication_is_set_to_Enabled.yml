@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Block all consumer Microsoft account user authentication' is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\MicrosoftAccount\\DisableUserAuth' AND data = 1);
+  critical: false
+  description: This setting determines whether applications and services on the device can utilize new consumer Microsoft account authentication via the Windows OnlineID and WebAccountManager APIs.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Microsoft accounts\Block all consumer Microsoft account user authentication'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy template MSAPolicy.admx/adml that is included with the Microsoft Windows 10 Release 1703 Administrative Templates (or newer).
+  platform: windows

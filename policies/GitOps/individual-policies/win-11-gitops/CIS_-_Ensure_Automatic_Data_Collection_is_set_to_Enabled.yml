@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Automatic Data Collection' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting determines whether Enhanced Phishing Protection can collect additional information such as content displayed, sounds played, and application memory when users enter their work or school password into a suspicious website or app.
+    The recommended state for this setting is: Enabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Windows Defender SmartScreen\Enhanced Phishing Protection\Automatic Data Collection'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WTDS\Components\CaptureThreatWindow' and data = 1);

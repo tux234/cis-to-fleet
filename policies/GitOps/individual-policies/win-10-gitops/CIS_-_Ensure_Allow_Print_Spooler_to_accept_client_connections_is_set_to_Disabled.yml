@@ -1,0 +1,10 @@
+- name: |
+    CIS - Ensure 'Allow Print Spooler to accept client connections' is set to 'Disabled'
+  platform: windows
+  description: |
+    This policy setting controls whether the Print Spooler service will accept client connections.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Disabled:
+    'Computer Configuration\Policies\Administrative Templates\Printers\Allow Print Spooler to accept client connections'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\Software\\Policies\\Microsoft\\Windows NT\\Printers\RegisterSpoolerRemoteRpcEndPoint' AND data = 2);

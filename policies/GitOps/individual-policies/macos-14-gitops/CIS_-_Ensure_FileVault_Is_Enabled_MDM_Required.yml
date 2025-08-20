@@ -1,0 +1,15 @@
+- name: CIS - Ensure FileVault Is Enabled (MDM Required)
+  platform: darwin
+  description: Checks that FileVault Is Enabled. FileVault secures a system's data by automatically encrypting its boot volume and requiring a password or recovery key to access it. This policy checks that filevault is enabled on the device and that the user is not allowed to disable it.
+  resolution: |
+    Automated method:
+    Ask your system administrator to deploy an MDM profile that enables FileVault and disables turning it off.
+    Graphical method:
+      Perform the following steps to ensure FileVault Is Enabled:
+        1. Open System Settings
+        2. Select Privacy & Privacy
+        3. Verify that FileVault states FileVault is turned on for the disk "<disk name>"
+        4. Select Privacy & Security
+        5. Select Profile
+        6. Verify that an installed profile has FileVault Can't Disable set to True
+  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.MCX' AND \n        name='dontAllowFDEDisable' AND \n        (value = 1 OR value = 'true') AND \n        username = ''\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.MCX' AND \n        name='dontAllowFDEDisable' AND \n        (value != 1 AND value != 'true')\n    )\n  AND EXISTS (\n    SELECT 1 FROM disk_encryption WHERE \n        user_uuid IS NOT \"\" AND \n        filevault_status = 'on' \n    );  \n"

@@ -1,0 +1,13 @@
+- name: |
+    CIS - Ensure 'Turn off default IPv6 DNS Servers' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting controls whether the DNS client will use the default IPv6 DNS server addresses provided by Windows.
+    The recommended state for this setting is: Enabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Network\DNS Client\Turn off default IPv6 DNS Servers'
+    Note: This Group Policy path is provided by the Group Policy template
+    'DnsClient.admx/adml' that is included with the Microsoft Windows 11 Release 24H2 Administrative Templates (or newer).
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient\DisableIPv6DefaultDnsServers' AND data = 1);

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Load and unload device drivers' is set to 'Administrators'
+  query: SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/LoadUnloadDeviceDrivers</LocURI></Target></Item></Get></SyncBody>" AND mdm_command_output == "Administrators";
+  critical: false
+  description: |
+    This policy setting allows users to dynamically load a new device driver on a system. An
+    attacker could potentially use this capability to install malicious code that appears to be a
+    device driver. This user right is required for users to add local printers or printer drivers in
+    Windows.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Increase scheduling priority'
+  platform: windows

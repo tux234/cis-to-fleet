@@ -1,0 +1,10 @@
+- name: |
+    CIS - Ensure 'Do not show feedback notifications' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting allows an organization to prevent its devices from showing feedback questions from Microsoft.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Data Collection and Preview Builds\Do not show feedback notifications'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection\DoNotShowFeedbackNotifications' AND data = 1);

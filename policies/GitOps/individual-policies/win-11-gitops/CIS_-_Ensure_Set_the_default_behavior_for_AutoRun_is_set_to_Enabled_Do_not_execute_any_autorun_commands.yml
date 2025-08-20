@@ -1,0 +1,11 @@
+- name: CIS - Ensure 'Set the default behavior for AutoRun' is set to 'Enabled Do not execute any autorun commands'
+  platform: windows
+  description: |
+    This policy setting sets the default behavior for Autorun commands. Autorun commands are
+    generally stored in autorun.inf files. They often launch the installation program or other routines.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Enabled Do not execute any autorun commands':
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\AutoPlay Policies\Set the default behavior for AutoRun'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\NoAutorun' AND data == 1);

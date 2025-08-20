@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Configure the behavior of the sudo command' is set to 'Enabled: Disabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Sudo\Enabled' AND data = 0);
+  critical: false
+  description: |
+    This policy setting configures the use of the sudo.exe command line tool. The sudo
+    feature in Windows allows users to run elevated commands (as an administrator)
+    directly from an unelevated console session.
+    The recommended state for this setting is: Enabled: Disabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled: Disabled:
+    'Computer Configuration\Policies\Administrative Templates\System\Configure the behavior of the sudo command'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy
+    template 'Sudo.admx' that is included with the Microsoft Windows 11 Release 24H2 Administrative Templates (or newer).
+  platform: windows

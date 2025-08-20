@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Limit Diagnostic Log Collection' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy is meant for Windows 11.
+    This policy setting controls whether additional diagnostic logs are collected when more information is needed to troubleshoot a problem on the device.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Data Collection and Preview Builds\Limit Diagnostic Log Collection'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection\\LimitDiagnosticLogCollection' AND data = 1);

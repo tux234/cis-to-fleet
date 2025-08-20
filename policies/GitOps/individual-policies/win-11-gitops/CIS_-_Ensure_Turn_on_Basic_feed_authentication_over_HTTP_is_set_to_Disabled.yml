@@ -1,0 +1,14 @@
+- name: |
+    CIS - Ensure 'Turn on Basic feed authentication over HTTP' is set to 'Disabled'
+  platform: windows
+  description: |
+    This policy setting controls whether RSS feeds can be authenticated using the Basic authentication scheme over an unencrypted HTTP connection.
+    The recommended state for this setting is: Disabled.
+    Note: A developer cannot change this setting through the Feed APIs.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Disabled:
+    'Computer Configuration\Administrative Templates\Windows Components\RSS Feeds\Turn on Basic feed authentication over HTTP'
+    Note: This Group Policy path is provided by the Group Policy template
+    'InetRes.admx/adml' that is included with the Microsoft Windows 7 & Server 2008 R2 Administrative Templates (or newer).
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Internet Explorer\Feeds\AllowBasicAuthInClear' AND data = 0);

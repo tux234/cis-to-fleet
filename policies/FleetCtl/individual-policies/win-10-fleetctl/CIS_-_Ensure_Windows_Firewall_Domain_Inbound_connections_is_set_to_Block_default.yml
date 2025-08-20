@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Windows Firewall: Domain: Inbound connections' is set to 'Block (default)'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\\Policies\\Microsoft\WindowsFirewall\DomainProfile\DefaultInboundAction' and data = 1);
+  critical: false
+  description: |
+    This setting determines the behavior for inbound connections that do not match an inbound firewall rule.
+    The recommended state for this setting is: Block (default).
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Block (default):
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Windows Defender Firewall with Advanced Security\Windows Defender Firewall with Advanced Security - Local Group Policy Object\Windows Defender Firewall Properties\Domain Profile\Inbound connections'
+  platform: windows

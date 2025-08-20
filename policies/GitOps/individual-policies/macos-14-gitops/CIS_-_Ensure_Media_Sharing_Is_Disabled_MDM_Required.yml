@@ -1,0 +1,14 @@
+- name: CIS - Ensure Media Sharing Is Disabled (MDM Required)
+  platform: darwin
+  description: |
+    Starting with macOS 10.15, Apple has provided a control which permits a user to share
+    Apple downloaded content on all Apple devices that are signed in with the same Apple ID.
+    This allows users to share downloaded Movies, Music, or TV shows with other
+    controlled macOS, iOS and iPadOS devices, as well as photos with Apple TVs.
+    Disabling Media Sharing reduces the remote attack surface of the system
+  resolution: |
+    Profile Method:
+    Ask your administrator to deploy a profile that sets
+    homeSharingUIStatus, legacySharingUIStatus, and mediaSharingUIStatus to 0
+    for com.apple.preferences.sharing.SharingPrefsExtension
+  query: "SELECT 1 WHERE EXISTS(\n  SELECT 1 FROM managed_policies WHERE\n    domain = 'com.apple.preferences.sharing.SharingPrefsExtension' AND\n    name = 'homeSharingUIStatus' AND\n    value = '0' AND \n    username = ''\n) AND EXISTS (\n  SELECT 1 FROM managed_policies WHERE\n    domain = 'com.apple.preferences.sharing.SharingPrefsExtension' AND\n    name = 'legacySharingUIStatus' AND\n    value = '0' AND \n    username = ''\n) AND EXISTS (\n  SELECT 1 FROM managed_policies WHERE\n    domain = 'com.apple.preferences.sharing.SharingPrefsExtension' AND\n    name = 'mediaSharingUIStatus' AND\n    value = '0' AND \n    username = ''\n) AND NOT EXISTS (\n  SELECT 1 FROM managed_policies WHERE\n    domain = 'com.apple.preferences.sharing.SharingPrefsExtension' AND\n    name = 'homeSharingUIStatus' AND\n    value != '0'\n) AND NOT EXISTS (\n  SELECT 1 FROM managed_policies WHERE\n    domain = 'com.apple.preferences.sharing.SharingPrefsExtension' AND\n    name = 'legacySharingUIStatus' AND\n    value != '0'\n) AND NOT EXISTS (\n  SELECT 1 FROM managed_policies WHERE\n    domain = 'com.apple.preferences.sharing.SharingPrefsExtension' AND\n    name = 'mediaSharingUIStatus' AND\n    value != '0'\n);\n"

@@ -1,0 +1,11 @@
+- name: CIS - Ensure 'Remote Desktop Services (TermService)' is set to 'Disabled'
+  platform: windows
+  description: |
+    Allows users to connect interactively to a remote computer. Remote Desktop and Remote Desktop Session Host Server depend on this service.
+    The recommended state for this setting is: Disabled.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to 'Disabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\Remote Desktop Services'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\TermService\\Start' AND data == 4);

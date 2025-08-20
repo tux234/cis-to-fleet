@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Configure Automatic Updates' is set to 'Enabled: 3'
+  query: |
+    SELECT EXISTS (
+      SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU\\NoAutoUpdate' AND data = 0)
+    ) AND EXISTS (
+      SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU\\AUOptions' AND data = 3)
+    );
+  critical: false
+  description: This policy setting specifies whether computers in your environment will receive security updates from Windows Update or WSUS. If you configure this policy setting to Enabled, the operating system will recognize when a network connection is available and then use the network connection to search Windows Update or your designated intranet site for updates that apply to them.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled: 3':
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Windows Update\Manage end user experience\Configure Automatic Updates'
+  platform: windows

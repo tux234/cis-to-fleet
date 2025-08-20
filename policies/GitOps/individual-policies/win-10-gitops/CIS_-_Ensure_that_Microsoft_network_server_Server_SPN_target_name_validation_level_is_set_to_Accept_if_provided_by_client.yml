@@ -1,0 +1,12 @@
+- name: CIS - Ensure that 'Microsoft network server Server SPN target name validation level' is set to 'Accept if provided by client'
+  platform: windows
+  description: |
+    This policy setting controls the level of validation a computer with shared folders or printers
+    (the server) performs on the service principal name (SPN) that is provided by the client
+    computer when it establishes a session using the server message block (SMB) protocol.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Accept if provided by client':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Microsoft network server: Server SPN target name validation level'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\CurrentControlSet\\Services\\LanManServer\\Parameters\\SmbServerNameHardeningLevel' AND data = 1);

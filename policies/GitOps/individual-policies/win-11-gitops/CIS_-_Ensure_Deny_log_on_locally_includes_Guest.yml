@@ -1,0 +1,12 @@
+- name: CIS - Ensure 'Deny log on locally' includes 'Guest'
+  platform: windows
+  description: |
+    This security setting determines which users are prevented from logging on at the computer. This
+    policy setting supersedes the Allow log on locally policy setting if an account is subject to
+    both policies.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path includes 'Guests'
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Deny log on locally'
+  query: |
+    SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/DenyLocalLogOn</LocURI></Target></Item></Get></SyncBody>" AND (regex_match(mdm_command_output,".*(Guest).*",0) is not null);

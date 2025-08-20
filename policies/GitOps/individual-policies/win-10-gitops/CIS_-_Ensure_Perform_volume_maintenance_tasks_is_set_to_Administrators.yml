@@ -1,0 +1,10 @@
+- name: CIS - Ensure 'Perform volume maintenance tasks' is set to 'Administrators'
+  platform: windows
+  description: |
+    This policy setting allows users to manage the system's volume or disk configuration, which could allow a user to delete a volume and cause data loss as well as a denial-ofservice condition.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Perform volume maintenance tasks'
+  query: |
+    SELECT 1 FROM cis_audit where item = "2.2.33" AND (regex_match(value,".*(?=.*Administrators).*",0) is not null);

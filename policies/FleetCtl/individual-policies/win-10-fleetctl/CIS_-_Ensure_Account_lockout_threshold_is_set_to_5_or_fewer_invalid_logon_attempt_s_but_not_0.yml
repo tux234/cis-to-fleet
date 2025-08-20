@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Account lockout threshold' is set to '5 or fewer invalid logon attempt(s), but not 0'
+  query: SELECT 1 FROM cis_audit where item = "1.2.2" and CAST(value as integer) <= 5 and CAST(value as integer) > 0;
+  critical: false
+  description: |
+    This policy setting determines the number of failed logon attempts before the account is locked. Setting this policy to 0 does not conform to the benchmark as doing so disables the account lockout threshold.
+    The recommended state for this setting is: 5 or fewer invalid logon attempt(s), but not 0.
+    Note: Password Policy settings (section 1.1) and Account Lockout Policy settings (section 1.2) must be applied via the Default Domain Policy GPO in order to be globally in effect on domain user accounts as their default behavior. If these settings are configured in another GPO, they will only affect local user accounts on the computers that receive the GPO. However, custom exceptions to the default password policy and account lockout policy rules for specific domain users and/or groups can be defined using Password Settings Objects (PSOs), which are completely separate from Group Policy and most easily configured using Active Directory Administrative Center.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to '5 or fewer invalid login attempt(s), but not 0':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Account Policies\Account Lockout Policy\Account lockout threshold'
+  platform: windows

@@ -1,0 +1,14 @@
+- name: CIS - Ensure 'Force shutdown from a remote system' is set to 'Administrators'
+  platform: windows
+  description: |
+    This policy setting allows users to shut down Windows Vista-based and newer computers from
+    remote locations on the network. Anyone who has been assigned this user right can cause a denial
+    of service (DoS) condition, which would make the computer unavailable to service user requests.
+    Therefore, it is recommended that only highly trusted administrators be assigned this user.
+    right.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Force shutdown from a remote system'
+  query: |
+    SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/RemoteShutdown</LocURI></Target></Item></Get></SyncBody>" AND mdm_command_output == "Administrators";

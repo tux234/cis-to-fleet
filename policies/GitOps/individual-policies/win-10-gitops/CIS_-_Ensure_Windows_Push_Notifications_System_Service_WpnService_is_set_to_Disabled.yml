@@ -1,0 +1,10 @@
+- name: CIS - Ensure 'Windows Push Notifications System Service (WpnService)' is set to 'Disabled'
+  platform: windows
+  description: |
+    This service runs in session 0 and hosts the notification platform and connection provider which handles the connection between the device and WNS server.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to 'Disabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\Windows Push Notifications System Service'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\WpnService\\Start' AND data == 4);

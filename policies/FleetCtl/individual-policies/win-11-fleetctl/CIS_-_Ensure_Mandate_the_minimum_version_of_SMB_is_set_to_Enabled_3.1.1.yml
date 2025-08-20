@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Mandate the minimum version of SMB' is set to 'Enabled: 3.1.1'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\MinSmb2Dialect' AND data = 785);
+  critical: false
+  description: |
+    This policy settings controls the minimum version of Server Message Block (SMB) protocol that can be used on the system.
+    The recommended state for this setting is: Enabled: 3.1.1.
+    Note: This group policy setting does not prevent the use of SMBv1 if it is installed and
+    enabled on the system. If the following recommendations are configured as prescribed
+    in this benchmark, SMBv1 will be disabled on the system: 'Configure SMB v1 client driver' and 'Configure SMB v1 server.'
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled: 3.1.1':
+    'Computer Configuration\Policies\Administrative Templates\Network\Lanman Server\Mandate the minimum version of SMB'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy
+    template LanmanServer.admx/adml that is included with the Microsoft Windows 11 Release 24H2 Administrative Templates (or newer).
+  platform: windows

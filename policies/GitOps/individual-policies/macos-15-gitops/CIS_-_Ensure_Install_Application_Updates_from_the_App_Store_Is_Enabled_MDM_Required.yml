@@ -1,0 +1,5 @@
+- name: CIS - Ensure Install Application Updates from the App Store Is Enabled (MDM Required)
+  platform: darwin
+  description: Ensure that application updates are installed after they are available from Apple.
+  resolution: Ask your system administrator to deploy an MDM profile that enables automatic updates of Apple apps.
+  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.SoftwareUpdate' AND \n        name='AutomaticallyInstallAppUpdates' AND \n        (value = 1 OR value = 'true')\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.SoftwareUpdate' AND \n        name='AutomaticallyInstallAppUpdates' AND \n        (value != 1 AND value != 'true')\n    );  \n"

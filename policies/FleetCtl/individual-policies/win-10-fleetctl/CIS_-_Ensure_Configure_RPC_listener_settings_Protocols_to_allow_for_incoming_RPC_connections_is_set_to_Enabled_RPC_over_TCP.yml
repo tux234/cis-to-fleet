@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Configure RPC listener settings: Protocols to allow for incoming RPC connections' is set to 'Enabled: RPC over TCP'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Printers\RPC\RpcProtocols' AND (data = 5));
+  critical: false
+  description: This policy setting controls which protocols incoming Remote Procedure Call (RPC) connections to the print spooler are allowed to use.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled: RPC over TCP':
+    'Computer Configuration\Policies\Administrative Templates\Printers\Configure RPC listener settings: Configure protocol options for incoming RPC connections'
+    Note: This Group Policy path is provided by the Group Policy template Printing.admx/adml that is included with the Microsoft Windows 11 Release 22H2 Administrative Templates (and newer).
+  platform: windows

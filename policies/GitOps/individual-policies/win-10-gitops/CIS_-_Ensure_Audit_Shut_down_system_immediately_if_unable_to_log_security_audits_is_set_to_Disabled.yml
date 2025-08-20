@@ -1,0 +1,13 @@
+- name: CIS - Ensure 'Audit Shut down system immediately if unable to log security audits' is set to 'Disabled'
+  platform: windows
+  description: |
+    This policy setting determines whether the system shuts down if it is unable to log Security
+    events. It is a requirement for Trusted Computer System Evaluation Criteria (TCSEC)-C2 and
+    Common Criteria certification to prevent auditable events from occurring if the audit system is
+    unable to log them.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Disabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Audit: Shut down system immediately if unable to log security audits'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\crashonauditfail' AND data == 0);

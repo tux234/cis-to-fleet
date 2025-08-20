@@ -1,0 +1,20 @@
+- name: |
+    CIS - Ensure 'Audit Other Logon/Logoff Events' is set to 'Success and Failure'
+  platform: windows
+  description: |
+    This subcategory reports other logon/logoff-related events, such as Remote Desktop Services session disconnects and reconnects, using RunAs to run processes under a different account, and locking and unlocking a workstation. Events for this subcategory include:
+    - 4649: A replay attack was detected.
+    - 4778: A session was reconnected to a Window Station.
+    - 4779: A session was disconnected from a Window Station.
+    - 4800: The workstation was locked.
+    - 4801: The workstation was unlocked.
+    - 4802: The screen saver was invoked.
+    - 4803: The screen saver was dismissed.
+    - 5378: The requested credentials delegation was disallowed by policy.
+    - 5632: A request was made to authenticate to a wireless network.
+    - 5633: A request was made to authenticate to a wired network.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Success and Failure:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Advanced Audit Policy Configuration\Audit Policies\Logon/Logoff\Audit Other Logon/Logoff Events'
+  query: |
+    SELECT 1 FROM cis_audit where item = "17.5.5" AND (regex_match(value,".*(?=.*Success)(?=.*Failure).*",0) is not null);

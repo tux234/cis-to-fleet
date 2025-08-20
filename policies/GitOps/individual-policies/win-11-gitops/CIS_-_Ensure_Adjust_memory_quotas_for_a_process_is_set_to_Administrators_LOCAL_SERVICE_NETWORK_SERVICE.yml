@@ -1,0 +1,11 @@
+- name: CIS - Ensure 'Adjust memory quotas for a process' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE'
+  platform: windows
+  description: |
+    This policy setting allows a user to adjust the maximum amount of memory that is available to a process. The ability to adjust memory quotas is useful for system tuning, but it can be abused. In the wrong hands, it could be used to launch a denial of service (DoS) attack.
+    The recommended state for this setting is: Administrators, LOCAL SERVICE, NETWORK SERVICE.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to a list of only 'Administrators', 'LOCAL SERVICE' and 'NETWORK SERVICE':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Adjust memory quotas for a process'
+  query: |
+    SELECT 1 FROM cis_audit where item = "2.2.4" AND (regex_match(value,".*(?=.*Administrators)(?=.*LOCAL SERVICE)(?=.*NETWORK SERVICE).*",0) is not null);

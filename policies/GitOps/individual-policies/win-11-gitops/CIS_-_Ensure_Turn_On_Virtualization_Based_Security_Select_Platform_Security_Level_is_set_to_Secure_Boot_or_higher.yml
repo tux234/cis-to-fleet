@@ -1,0 +1,14 @@
+- name: |
+    CIS - Ensure 'Turn On Virtualization Based Security: Select Platform Security Level' is set to 'Secure Boot' or higher
+  platform: windows
+  description: |
+    This policy setting specifies whether Virtualization Based Security (VBS) is enabled. VBS uses the Windows Hypervisor to provide support for security services. The recommended state for this setting is: Secure Boot or Secure Boot and DMA Protection.
+
+    Note: VBS requires a 64-bit version of Windows with Secure Boot enabled, which in turn requires that Windows was installed with a UEFI BIOS configuration, not a Legacy BIOS configuration. In addition, if running Windows on a virtual machine, the hardware-assisted CPU virtualization feature (Intel VT-x or AMD-V) must be exposed by the host to the guest VM. More information on system requirements for this feature can be found at Windows Defender Credential Guard Requirements (Windows 10) | Microsoft Docs
+
+    Note #2: Credential Guard and Device Guard are not currently supported when using Azure IaaS VMs.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Secure Boot or Secure Boot and DMA Protection:
+    'Computer Configuration\Policies\Administrative Templates\System\Device Guard\Turn On Virtualization Based Security: Select Platform Security Level'
+  query: |
+    SELECT 1 FROM REGISTRY WHERE (PATH = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\DeviceGuard\RequirePlatformSecurityFeatures' AND data in (1,3));

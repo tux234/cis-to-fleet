@@ -1,0 +1,10 @@
+- name: CIS - Ensure 'Server (LanmanServer)' is set to 'Disabled'
+  platform: windows
+  description: |
+    The service supports file, print, and named-pipe sharing over the network for this computer.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to 'Disabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\Server'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\LanmanServer\\Start' AND data == 4);

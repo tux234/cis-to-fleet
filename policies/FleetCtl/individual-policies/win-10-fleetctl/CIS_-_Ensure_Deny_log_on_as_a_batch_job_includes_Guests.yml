@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Deny log on as a batch job' includes 'Guests'
+  query: SELECT 1 FROM cis_audit where item = "2.2.17" AND (regex_match(value,".*(?=.*Guests).*",0) is not null);
+  critical: false
+  description: |
+    This policy setting determines which accounts will not be able to log on to the computer as a
+    batch job. A batch job is not a batch (.bat) file, but rather a batch-queue facility. Accounts that use the Task Scheduler to schedule jobs need this user right.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path includes 'Guests'
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Deny log on as a batch job'
+  platform: windows

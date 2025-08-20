@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Simple TCP/IP Services (simptcp)' is set to 'Disabled' or to 'Not Installed'
+  query: |
+    SELECT CASE 
+        WHEN NOT EXISTS (SELECT * FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\simptcp\\Start') THEN 1 
+        WHEN (SELECT data FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\simptcp\\Start') == '4' THEN 1 
+        ELSE 0 
+    END AS result;
+  critical: false
+  description: The service supports the following TCP/IP services: Character Generator, Daytime, Discard, Echo, and Quote of the Day.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to 'Disabled' or to 'Not Installed':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\Simple TCP/IP Services'
+  platform: windows

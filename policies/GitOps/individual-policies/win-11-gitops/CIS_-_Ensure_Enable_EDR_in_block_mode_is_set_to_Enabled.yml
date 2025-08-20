@@ -1,0 +1,15 @@
+- name: |
+    CIS - Ensure 'Enable EDR in block mode' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting controls whether Microsoft Defender Antivirus Endpoint Detection and Response (EDR) is enabled in block mode (passive remediation).
+    The recommended state for this setting is: Enabled.
+    Note: EDR in block mode is only available in Microsoft Defender for Endpoint Plan 2.
+    Note 2: This setting is available with Microsoft Defender Antivirus platform release v4.18.2202.X and newer.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Microsoft Defender Antivirus\Features\Enable EDR in block mode'
+    Note: This Group Policy path is provided by the Group Policy template
+    'WindowsDefender.admx/adml' that is included with the Microsoft Windows 11 Release 24H2 Administrative Templates (or newer).
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Features\PassiveRemediation' AND data = 1);

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'System objects Require case insensitivity for non Windows subsystems' is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\kernel\\obcaseinsensitive' AND data != 0);
+  critical: false
+  description: |
+    This policy setting determines whether case insensitivity is enforced for all subsystems. The
+    Microsoft Win32 subsystem is case insensitive. However, the kernel supports case sensitivity for
+    other subsystems, such as the Portable Operating System Interface for UNIX (POSIX). Because
+    Windows is case insensitive (but the POSIX subsystem will support case sensitivity), failure to
+    enforce this policy setting makes it possible for a user of the POSIX subsystem to create a file
+    with the same name as another file by using mixed case to label it. Such a situation can block
+    access to these files by another user who uses typical Win32 tools, because only one of the
+    files will be available.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Enabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\System objects: Require case insensitivity for non Windows subsystems'
+  platform: windows

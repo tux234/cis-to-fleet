@@ -1,0 +1,10 @@
+- name: |
+    CIS - Ensure 'Set time limit for disconnected sessions' is set to 'Enabled: 1 minute'
+  platform: windows
+  description: |
+    This setting helps to prevent active Remote Desktop sessions from tying up the computer for long periods of time while not in use, preventing computing resources from being consumed by large numbers of disconnected but still active sessions.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled' and then '1 minute':
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Remote Desktop Services\Remote Desktop Session Host\Session Time Limits\Set time limit for disconnected sessions'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services\\MaxDisconnectionTime' AND data = 60000);

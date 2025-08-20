@@ -1,0 +1,10 @@
+- name: CIS - Ensure 'Let Windows apps activate with voice while the system is locked' is set to 'Enabled Force Deny'
+  platform: windows
+  description: |
+    This policy setting specifies whether Windows apps can be activated by voice (apps and Cortana) while the system is locked.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Enabled Force Deny':
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\App Privacy\Let Windows apps activate with voice while the system is locked'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy\\LetAppsActivateWithVoiceAboveLock' AND data == 2);

@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure writing tools is disabled (MDM required)
+  query: |
+    SELECT 1 WHERE EXISTS(
+      SELECT 1 FROM managed_policies WHERE
+        domain = 'com.apple.applicationaccess' AND
+        name = 'allowWritingTools' AND
+        (value = 0 OR value = 'false')
+    ) AND NOT EXISTS (
+      SELECT 1 FROM managed_policies WHERE
+        domain = 'com.apple.applicationaccess' AND
+        name = 'allowWritingTools' AND
+        (value != 0 AND value != 'false')
+    );
+  critical: false
+  description: |
+    Writing Tools is a feature of Apple Intelligence that provides AI-powered
+    writing assistance including proofreading, rewriting, and summarization
+    capabilities. While these features process text on-device when possible,
+    they may still process sensitive or confidential information that
+    organizations need to control.
+    Organizations handling sensitive documents should consider disabling Writing
+    Tools to prevent potential exposure of confidential information through AI
+    processing.
+  resolution: |
+    Profile Method:
+    Ask your administrator to deploy a profile with the following configuration:
+    1. The PayloadType string is com.apple.applicationaccess
+    2. The key to include is allowWritingTools
+    3. The key must be set to <false/>
+  platform: darwin

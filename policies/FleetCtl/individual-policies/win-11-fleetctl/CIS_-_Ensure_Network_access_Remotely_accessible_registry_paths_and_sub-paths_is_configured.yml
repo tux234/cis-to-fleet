@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Network access: Remotely accessible registry paths and sub-paths' is configured
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\SecurePipeServers\\Winreg\\AllowedPaths\Machine' and data == 'System\CurrentControlSet\Control\Print\Printers,System\CurrentControlSet\Services\Eventlog,Software\Microsoft\OLAP Server,Software\Microsoft\Windows NT\CurrentVersion\Print,Software\Microsoft\Windows NT\CurrentVersion\Windows,System\CurrentControlSet\Control\ContentIndex,System\CurrentControlSet\Control\Terminal Server,System\CurrentControlSet\Control\Terminal Server\UserConfig,System\CurrentControlSet\Control\Terminal Server\DefaultUserConfiguration,Software\Microsoft\Windows NT\CurrentVersion\Perflib,System\CurrentControlSet\Services\SysmonLog');
+  critical: false
+  description: |
+    This policy setting determines which registry paths and sub-paths will be accessible over
+    the network, regardless of the users or groups listed in the access control list (ACL) of the
+    winreg registry key.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to:
+    System\CurrentControlSet\Control\Print\Printers
+    System\CurrentControlSet\Services\Eventlog
+    SOFTWARE\Microsoft\OLAP Server
+    SOFTWARE\Microsoft\Windows NT\CurrentVersion\Print
+    SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows
+    System\CurrentControlSet\Control\ContentIndex
+    System\CurrentControlSet\Control\Terminal Server
+    System\CurrentControlSet\Control\Terminal Server\UserConfig
+    System\CurrentControlSet\Control\Terminal Server\DefaultUserConfiguration
+    SOFTWARE\Microsoft\Windows NT\CurrentVersion\Perflib
+    System\CurrentControlSet\Services\SysmonLog
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Network access: Remotely accessible registry paths and sub-paths'
+  platform: windows

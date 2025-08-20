@@ -1,0 +1,12 @@
+- name: |
+    CIS - Ensure 'GameInput Service (GameInputSvc)' is set to 'Disabled'
+  platform: windows
+  description: |
+    This service enables the use of keyboards, mice, gamepads, and other input devices to be used with the GameInput API.
+    The recommended state for this setting is: Disabled.
+    Note: GameInput service runs as LocalSystem in its own process of GameInputSvc.exe and doesn't share its process with other services.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to: Disabled.
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\GameInput Service'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\GameInputSvc\Start' AND data = 0);
