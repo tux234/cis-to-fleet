@@ -1,5 +1,9 @@
 name: Generate CIS Policies
 
+permissions:
+  contents: write
+  pull-requests: write
+
 on:
   schedule:
     # Run daily at 2 AM UTC to check for new CIS policies
