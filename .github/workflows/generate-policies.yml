@@ -287,6 +287,18 @@ jobs:
 
       - name: Organize generated policies
         run: |
+          # Debug: Check what was downloaded
+          echo "=== Debugging artifact download ==="
+          echo "Current directory contents:"
+          ls -la
+          echo "Artifacts directory contents:"
+          if [[ -d artifacts ]]; then
+            find artifacts -type f -name "*.yml" | head -20
+            echo "Total YAML files in artifacts: $(find artifacts -name "*.yml" | wc -l)"
+          else
+            echo "No artifacts directory found"
+          fi
+          
           # Create clean output directory structure
           rm -rf ${{ env.OUTPUT_DIR }}
           mkdir -p ${{ env.OUTPUT_DIR }}
@@ -295,6 +307,18 @@ jobs:
           if [[ -d artifacts ]]; then
             cp -r artifacts/* ${{ env.OUTPUT_DIR }}/
             rm -rf artifacts/
+            echo "Moved artifacts to ${{ env.OUTPUT_DIR }}"
+          else
+            echo "No artifacts to move"
+          fi
+          
+          # Debug: Check final directory structure
+          echo "=== Final directory structure ==="
+          if [[ -d ${{ env.OUTPUT_DIR }} ]]; then
+            find ${{ env.OUTPUT_DIR }} -type f -name "*.yml" | head -10
+            echo "Total YAML files in policies: $(find ${{ env.OUTPUT_DIR }} -name "*.yml" | wc -l)"
+          else
+            echo "No policies directory created"
           fi
           
           # Generate index file
@@ -368,11 +392,23 @@ jobs:
       - name: Check for changes
         id: check-changes
         run: |
+          echo "=== Checking for changes ==="
+          echo "Files before git add:"
+          find . -name "*.yml" -not -path "./.git/*" | head -20
+          
           git add .
+          
+          echo "Git status after add:"
+          git status --porcelain
+          
           if git diff --cached --quiet; then
             echo "no-changes=true" >> $GITHUB_OUTPUT
+            echo "No changes detected"
           else
             echo "no-changes=false" >> $GITHUB_OUTPUT
+            echo "Changes detected!"
+            echo "Changed files:"
+            git diff --cached --name-only
           fi
 
       - name: Create Pull Request
