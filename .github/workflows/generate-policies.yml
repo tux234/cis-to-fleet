@@ -162,7 +162,7 @@ jobs:
             --level ${{ steps.params.outputs.cis_level }} \
             --output temp_gitops \
             --force \
-            --verbose
+            --debug
           
           # Move combined files to GitOps folder
           if [[ -d temp_gitops ]]; then
@@ -180,7 +180,7 @@ jobs:
             --level ${{ steps.params.outputs.cis_level }} \
             --output temp_gitops_split \
             --force \
-            --verbose
+            --debug
           
           # Move individual policy directories to GitOps/individual-policies
           if [[ -d temp_gitops_split ]]; then
@@ -197,7 +197,7 @@ jobs:
             --level ${{ steps.params.outputs.cis_level }} \
             --output temp_fleetctl \
             --force \
-            --verbose
+            --debug
           
           # Move combined files to FleetCtl folder
           if [[ -d temp_fleetctl ]]; then
@@ -215,7 +215,7 @@ jobs:
             --level ${{ steps.params.outputs.cis_level }} \
             --output temp_fleetctl_split \
             --force \
-            --verbose
+            --debug
           
           # Move individual policy directories to FleetCtl/individual-policies
           if [[ -d temp_fleetctl_split ]]; then
