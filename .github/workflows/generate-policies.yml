@@ -184,7 +184,14 @@ jobs:
           
           # Move individual policy directories to GitOps/individual-policies
           if [[ -d temp_gitops_split ]]; then
+            echo "Contents of temp_gitops_split:"
+            ls -la temp_gitops_split/ || echo "Directory is empty or doesn't exist"
+            echo "Looking for directories matching *-gitops:"
+            find temp_gitops_split -type d -name "*-gitops" || echo "No directories found matching pattern"
             find temp_gitops_split -type d -name "*-gitops" -exec mv {} ${{ env.OUTPUT_DIR }}/GitOps/individual-policies/ \;
+          else
+            echo "temp_gitops_split directory not found"
+            ls -la . | grep temp || echo "No temp directories found"
           fi
 
       - name: Generate FleetCtl combined policies
@@ -219,7 +226,14 @@ jobs:
           
           # Move individual policy directories to FleetCtl/individual-policies
           if [[ -d temp_fleetctl_split ]]; then
+            echo "Contents of temp_fleetctl_split:"
+            ls -la temp_fleetctl_split/ || echo "Directory is empty or doesn't exist"
+            echo "Looking for directories matching *-fleetctl:"
+            find temp_fleetctl_split -type d -name "*-fleetctl" || echo "No directories found matching pattern"
             find temp_fleetctl_split -type d -name "*-fleetctl" -exec mv {} ${{ env.OUTPUT_DIR }}/FleetCtl/individual-policies/ \;
+          else
+            echo "temp_fleetctl_split directory not found"
+            ls -la . | grep temp || echo "No temp directories found"
           fi
 
       - name: Clean up temporary directories
