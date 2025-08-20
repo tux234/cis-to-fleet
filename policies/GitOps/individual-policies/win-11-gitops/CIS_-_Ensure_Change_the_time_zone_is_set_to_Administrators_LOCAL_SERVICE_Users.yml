@@ -1,0 +1,10 @@
+- name: CIS - Ensure 'Change the time zone' is set to 'Administrators, LOCAL SERVICE, Users'
+  platform: windows
+  description: |
+    This setting determines which users can change the time zone of the computer. This ability holds no great danger for the computer and may be useful for mobile workers.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Administrators, LOCAL SERVICE, Users':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Change the time zone'
+  query: |
+    SELECT 1 FROM cis_audit where item = "2.2.9" AND (regex_match(value,".*(?=.*Administrators)(?=.*Users)(?=.*LOCAL SERVICE).*",0) is not null);

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Prevent enabling lock screen camera' is set to 'Enabled'
+  query: SELECT 1 FROM registry where (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Personalization\NoLockScreenCamera' AND data == 1);
+  critical: false
+  description: |
+    Disables the lock screen camera toggle switch in PC Settings and prevents a camera from being invoked on the lock screen.
+    The recommended state for this setting is: Enabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Control Panel\Personalization\Prevent enabling lock screen camera'
+  platform: windows

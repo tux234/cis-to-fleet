@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Downloaded Maps Manager (MapsBroker)' is set to 'Disabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\MapsBroker\\Start' AND data == 4);
+  critical: false
+  description: Windows service for application access to downloaded maps. This service is started on- demand by application accessing downloaded maps.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to 'Disabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\Downloaded Maps Manager'
+  platform: windows

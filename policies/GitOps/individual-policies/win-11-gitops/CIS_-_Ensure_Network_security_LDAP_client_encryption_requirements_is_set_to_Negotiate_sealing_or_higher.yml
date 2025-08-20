@@ -1,0 +1,14 @@
+- name: |
+    CIS - Ensure 'Network security: LDAP client encryption requirements' is set to 'Negotiate sealing' or higher
+  platform: windows
+  description: |
+    This policy setting determines the level of data encryption that is requested on behalf of clients that issue LDAP BIND requests.
+    The recommended state for this setting is: 'Negotiate sealing'.
+    Configuring this setting to 'Require sealing' also conforms to the Benchmark.
+    Note: This policy setting does not have any impact on LDAP simple bind
+    (ldap_simple_bind) or LDAP simple bind through SSL (ldap_simple_bind_s).
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Negotiate sealing' or higher:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Network security: LDAP client encryption requirements'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LDAP\ldapclientconfidentiality' AND data IN (1, 2));

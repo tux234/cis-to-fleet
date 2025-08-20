@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Turn on PowerShell Transcription' is set to 'Enabled'
+  platform: windows
+  description: |
+    This Policy setting lets you capture the input and output of Windows PowerShell commands into text-based transcripts.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled':
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Windows PowerShell\Turn on PowerShell Transcription'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy template PowerShellExecutionPolicy.admx/adml that is included with the Microsoft Windows 10 RTM (Release 1507) Administrative Templates (or newer).
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\PowerShell\\Transcription\\EnableTranscripting' AND data = 1);

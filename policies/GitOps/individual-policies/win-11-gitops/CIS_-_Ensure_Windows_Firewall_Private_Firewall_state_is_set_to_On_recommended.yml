@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Windows Firewall: Private: Firewall state' is set to 'On (recommended)'
+  platform: windows
+  description: |
+    Select On (recommended) to have Windows Firewall with Advanced Security use the settings for this profile to filter network traffic. If you select Off, Windows Firewall with Advanced Security will not use any of the firewall rules or connection security rules for this profile.
+    The recommended state for this setting is: On (recommended).
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'On (recommended)':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Windows Defender Firewall with Advanced Security\Windows Defender Firewall with Advanced Security - Local Group Policy Object\Windows Defender Firewall Properties\Private Profile\Firewall state'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile\EnableFirewall' and data == 1);

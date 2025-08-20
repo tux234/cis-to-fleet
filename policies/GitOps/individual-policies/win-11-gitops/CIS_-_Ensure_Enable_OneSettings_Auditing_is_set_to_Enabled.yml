@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Enable OneSettings Auditing' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy is meant for Windows 11.
+    This policy setting controls whether Windows records attempts to connect with the OneSettings service to the Operational EventLog.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Data Collection and Preview Builds\Enable OneSettings Auditing'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection\\EnableOneSettingsAuditing' AND data = 1);

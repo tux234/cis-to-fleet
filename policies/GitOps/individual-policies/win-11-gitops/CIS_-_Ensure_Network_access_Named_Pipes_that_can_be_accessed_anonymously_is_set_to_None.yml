@@ -1,0 +1,12 @@
+- name: |
+    CIS - Ensure 'Network access: Named Pipes that can be accessed anonymously' is set to 'None'
+  platform: windows
+  description: |
+    This policy setting determines which communication sessions, or pipes, will have attributes
+    and permissions that allow anonymous access.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to <blank>
+    (i.e. None):
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Network access: Named Pipes that can be accessed anonymously'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\LanManServer\\Parameters\NullSessionPipes' and data == '');

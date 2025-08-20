@@ -1,0 +1,15 @@
+- name: CIS - Ensure Sending Diagnostic and Usage Data to Apple Is Disabled (MDM Required)
+  platform: darwin
+  description: Checks that Sending Diagnostic and Usage Data to Apple Is Disabled.
+  resolution: |
+    Automated method:
+    Ask your system administrator to deploy an MDM profile that disables Sending Diagnostic and Usage Data to Apple.
+    Graphical method:
+      Perform the following steps to ensure Sending Diagnostic and Usage Data to Apple Is Disabled:
+        1. Open System Settings
+        2. Select Privacy & Security
+        3. Select Analytics & Improvements
+        4. Verify that Share Mac Analytics is not enabled
+        5. Verify that Share with App Developers is not enabled
+        6. Verify that Improve Siri & Dictation is not enabled
+  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.SubmitDiagInfo' AND \n        name='AutoSubmit' AND \n        (value = 0 OR value = 'false') AND \n        username = ''\n    )\n  AND EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.applicationaccess' AND \n        name='allowDiagnosticSubmission' AND \n        (value = 0 OR value = 'false') AND \n        username = ''\n    )\n  AND EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.applicationaccess' AND \n        name='Siri Data Sharing Opt-In Status' AND \n        value = 2 AND \n        username = ''\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.SubmitDiagInfo' AND \n        name='Disable' AND \n        (value != 0 AND value != 'false')\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.applicationaccess' AND \n        name='Disable' AND \n        (value != 0 AND value != 'false')\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.applicationaccess' AND \n        name='Disable' AND \n        value != 2\n    );  \n"

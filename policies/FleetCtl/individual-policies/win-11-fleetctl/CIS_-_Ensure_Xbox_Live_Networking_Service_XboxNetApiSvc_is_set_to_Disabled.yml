@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Xbox Live Networking Service (XboxNetApiSvc)' is set to 'Disabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\XboxNetApiSvc\\Start' AND data == 4);
+  critical: false
+  description: This service supports the Windows.Networking.XboxLive application programming interface.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to 'Disabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\Xbox Live Networking Service'
+  platform: windows

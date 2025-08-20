@@ -1,0 +1,10 @@
+- name: CIS - Ensure 'Network security Configure encryption types allowed for Kerberos' is set to 'AES128_HMAC_SHA1, AES256_HMAC_SHA1, Future encryption types'
+  platform: windows
+  description: |
+    This setting determines if online identities are able to authenticate to this computer.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'AES128_HMAC_SHA1, AES256_HMAC_SHA1, Future encryption types':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Network security: Configure encryption types allowed for Kerberos'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\Kerberos\\Parameters\\SupportedEncryptionTypes' COLLATE NOCASE AND ((CAST(data AS INTEGER) & 0x8) AND (CAST(data AS INTEGER) & 0x10) AND (CAST(data AS INTEGER) & 0xe0) AND ((CAST(data AS INTEGER) & 0x1) = 0) AND ((CAST(data AS INTEGER) & 0x2) = 0) AND ((CAST(data AS INTEGER) & 0x4) = 0)));

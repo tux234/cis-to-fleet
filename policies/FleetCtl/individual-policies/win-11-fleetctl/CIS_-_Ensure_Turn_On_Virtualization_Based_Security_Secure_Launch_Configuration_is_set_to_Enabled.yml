@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Turn On Virtualization Based Security: Secure Launch Configuration' is set to 'Enabled'
+  query: SELECT 1 FROM REGISTRY WHERE (PATH = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceGuard\ConfigureSystemGuardLaunch' AND data = 1);
+  critical: false
+  description: Secure Launch protects the Virtualization Based Security environment from exploited vulnerabilities in device firmware.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\System\Device Guard\Turn On Virtualization Based Security: Secure Launch Configuration'
+  platform: windows

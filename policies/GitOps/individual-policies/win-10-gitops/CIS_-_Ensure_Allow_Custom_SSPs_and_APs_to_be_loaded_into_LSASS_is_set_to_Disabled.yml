@@ -1,0 +1,8 @@
+- name: |
+    CIS - Ensure 'Allow Custom SSPs and APs to be loaded into LSASS' is set to 'Disabled'
+  platform: windows
+  description: |
+    This policy setting controls the configuration under which the Local Security Authority Subsystem Service (LSASS) will load custom Security Support Provider/Authentication Package (SSP/AP).
+  resolution: "To establish the recommended configuration via GP, set the following UI path to Disabled:\n'Computer Configuration\\Policies\\Administrative Templates\\System\\Local Security Authority\\Allow Custom SSPs and APs to be loaded into LSASS'\n    \n"
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\Policies\\Microsoft\\Windows\\System\\AllowCustomSSPsAPs' AND data = 0);

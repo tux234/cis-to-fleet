@@ -1,0 +1,10 @@
+- name: |
+    CIS - Ensure 'Do not allow location redirection' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting controls the redirection of location data to the remote computer in a Remote Desktop Services session.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled':
+    'Computer Configuration\Administrative Templates\Windows Components\Remote Desktop Services\Remote Desktop Session Host\Device and Resource Redirection\Do not allow location redirection'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services\\fDisableLocationRedir' AND data = 1);

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Peer Name Resolution Protocol (PNRPsvc)' is set to 'Disabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\PNRPsvc\\Start' AND data == 4);
+  critical: false
+  description: |
+    Enables serverless peer name resolution over the Internet using the Peer Name Resolution Protocol (PNRP).
+    The recommended state for this setting is: Disabled.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to 'Disabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\Peer Name Resolution Protocol'
+  platform: windows

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Include command line in process creation events' is set to 'Enabled'
+  query: SELECT 1 FROM REGISTRY WHERE (PATH = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\Audit\ProcessCreationIncludeCmdLine_Enabled' AND data = 1);
+  critical: false
+  description: This policy setting controls whether the process creation command line text is logged in security audit events when a new process has been created.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\System\Audit Process Creation\Include command line in process creation events'
+  platform: windows

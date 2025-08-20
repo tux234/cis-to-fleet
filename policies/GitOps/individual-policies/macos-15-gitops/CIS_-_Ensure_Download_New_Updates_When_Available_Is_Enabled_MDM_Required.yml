@@ -1,0 +1,5 @@
+- name: CIS - Ensure Download New Updates When Available Is Enabled (MDM Required)
+  platform: darwin
+  description: Checks that the system is configured via MDM to automatically download updates.
+  resolution: Ask your system administrator to deploy an MDM profile that enables automatic update downloads.
+  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.SoftwareUpdate' AND \n        name='AutomaticDownload' AND \n        (value = 1 OR value = 'true')\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.SoftwareUpdate' AND \n        name='AutomaticDownload' AND \n        (value != 1 AND value != 'true')\n    );  \n"

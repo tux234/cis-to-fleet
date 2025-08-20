@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Windows Firewall: Public: Logging: Size limit (KB)' is set to '16,384 KB or greater'
+  query: SELECT * FROM registry WHERE (key = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\\Logging\LogFileSize' and data >= 16384 );
+  critical: false
+  description: |
+    Use this option to specify the size limit of the file in which Windows Firewall will write its log information.
+    The recommended state for this setting is: 16,384 KB or greater.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 16,384 KB or greater:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Windows Defender Firewall with Advanced Security\Windows Defender Firewall with Advanced Security - Local Group Policy Object\Windows Defender Firewall Properties\Public Profile\Logging Customize\Size limit (KB)'
+  platform: windows

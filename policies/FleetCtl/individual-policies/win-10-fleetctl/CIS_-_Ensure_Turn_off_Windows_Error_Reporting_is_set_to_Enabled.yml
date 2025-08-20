@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Turn off Windows Error Reporting' is set to 'Enabled'
+  query: SELECT COUNT(*) FROM registry WHERE ((path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Error Reporting\Disabled' AND data = 1) OR (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\PCHealth\\ErrorReporting\DoReport' AND data = 0))=2;
+  critical: false
+  description: This policy setting controls whether or not errors are reported to Microsoft. Error Reporting is used to report information about a system or application that has failed or has stopped responding and is used to improve the quality of the product.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\System\Internet Communication Management\Internet Communication settings\Turn off Windows Error Reporting'
+  platform: windows

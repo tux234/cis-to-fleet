@@ -1,0 +1,13 @@
+- name: |
+    CIS - Ensure 'Network access: Shares that can be accessed anonymously' is set to 'None'
+  platform: windows
+  description: |
+    This policy setting determines which network shares can be accessed by anonymous users.
+    The default configuration for this policy setting has little effect because all users have to be
+    authenticated before they can access shared resources on the server.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to <blank>
+    (i.e. None):
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Network access: Shares that can be accessed anonymously'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\LanManServer\\Parameters\NullSessionShares' and data == '');

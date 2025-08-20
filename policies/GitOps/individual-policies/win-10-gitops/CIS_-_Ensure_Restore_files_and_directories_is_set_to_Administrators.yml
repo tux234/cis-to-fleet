@@ -1,0 +1,14 @@
+- name: CIS - Ensure 'Restore files and directories' is set to 'Administrators'
+  platform: windows
+  description: |
+    This policy setting determines which users can bypass file, directory, registry, and other
+    persistent object permissions when restoring backed up files and directories on computers that
+    run Windows Vista (or newer) in your environment. This user right also determines which users
+    can set valid security principals as object owners; it is similar to the Back up files and
+    directories user right.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Restore files and directories'
+  query: |
+    SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/RestoreFilesAndDirectories</LocURI></Target></Item></Get></SyncBody>" AND mdm_command_output == "Administrators";

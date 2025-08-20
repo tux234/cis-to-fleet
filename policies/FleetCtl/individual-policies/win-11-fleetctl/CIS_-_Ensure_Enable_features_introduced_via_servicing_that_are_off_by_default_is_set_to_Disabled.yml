@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Enable features introduced via servicing that are off by default' is set to 'Disabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AllowTemporaryEnterpriseFeatureControl' AND data =0);
+  critical: false
+  description: |
+    This policy settings configures whether or not features and enhancements that are introduced through monthly cumulative updates (servicing), are enabled on the system.
+    The recommended state for this setting is: Disabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Disabled:
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Windows Update\Manage end user experience\Enable features introduced via servicing that are off by default'
+  platform: windows

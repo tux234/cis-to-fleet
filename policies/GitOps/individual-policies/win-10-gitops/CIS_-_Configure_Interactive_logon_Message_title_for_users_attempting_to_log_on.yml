@@ -1,0 +1,13 @@
+- name: CIS - Configure 'Interactive logon Message title for users attempting to log on'
+  platform: windows
+  description: |
+    This policy setting specifies the text displayed in the title bar of the window that users see
+    when they log on to the system. Configure this setting in a manner that is consistent with the
+    security and operational requirements of your organization.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to a value that is consistent with the security and operational requirements
+    of your organization:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Interactive logon: Message title for users attempting to log on'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\legalnoticecaption' AND data != "");

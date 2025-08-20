@@ -1,0 +1,10 @@
+- name: CIS - Ensure 'Accounts Block Microsoft accounts' is set to 'Users can't add or log on with Microsoft accounts'
+  platform: windows
+  description: |
+    This policy setting prevents users from adding new Microsoft accounts on this computer.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Users can't add or log on with Microsoft account':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Accounts: Block Microsoft accounts'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\NoConnectedUser' AND data == 3);

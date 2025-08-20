@@ -1,0 +1,11 @@
+- name: CIS - Ensure 'Peer Networking Identity Manager (p2pimsvc)' is set to 'Disabled'
+  platform: windows
+  description: |
+    Provides identity services for the Peer Name Resolution Protocol (PNRP) and Peer-to-Peer Grouping services.
+    The recommended state for this setting is: Disabled.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to 'Disabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\Peer Networking Identity Manager'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\p2pimsvc\\Start' AND data == 4);

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Audit Account Lockout' is set to include 'Failure'
+  query: SELECT 1 FROM cis_audit where item = "17.5.1" AND (regex_match(value,".*(?=.*Failure).*",0) is not null);
+  critical: false
+  description: |
+    This subcategory reports when a user's account is locked out as a result of too many failed logon attempts. Events for this subcategory include:
+    - 4625: An account failed to log on.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to include Failure:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Advanced Audit Policy Configuration\Audit Policies\Logon/Logoff\Audit Account Lockout'
+  platform: windows

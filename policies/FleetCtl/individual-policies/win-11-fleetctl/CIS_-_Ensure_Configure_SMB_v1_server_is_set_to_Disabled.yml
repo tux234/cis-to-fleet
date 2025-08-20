@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Configure SMB v1 server' is set to 'Disabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\LanmanServer\\Parameters\SMB1' AND data = 0);
+  critical: false
+  description: This setting configures the server-side processing of the Server Message Block version 1 (SMBv1) protocol.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Disabled:
+    'Computer Configuration\Policies\Administrative Templates\MS Security Guide\Configure SMB v1 server'
+    Note: This Group Policy path does not exist by default. An additional Group Policy template (SecGuide.admx/adml) is required - it is available from Microsoft at this link (https://techcommunity.microsoft.com/t5/microsoft-security-baselines/security-baseline-final-for-windows-10-v1903-and-windows-server/ba-p/701084).
+  platform: windows

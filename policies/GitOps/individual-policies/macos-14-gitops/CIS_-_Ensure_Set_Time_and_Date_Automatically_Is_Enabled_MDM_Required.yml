@@ -1,0 +1,9 @@
+- name: CIS - Ensure Set Time and Date Automatically Is Enabled (MDM Required)
+  platform: darwin
+  resolution: |
+    The administrator should configure this via MDM profile.
+    Create or edit a configuration profile with the following information:
+      1. The PayloadType string is com.apple.applicationaccess.
+      2. The key to include is forceAutomaticDateAndTime.
+      3. The key must be set to <true/>.
+  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.applicationaccess' AND \n        name='forceAutomaticDateAndTime' AND \n        (value = 1 OR value = 'true') AND \n        username = ''\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.applicationaccess' AND \n        name='forceAutomaticDateAndTime' AND \n        (value != 1 AND value != 'true')\n    );  \n"

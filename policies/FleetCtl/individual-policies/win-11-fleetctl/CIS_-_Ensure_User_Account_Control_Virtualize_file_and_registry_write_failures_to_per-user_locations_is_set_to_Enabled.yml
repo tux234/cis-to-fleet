@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'User Account Control: Virtualize file and registry write failures to per-user locations' is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\EnableVirtualization' and data == 1);
+  critical: false
+  description: |
+    This policy setting controls whether application write failures are redirected to defined registry and file system locations. This policy setting mitigates applications that run as administrator and write run-time application data to:
+    %ProgramFiles%
+    %windir%
+    %windir%\System32
+    HKEY_LOCAL_MACHINE\SOFTWARE
+    The recommended state for this setting is: Enabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\User Account Control: Virtualize file and registry write failures to per-user locations'
+  platform: windows

@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Allow data persistence for Microsoft Defender Application Guard' is set to 'Disabled'
+  platform: windows
+  description: |
+    This policy setting allows you to decide whether data should persist across different sessions in Microsoft Defender Application Guard.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Disabled:
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Microsoft Defender Application Guard\Allow data persistence for Microsoft Defender Application Guard'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy template AppHVSI.admx/adml that is included with the Microsoft Windows 10 Release 1709 Administrative Templates (or newer).
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\AppHVSI\AllowPersistence' AND data = 0);

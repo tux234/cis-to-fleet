@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'OpenSSH SSH Server (sshd)' is set to 'Disabled' or 'Not Installed'
+  query: |
+    SELECT 1 WHERE 
+    NOT EXISTS ( SELECT 1 FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\sshd\\Start' )
+    OR 
+    EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\sshd\\Start' AND data == 4 );
+  critical: false
+  description: |
+    SSH protocol based service to provide secure encrypted communications between two untrusted hosts over an insecure network.
+    The recommended state for this setting is: Disabled or Not Installed.
+    Note: This service is not installed by default. It is supplied with Windows, but it is installed by enabling an optional Windows feature (OpenSSH Server).
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to Disabled or Not Installed.:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\OpenSSH SSH Server'
+  platform: windows

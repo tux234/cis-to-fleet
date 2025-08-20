@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'MSS: (DisableIPSourceRouting IPv6) IP source routing protection level (protects against packet spoofing)' is set to 'Enabled: Highest protection, source routing is completely disabled'
+  platform: windows
+  description: |
+    IP source routing is a mechanism that allows the sender to determine the IP route that a datagram should follow through the network.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled: Highest protection, source routing is completely disabled':
+    'Computer Configuration\Policies\Administrative Templates\MSS (Legacy)\MSS: (DisableIPSourceRouting IPv6) IP source routing protection level'
+    Note: This Group Policy path does not exist by default. An additional Group Policy template (MSS-legacy.admx/adml) is required - it is available from the Security Compliance Toolkit 1.0 (https://www.microsoft.com/en-us/download/details.aspx?id=55319)
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters\DisableIPSourceRouting' AND data = 2);

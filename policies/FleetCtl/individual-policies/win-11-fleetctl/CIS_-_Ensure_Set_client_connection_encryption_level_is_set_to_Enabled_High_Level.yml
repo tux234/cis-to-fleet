@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Set client connection encryption level' is set to 'Enabled: High Level'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services\\MinEncryptionLevel' AND data = 3);
+  critical: false
+  description: |
+    This policy setting specifies whether to require the use of a specific encryption level to secure communications between client computers and RD Session Host servers during Remote Desktop Protocol (RDP) connections.
+    This policy only applies when you are using native RDP encryption.
+    However, native RDP encryption (as opposed to SSL encryption) is not recommended.
+    This policy does not apply to SSL encryption.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled', then 'High Level':
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Remote Desktop Services\Remote Desktop Session Host\Security\Set client connection encryption level'
+  platform: windows

@@ -1,0 +1,7 @@
+- name: CIS - Ensure Secure Keyboard Entry Terminal.app Is Enabled (MDM Required)
+  platform: darwin
+  description: |
+    Secure Keyboard Entry prevents other applications on the system and/or network from detecting and recording what is typed into Terminal. Unauthorized applications and malicious code could intercept keystrokes entered in the Terminal.
+    Enabling Secure Keyboard Entry minimizes the risk of a key logger from detecting what is entered in Terminal.
+  resolution: "Profile Method:\nAsk your administrator to deploy a profile with the following configuration:\n  1. The PayloadType string is com.apple.Terminal \n  2. The key to include is SecureKeyboardEntry\n  3. The key must be set to\n  <true/>\n"
+  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.Terminal' AND \n        name='SecureKeyboardEntry' AND \n        (value = 1 OR value = 'true')\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.Terminal' AND \n        name='SecureKeyboardEntry' AND \n        (value != 1 AND value != 'true')\n    );  \n"

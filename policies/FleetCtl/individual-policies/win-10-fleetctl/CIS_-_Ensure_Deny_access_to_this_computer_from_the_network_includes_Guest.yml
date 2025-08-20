@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Deny access to this computer from the network' includes 'Guest'
+  query: SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/DenyAccessFromNetwork</LocURI></Target></Item></Get></SyncBody>" AND (regex_match(mdm_command_output,".*(Guest).*",0) is not null);
+  critical: false
+  description: |
+    This policy setting prohibits users from connecting to a computer from across the network, which
+    would allow users to access and potentially modify data remotely. In high security environments,
+    there should be no need for remote users to access data on a computer. Instead, file sharing
+    should be accomplished through the use of network servers. This user right supersedes the Access
+    this computer from the network user right if an account is subject to both policies.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path includes 'Guest'
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Deny access to this computer from the network'
+  platform: windows

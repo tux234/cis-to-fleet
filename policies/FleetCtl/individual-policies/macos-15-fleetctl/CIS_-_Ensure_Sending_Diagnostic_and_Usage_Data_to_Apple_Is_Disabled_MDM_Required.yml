@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Sending Diagnostic and Usage Data to Apple Is Disabled (MDM Required)
+  query: |
+    SELECT 1 WHERE 
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.SubmitDiagInfo' AND 
+            name='AutoSubmit' AND 
+            (value = 0 OR value = 'false')
+        )
+      AND EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.applicationaccess' AND 
+            name='allowDiagnosticSubmission' AND 
+            (value = 0 OR value = 'false')
+        )
+      AND EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.Accessibility' AND 
+            name='AXSAudioDonationSiriImprovementEnabled' AND 
+            (value = 0 OR value = 'false')
+        )
+      AND EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.applicationaccess' AND 
+            name='Siri Data Sharing Opt-In Status' AND 
+            value = 2
+        )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.SubmitDiagInfo' AND 
+            name='Disable' AND 
+            (value != 0 AND value != 'false')
+        )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.applicationaccess' AND 
+            name='Disable' AND 
+            (value != 0 AND value != 'false')
+        )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.applicationaccess' AND 
+            name='Disable' AND 
+            value != 2
+        );  
+  critical: false
+  description: Checks that Sending Diagnostic and Usage Data to Apple Is Disabled.
+  resolution: |
+    Automated method:
+    Ask your system administrator to deploy an MDM profile that disables Sending Diagnostic and Usage Data to Apple.
+    Graphical method:
+      Perform the following steps to ensure Sending Diagnostic and Usage Data to Apple Is Disabled:
+        1. Open System Settings
+        2. Select Privacy & Security
+        3. Select Analytics & Improvements
+        4. Verify that Share Mac Analytics is not enabled
+        5. Verify that Share with App Developers is not enabled
+        6. Verify that Improve Siri & Dictation is not enabled
+        7. Verify that Improve Assistive Voice Features is not enabled 
+  platform: darwin

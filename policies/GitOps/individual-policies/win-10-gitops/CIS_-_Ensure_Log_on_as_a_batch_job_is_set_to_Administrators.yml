@@ -1,0 +1,14 @@
+- name: CIS - Ensure 'Log on as a batch job' is set to 'Administrators'
+  platform: windows
+  description: |
+    This policy setting allows accounts to log on using the task scheduler service. Because the task
+    scheduler is often used for administrative purposes, it may be needed in enterprise
+    environments. However, its use should be restricted in high security environments to prevent
+    misuse of system resources or to prevent attackers from using the right to launch malicious code
+    after gaining user level access to a computer.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Log on as a batch job'
+  query: |
+    SELECT 1 FROM cis_audit where item = "2.2.28" AND (regex_match(value,".*(?=.*Administrators).*",0) is not null);

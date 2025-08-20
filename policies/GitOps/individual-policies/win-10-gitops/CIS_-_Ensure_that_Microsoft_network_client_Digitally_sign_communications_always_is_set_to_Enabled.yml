@@ -1,0 +1,10 @@
+- name: CIS - Ensure that 'Microsoft network client Digitally sign communications (always)' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting determines whether packet signing is required by the SMB client component.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Enabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Microsoft network client: Digitally sign communications (always)'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\CurrentControlSet\\Services\\LanmanWorkstation\\Parameters\\RequireSecuritySignature' AND data != 0);

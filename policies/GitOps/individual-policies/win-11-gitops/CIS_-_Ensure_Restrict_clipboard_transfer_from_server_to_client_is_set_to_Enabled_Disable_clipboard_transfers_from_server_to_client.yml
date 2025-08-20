@@ -1,0 +1,13 @@
+- name: |
+    CIS - Ensure 'Restrict clipboard transfer from server to client' is set to 'Enabled: Disable clipboard transfers from server to client'
+  platform: windows
+  description: |
+    This policy setting controls whether the clipboard can be used to transfer data from the Remote Desktop session to the client.
+    The recommended state for this setting is: Enabled: Disable clipboard transfers from server to client.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled: Disable clipboard transfers from server to client':
+    'Computer Configuration\Administrative Templates\Windows Components\Remote Desktop Services\Remote Desktop Session Host\Device and Resource Redirection\Restrict clipboard transfer from server to client'
+    Note: This Group Policy path is provided by the Group Policy template
+    'TerminalServer.admx/adml' that is included with the Microsoft Windows 11 Release 23H2 v2.0 Administrative Templates (or newer).
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\SCClipLevel' AND data = 0);

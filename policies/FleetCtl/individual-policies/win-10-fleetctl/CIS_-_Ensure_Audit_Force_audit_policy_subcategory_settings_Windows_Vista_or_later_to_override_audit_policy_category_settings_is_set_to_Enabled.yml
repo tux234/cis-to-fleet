@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Audit Force audit policy subcategory settings (Windows Vista or later) to override audit policy category settings' is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\SCENoApplyLegacyAuditPolicy' AND data == 1);
+  critical: false
+  description: This policy setting allows administrators to enable the more precise auditing capabilities.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Enabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Audit: Force audit policy subcategory settings (Windows Vista or later) to override audit policy category settings'
+  platform: windows

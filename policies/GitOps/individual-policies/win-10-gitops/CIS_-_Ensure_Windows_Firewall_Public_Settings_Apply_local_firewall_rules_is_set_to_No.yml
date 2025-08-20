@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Windows Firewall: Public: Settings: Apply local firewall rules' is set to 'No'
+  platform: windows
+  description: |
+    This setting controls whether local administrators are allowed to create local firewall rules that apply together with firewall rules configured by Group Policy.
+    The recommended state for this setting is: No.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to No:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Windows Defender Firewall with Advanced Security\Windows Defender Firewall with Advanced Security - Local Group Policy Object\Windows Defender Firewall Properties\Public Profile\Settings Customize\Apply local firewall rules'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\AllowLocalPolicyMerge' and data == 0);

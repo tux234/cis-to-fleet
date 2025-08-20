@@ -1,0 +1,10 @@
+- name: |
+    CIS - Ensure 'Turn off app notifications on the lock screen' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting allows you to prevent app notifications from appearing on the lock screen.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\System\Logon\Turn off app notifications on the lock screen'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\System\DisableLockScreenAppNotifications' AND data = 1);

@@ -1,0 +1,29 @@
+- name: CIS - Ensure Bluetooth Sharing Is Disabled
+  platform: darwin
+  description: |
+    Bluetooth Sharing allows files to be exchanged with Bluetooth-enabled devices.
+    This setting only disables the receiving of files and requires both devices to
+    be paired through Bluetooth as well as accepted by the receiver. This setting
+    does not disable the ability to send files from the device to another paired
+    Bluetooth device.
+    Bluetooth pairing only requires an acceptance dialog on either device attempting
+    to pair. It does require the Bluetooth pane in System Settings to be open for
+    any macOS device to be discoverable. While it does give a verification code, it
+    does not require either device to enter the code, but just accept the dialog
+    box (on either device). At that point, the two devices are paired and files can
+    be shared through Bluetooth. To receive files through Bluetooth File Exchange
+    application, the user does have to accept the file(s) through a dialog box.
+    Users should only pair to known trusted Bluetooth devices.
+  resolution: |
+    Graphical Method:
+    1. Open System Settings
+    2. Select General
+    3. Select Sharing
+    4. Set Bluetooth Sharing to disabled
+  query: |
+    SELECT 1 WHERE NOT EXISTS (
+      SELECT * FROM plist WHERE
+        path LIKE '/Users/%/Library/Preferences/ByHost/com.apple.Bluetooth.%.plist' AND
+        key = 'PrefKeyServicesEnabled' AND
+        value = '1'
+    );

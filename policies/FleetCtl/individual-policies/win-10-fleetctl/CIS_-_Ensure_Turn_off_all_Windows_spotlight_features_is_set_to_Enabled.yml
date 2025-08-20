@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Turn off all Windows spotlight features' is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE (path LIKE 'HKEY_USERS\%\SOFTWARE\Microsoft\Windows\CurrentVersion\Group Policy Objects\%\Software\Policies\Microsoft\Windows\CloudContent\DisableWindowsSpotlightFeatures' AND data = 1);
+  critical: false
+  description: This policy setting determines whether the all Windows Spotlight features are turned on/off (together).
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'User Configuration\Policies\Administrative Templates\Windows Components\Cloud Content\Turn off all Windows spotlight features'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy template CloudContent.admx/adml that is included with the Microsoft Windows 10 Release 1607 & Server 2016 Administrative Templates (or newer).
+  platform: windows

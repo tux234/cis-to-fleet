@@ -1,0 +1,10 @@
+- name: CIS - Ensure 'Block launching Universal Windows apps with Windows Runtime API access from hosted content' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting controls whether Microsoft Store apps with Windows Runtime API access directly from web content can be launched.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Enabled':
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\App runtime\Block launching Universal Windows apps with Windows Runtime API access from hosted content'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\BlockHostedAppAccessWinRT' AND data != 0);

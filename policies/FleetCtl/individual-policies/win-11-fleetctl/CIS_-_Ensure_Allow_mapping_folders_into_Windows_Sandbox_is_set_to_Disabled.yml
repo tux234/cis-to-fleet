@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Allow mapping folders into Windows Sandbox' is set to 'Disabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Sandbox\AllowWriteToMappedFolders' AND data = 0);
+  critical: false
+  description: |
+    This policy setting controls whether folders are allowed to be mapped into Windows Sandbox.
+    The recommended state for this setting is: Disabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Disabled:
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Windows Sandbox\Allow mapping folders into Windows Sandbox'
+    Note: This Group Policy path is provided by the Group Policy template
+    'WindowsSandbox.admx/adml' that is included with the Microsoft Windows 11 Release 24H2 Administrative Templates (or newer).
+  platform: windows

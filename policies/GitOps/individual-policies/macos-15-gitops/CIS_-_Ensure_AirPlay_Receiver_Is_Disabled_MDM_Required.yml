@@ -1,0 +1,18 @@
+- name: CIS - Ensure AirPlay Receiver Is Disabled (MDM Required)
+  platform: darwin
+  description: |
+    In macOS Monterey (12.0), Apple has added the capability to share content from
+    another Apple device to the screen of a host Mac. While there are many valuable uses
+    of this capability, such sharing on a standard Mac user workstation should be enabled
+    ad hoc as required rather than allowing a continuous sharing service. The feature can
+    be restricted by Apple ID or network and is configured to use by accepting the
+    connection on the Mac. Part of the concern is frequent connection requests may
+    function as a denial-of-service and access control limits may provide too much
+    information to an attacker.
+  resolution: |
+    The administrator should configure this via MDM profile.
+    Ask your administrator to deploy a profile with the following configuration:
+      1. The PayloadType string is com.apple.applicationaccess
+      2. The key to include is allowAirPlayIncomingRequests
+      3. The key must be set to <false/>
+  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.applicationaccess' AND \n        name='allowAirPlayIncomingRequests' AND \n        (value = 0 OR value = 'false')\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.applicationaccess' AND \n        name='allowAirPlayIncomingRequests' AND \n        (value != 0 AND value != 'false')\n    );  \n"

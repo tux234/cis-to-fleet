@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure that 'Microsoft network server Digitally sign communications (always)' is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\CurrentControlSet\\Services\\LanManServer\\Parameters\\requiresecuritysignature' AND data != 0);
+  critical: false
+  description: |
+    This policy setting determines whether packet signing is required by the SMB server component.
+    Enable this policy setting in a mixed environment to prevent downstream clients from using the
+    workstation as a network server.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Enabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Microsoft network server: Digitally sign communications (always)'
+  platform: windows

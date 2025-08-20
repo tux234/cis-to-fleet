@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure the OS is not Activate When Resuming from Sleep (Fleetd, FDA Required)
+  query: |
+    SELECT 1 WHERE EXISTS(
+      SELECT 1 FROM system_info WHERE
+      regex_match(hardware_model, '^Mac[0-9,]+$', 0) != '' OR regex_match(hardware_model, '^MacBook', 0) != 0
+    )
+    AND EXISTS(
+      SELECT JSON_EXTRACT(system_wide_power_settings, '$.DestroyFVKeyOnStandby') AS destroy_fv_key_on_standby
+      FROM (
+        SELECT JSON_EXTRACT(json_result, '$.System-wide power settings:') AS system_wide_power_settings FROM pmset
+      )
+      WHERE destroy_fv_key_on_standby = '1'
+    )
+    AND EXISTS(
+        SELECT 1 WHERE EXISTS(
+          SELECT 1 WHERE EXISTS(
+            SELECT 1 FROM system_info WHERE cpu_type = 'x86_64h' OR cpu_type = 'x86_64'
+          ) AND EXISTS(
+            SELECT
+                CAST(JSON_EXTRACT(battery, '$.standbydelaylow') AS INTEGER) AS standbydelaylow,
+                CAST(JSON_EXTRACT(battery, '$.standbydelayhigh') AS INTEGER) AS standbydelayhigh,
+                CAST(JSON_EXTRACT(battery, '$.highstandbythreshold') AS INTEGER) AS highstandbythreshold,
+                CAST(JSON_EXTRACT(battery, '$.hibernatemode') AS INTEGER) AS hibernatemode
+            FROM (
+                SELECT JSON_EXTRACT(json_result, '$.Battery Power:') as battery FROM pmset WHERE getting = 'custom'
+            )
+            WHERE standbydelaylow <= 900 AND standbydelayhigh <= 900 AND highstandbythreshold >= 90 AND hibernatemode = 25
+          )
+        ) OR EXISTS(
+          SELECT 1 WHERE EXISTS(
+            SELECT 1 FROM system_info WHERE cpu_type LIKE 'arm64%'
+          ) AND EXISTS (
+            SELECT
+                CAST(JSON_EXTRACT(battery, '$.standby') AS INTEGER) AS standby
+            FROM (
+                SELECT JSON_EXTRACT(json_result, '$.Battery Power:') AS battery FROM pmset WHERE getting = 'custom'
+            )
+            WHERE standby <= 900
+          )
+        )
+    );
+  critical: false
+  description: |
+    In order to use a computer with Full Disk Encryption (FDE), macOS must keep encryption keys in memory to allow
+    the use of the disk that has been FileVault protected. When the system is not in use, the volume is protected
+    through encryption. When the system is sleeping and available to quickly resume, the encryption keys remain in memory.
+    If an unauthorized party has possession of the computer and the computer is only slept, there are known attack vectors
+    that can be attempted against the RAM that has the encryption keys or the running operating system protected
+    by a login screen.
+    
+    MacBooks should be set so that the `standbydelay` is 15 minutes (900 seconds) or less.
+    Mac systems should be set to hibernate after sleeping for a risk-acceptable time period.
+    Organizations may still decide to use hibernate after sleeping if there is a security need 
+    (ex. international travel), but it can cause kernel panics in Apple Silicon Macs.
+  resolution: |
+    Ask your system administrator to deploy the following script to Macbook devices:
+    if [[ $(uname -m) == 'arm64' ]]; then
+            # Apple silicon
+            /usr/bin/sudo /usr/bin/pmset -a standby 900
+            /usr/bin/sudo /usr/bin/pmset -a destroyfvkeyonstandby 1
+    else
+            # Intel
+            /usr/bin/sudo /usr/bin/pmset -a standbydelaylow 900
+            /usr/bin/sudo /usr/bin/pmset -a standbydelayhigh 900
+            /usr/bin/sudo /usr/bin/pmset -a highstandbythreshold 90
+            /usr/bin/sudo /usr/bin/pmset -a destroyfvkeyonstandby 1
+            /usr/bin/sudo /usr/bin/pmset -a hibernatemode 25
+    fi
+  platform: darwin

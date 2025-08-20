@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Configure registry policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'
+  platform: windows
+  description: |
+    The "Process even if the Group Policy objects have not changed" option updates and reapplies policies even if the policies have not changed.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled, then set the Process even if the Group Policy objects have not changed option to TRUE (checked):
+    'Computer Configuration\Policies\Administrative Templates\System\Group Policy\Configure registry policy processing'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy template GroupPolicy.admx/adml that is included with the Microsoft Windows 8.0 & Server 2012 (non-R2) Administrative Templates (or newer).
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Group Policy\\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\NoGPOListChanges' AND data = 0);

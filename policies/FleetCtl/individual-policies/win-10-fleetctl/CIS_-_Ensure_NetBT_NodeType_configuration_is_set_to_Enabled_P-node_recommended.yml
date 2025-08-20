@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'NetBT NodeType configuration' is set to 'Enabled: P-node (recommended)'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\NetBT\\Parameters\NodeType' AND data = 2);
+  critical: false
+  description: |
+    This setting determines which method NetBIOS over TCP/IP (NetBT) uses to register and resolve names. The available methods are:
+    The B-node (broadcast) method only uses broadcasts.
+    The P-node (point-to-point) method only uses name queries to a name server (WINS).
+    The M-node (mixed) method broadcasts first, then queries a name server (WINS) if broadcast failed.
+    The H-node (hybrid) method queries a name server (WINS) first, then broadcasts if the query failed.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled: P-node (recommended):
+    'Computer Configuration\Policies\Administrative Templates\MS Security Guide\NetBT NodeType configuration'
+    Note: This change does not take effect until the computer has been restarted.
+    Note: This Group Policy path does not exist by default. An additional Group Policy template (SecGuide.admx/adml) is required - it is available from Microsoft at this link (https://techcommunity.microsoft.com/t5/microsoft-security-baselines/security-baseline-final-for-windows-10-v1903-and-windows-server/ba-p/701084).
+  platform: windows

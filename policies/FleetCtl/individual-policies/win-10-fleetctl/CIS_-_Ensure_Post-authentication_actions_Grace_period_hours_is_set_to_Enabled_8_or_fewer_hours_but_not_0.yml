@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Post-authentication actions: Grace period (hours)' is set to 'Enabled: 8 or fewer hours, but not 0'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS\PostAuthenticationResetDelay' AND data <= 8 AND data != 0 );
+  critical: false
+  description: |
+    This policy settings configures post-authentication actions which will be executed after
+    detecting an authentication by the Windows LAPS managed account. The Grace period
+    refers to the amount of time (hours) to wait after an authentication before executing the
+    specified post-authentication actions.
+    The recommended state for this setting is: Enabled: 8 or fewer hours, but not 0.
+    Note: Organizations that utilize third-party commercial software to manage unique &
+    complex local Administrator passwords on domain members may opt to disregard these LAPS recommendations.
+    Note 2: Windows LAPS does not support standalone computers - they must be joined
+    to an Active Directory domain or Entra ID (formerly Azure Active Directory).
+    Note 3: If this policy is set to 0 it prevents all post-authentication actions from occurring.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled: 8 or fewer hours, but not 0:
+    'Computer Configuration\Policies\Administrative Templates\System\LAPS\Post-authentication actions: Grace period (hours)'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy
+    template 'LAPS.admx/adml' that is included with the Microsoft Windows 11 Release 22H2 Administrative Templates v3.0 (or newer).
+  platform: windows

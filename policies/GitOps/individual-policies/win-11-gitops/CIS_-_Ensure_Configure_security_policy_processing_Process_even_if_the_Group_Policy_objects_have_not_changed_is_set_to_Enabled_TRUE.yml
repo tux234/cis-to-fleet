@@ -1,0 +1,12 @@
+- name: |
+    CIS - Ensure 'Configure security policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'
+  platform: windows
+  description: |
+    The "Process even if the Group Policy objects have not changed" option updates and reapplies security policies even if the security policies have not changed.
+    This setting affects all policy settings within the built-in security template of Group Policy (e.g. Windows Settings\Security Settings).
+    The recommended state for this setting is: Enabled: TRUE (checked).
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled, then set the Process even if the Group Policy objects have not changed option to TRUE (checked):
+    'Computer Configuration\Policies\Administrative Templates\System\Group Policy\Configure security policy processing'
+  query: |
+    SELECT 1 FROM registry WHERE path LIKE 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{%}\NoBackgroundPolicy' AND data = '0';

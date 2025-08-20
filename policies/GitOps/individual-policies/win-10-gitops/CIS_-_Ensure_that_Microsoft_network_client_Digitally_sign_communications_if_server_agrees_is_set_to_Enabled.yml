@@ -1,0 +1,10 @@
+- name: CIS - Ensure that 'Microsoft network client Digitally sign communications (if server agrees)' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting determines whether the SMB client will attempt to negotiate SMB packet signing.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Enabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Microsoft network client: Digitally sign communications (if server agrees)'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\CurrentControlSet\\Services\\LanmanWorkstation\\Parameters\\EnableSecuritySignature' AND data != 0);

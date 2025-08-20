@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Configure enhanced anti-spoofing' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting determines whether enhanced anti-spoofing is configured for devices which support it.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Biometrics\Facial Features\Configure enhanced anti-spoofing'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy template Biometrics.admx/adml that is included with the Microsoft Windows 10 Release 1511 Administrative Templates (or newer).
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Biometrics\\FacialFeatures\EnhancedAntiSpoofing' AND data = 1);

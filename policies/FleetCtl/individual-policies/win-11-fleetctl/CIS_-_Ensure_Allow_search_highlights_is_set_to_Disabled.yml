@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Allow search highlights' is set to 'Disabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search\\EnableDynamicContentInWSB' AND (data = 0));
+  critical: false
+  description: This policy setting controls search highlights in the start menu search box and in search home.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Disabled':
+    Computer Configuration\Policies\Administrative Templates\Windows Components\Search\Allow search highlights
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy template Search.admx/adml that is included with the Microsoft Windows 10 Release 21H2 Administrative Templates (or newer).
+  platform: windows

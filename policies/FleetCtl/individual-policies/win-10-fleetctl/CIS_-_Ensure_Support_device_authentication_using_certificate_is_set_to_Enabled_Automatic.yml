@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Support device authentication using certificate' is set to 'Enabled: Automatic'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\kerberos\\parameters\DevicePKInitBehavior' AND data = 0) AND (SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\kerberos\\parameters\DevicePKInitEnabled' AND data = 1));
+  critical: false
+  description: |
+    This policy setting allows you to set support for Kerberos to attempt authentication using the certificate for the device to the domain.
+    Support for device authentication using certificate will require connectivity to a DC in the device account domain which supports certificate authentication for computer accounts.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled: Automatic:
+    'Computer Configuration\Policies\Administrative Templates\System\Kerberos\Support device authentication using certificate'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy template Kerberos.admx/adml that is included with the Microsoft Windows 10 RTM (Release 1507) Administrative Templates (or newer).
+  platform: windows

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Network access: Remotely accessible registry paths' is configured
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\SecurePipeServers\\Winreg\\AllowedExactPaths\Machine' and data == 'System\CurrentControlSet\Control\ProductOptions,System\CurrentControlSet\Control\Server Applications,Software\Microsoft\Windows NT\CurrentVersion');
+  critical: false
+  description: |
+    This policy setting determines which registry paths will be accessible over the network,
+    regardless of the users or groups listed in the access control list (ACL) of the winreg
+    registry key.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to:
+    System\CurrentControlSet\Control\ProductOptions
+    System\CurrentControlSet\Control\Server Applications
+    SOFTWARE\Microsoft\Windows NT\CurrentVersion
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Network access: Remotely accessible registry paths'
+  platform: windows

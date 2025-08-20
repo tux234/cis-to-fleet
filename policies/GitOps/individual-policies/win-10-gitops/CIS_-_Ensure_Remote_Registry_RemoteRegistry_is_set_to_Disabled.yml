@@ -1,0 +1,10 @@
+- name: CIS - Ensure 'Remote Registry (RemoteRegistry)' is set to 'Disabled'
+  platform: windows
+  description: |
+    The service enables remote users to view and modify registry settings on this computer.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to 'Disabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\Remote Registry'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\RemoteRegistry\\Start' AND data == 4);

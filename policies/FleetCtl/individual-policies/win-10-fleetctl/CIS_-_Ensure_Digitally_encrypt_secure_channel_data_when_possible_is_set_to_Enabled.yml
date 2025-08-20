@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Digitally encrypt secure channel data (when possible)' is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\SealSecureChannel' AND data != 0;
+  critical: false
+  description: |
+    This policy setting determines whether a domain member should attempt to negotiate encryption
+    for all secure channel traffic that it initiates.
+    When a computer joins a domain, a computer account is created. After it joins the domain, the
+    computer uses the password for that account to create a secure channel with the Domain
+    Controller for its domain every time that it restarts. Requests that are sent on the secure
+    channel are authenticated—and sensitive information such as passwords are encrypted—but the
+    channel is not integrity-checked, and not all information is encrypted.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the
+    following UI path to 'Enabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Domain member: Digitally encrypt secure channel data (when possible)'
+  platform: windows

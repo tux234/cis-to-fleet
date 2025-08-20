@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Do not apply the Mark of the Web tag to files copied from insecure sources' is set to 'Disabled'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer\DisableMotWOnInsecurePathCopy' AND data = 0);
+  critical: false
+  description: |
+    This policy setting determines whether files that are sourced from insecure locations are tagged with Mark of the Web (MOTW).
+    The recommended state for this setting is: Disabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Disabled:
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\File Explorer\Do not apply the Mark of the Web tag to files copied from insecure sources'
+    Note: This Group Policy path is provided by the Group Policy template
+    'Explorer.admx/adml' that is included with the Microsoft Windows 11 Release 24H2 Administrative Templates (or newer).
+  platform: windows

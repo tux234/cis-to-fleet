@@ -1,0 +1,10 @@
+- name: |
+    CIS - Ensure 'Prevent device metadata retrieval from the Internet' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting allows you to prevent Windows from retrieving device metadata from the Internet.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\System\Device Installation\Prevent device metadata retrieval from the Internet'
+  query: |
+    SELECT 1 FROM REGISTRY WHERE (PATH = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Device Metadata\PreventDeviceMetadataFromNetwork' AND data = 1);

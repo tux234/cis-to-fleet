@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Configure Remote Encryption Protection Mode' is set to 'Enabled: Audit' or higher
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Remediation\Behavioral Network Blocks\Brute Force Protection\BruteForceProtectionConfiguredState' AND data IN (1, 2));
+  critical: false
+  description: |
+    This policy setting configures the Brute-Force Protection feature in Microsoft Defender Antivirus.
+    Brute-Force Protection can detect and block attempts to forcibly initiate sign-ins and sessions.
+    The recommended state for this setting is: 'Enabled: Audit'. Configuring this setting to Block also conforms to the benchmark.
+    Note: Configuring the value to either Default or Off does not conform to this benchmark.
+    Note 2: This setting's name is duplicated in the 'Remote Encryption Protection' section, but they configure two different behaviors.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled: Audit' or higher:
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Microsoft Defender Antivirus\Remediation\Behavioral Network Blocks\Brute-Force Protection\Configure Remote Encryption Protection Mode'
+    Note: This Group Policy path is provided by the Group Policy template
+    'WindowsDefender.admx/adml' that is included with the Microsoft Windows 11 Release 24H2 Administrative Templates (or newer).
+  platform: windows

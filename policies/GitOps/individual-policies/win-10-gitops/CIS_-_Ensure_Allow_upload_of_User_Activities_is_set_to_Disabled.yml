@@ -1,0 +1,10 @@
+- name: |
+    CIS - Ensure 'Allow upload of User Activities' is set to 'Disabled'
+  platform: windows
+  description: |
+    This policy setting determines whether published User Activities can be uploaded to the cloud.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Disabled:
+    'Computer Configuration\Policies\Administrative Templates\System\OS Policies\Allow upload of User Activities'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\System\UploadUserActivities' AND data = 0);

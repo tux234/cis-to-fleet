@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS -  Ensure Logging Is Enabled for Sudo (Fleetd Required)
+  query: |
+    SELECT 1 AS result
+    FROM (
+      SELECT 1 FROM file_lines
+      WHERE path = '/etc/sudoers'
+        AND line LIKE '%Defaults%log_allowed%'
+        AND line NOT LIKE '%!log_allowed%'
+        AND line NOT LIKE '#%'
+    
+      UNION ALL
+    
+      SELECT 1 FROM file_lines
+      WHERE path LIKE '/etc/sudoers.d/%'
+        AND line LIKE '%Defaults%log_allowed%'
+        AND line NOT LIKE '%!log_allowed%'
+        AND line NOT LIKE '#%'
+    ) AS matches
+    LIMIT 1;
+  critical: false
+  description: |
+    In order to properly monitor the use of the sudo command, logs events for
+    any use of sudo should be captured in the unified log.
+  resolution: |
+    Automated method:
+    Ask your administrator to deploy a script that will configure:
+    /usr/bin/sudo /usr/sbin/visudo -f /etc/sudoers.d/10_cissudoconfiguration
+    Add the line to the file: 'Defaults log_allowed'
+    Note: Unlike other Unix/Linux distros, macOS will ignore configuration files
+    in the sudoers.d folder that contain a period, so do not add a file
+    extension to the configuration file. The 'Defaults log_allowed' line can be
+    added to an existing configuration file or a new one.
+  platform: darwin

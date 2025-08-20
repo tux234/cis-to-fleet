@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Require domain users to elevate when setting a network's location' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting determines whether to require domain users to elevate when setting a network's location.
+    The recommended state for this setting is: Enabled.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to On (recommended):
+    'Computer Configuration\Policies\Administrative Templates\Network\Network Connections\Require domain users to elevate when setting a network's location'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Network Connections\NC_StdDomainUserSetLocation' AND data = 1);

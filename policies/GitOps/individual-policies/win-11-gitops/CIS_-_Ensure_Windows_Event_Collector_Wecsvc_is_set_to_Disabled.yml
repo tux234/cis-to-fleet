@@ -1,0 +1,12 @@
+- name: CIS - Ensure 'Windows Event Collector (Wecsvc)' is set to 'Disabled'
+  platform: windows
+  description: |
+    This service manages persistent subscriptions to events from remote sources that support
+    WS-Management protocol. This includes Windows Vista event logs, hardware and IPMI-enabled event
+    sources. The service stores forwarded events in a local Event Log.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to 'Disabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\Windows Event Collector'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Wecsvc\\Start' AND data == 4);

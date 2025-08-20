@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Media Sharing Is Disabled (MDM Required)
+  query: |
+    SELECT 1 WHERE EXISTS(
+      SELECT 1 FROM managed_policies WHERE
+        domain = 'com.apple.applicationaccess' AND
+        name = 'allowMediaSharing' AND
+        (value = 0 OR value = 'false')
+    ) AND EXISTS (
+      SELECT 1 FROM managed_policies WHERE
+        domain = 'com.apple.applicationaccess' AND
+        name = 'allowMediaSharingModification' AND
+        (value = 0 OR value = 'false')
+    ) AND NOT EXISTS (
+      SELECT 1 FROM managed_policies WHERE
+        domain = 'com.apple.applicationaccess' AND
+        name = 'allowMediaSharing' AND
+        (value != 0 AND value != 'false')
+    ) AND NOT EXISTS (
+      SELECT 1 FROM managed_policies WHERE
+        domain = 'com.apple.applicationaccess' AND
+        name = 'allowMediaSharingModification' AND
+        (value != 0 AND value != 'false')
+    );
+  critical: false
+  description: |
+    Starting with macOS 10.15, Apple has provided a control which permits a user to share
+    Apple downloaded content on all Apple devices that are signed in with the same Apple ID.
+    This allows users to share downloaded Movies, Music, or TV shows with other
+    controlled macOS, iOS and iPadOS devices, as well as photos with Apple TVs.
+    Disabling Media Sharing reduces the remote attack surface of the system
+  resolution: |
+    Profile Method:
+    Ask your administrator to deploy a profile with the following configuration:
+    1. The PayloadType string is com.apple.applicationaccess
+    2. The key to include is allowMediaSharing
+    3. The key must be set to <false/>
+    4. The key to also include is allowMediaSharingModification
+    5. The key must be set to <false/>
+  platform: darwin

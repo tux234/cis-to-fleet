@@ -1,0 +1,20 @@
+- name: CIS - Ensure 'Create symbolic links' is set to 'Administrators or NT VIRTUAL MACHINE\Virtual Machines'
+  platform: windows
+  description: |
+    This policy setting determines which users can create symbolic links. In Windows Vista, existing
+    NTFS file system objects, such as files and folders, can be accessed by referring to a new kind
+    of file system object called a symbolic link. A symbolic link is a pointer (much like a shortcut
+    or .lnk file) to another file system object, which can be a file, folder, shortcut or another
+    symbolic link. The difference between a shortcut and a symbolic link is that a shortcut only
+    works from within the Windows shell. To other programs and applications, shortcuts are just
+    another file, whereas with symbolic links, the concept of a shortcut is implemented as a feature
+    of the NTFS file system. Symbolic links can potentially expose security vulnerabilities in
+    applications that are not designed to use them. For this reason, the privilege for creating
+    symbolic links should only be assigned to trusted users. By default, only Administrators can
+    create symbolic links.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Administrators or NT VIRTUAL MACHINE\Virtual Machines'
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Create symbolic links'
+  query: |
+    SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/CreateSymbolicLinks</LocURI></Target></Item></Get></SyncBody>" AND (regex_match(mdm_command_output,".*(Administrators|Virtual Machines).*",0) is not null);

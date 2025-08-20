@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Configure Redirection Guard' is set to 'Enabled: Redirection Guard Enabled' 
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Printers\RedirectionGuardPolicy' AND (data = 1));
+  critical: false
+  description: This policy setting determines whether Redirection Guard is enabled for the print spooler. Redirection Guard can prevent file redirections from being used within the print spooler.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled: Redirection Guard Enabled':
+    'Computer Configuration\Policies\Administrative Templates\Printers\Configure Redirection Guard'
+    Note: This Group Policy path is provided by the Group Policy template Printing.admx/adml that is included with the Microsoft Windows 11 Release 22H2 Administrative Templates (or newer).
+  platform: windows

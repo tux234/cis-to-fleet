@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Turn off the advertising ID' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting turns off the advertising ID, preventing apps from using the ID for experiences across apps.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\System\User Profiles\Turn off the advertising ID'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy template UserProfiles.admx/adml that is included with the Microsoft Windows 8.1 & Server 2012 R2 Administrative Templates (or newer).
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\Microsoft\\Windows\\AdvertisingInfo\DisabledByGroupPolicy' AND data = 1);

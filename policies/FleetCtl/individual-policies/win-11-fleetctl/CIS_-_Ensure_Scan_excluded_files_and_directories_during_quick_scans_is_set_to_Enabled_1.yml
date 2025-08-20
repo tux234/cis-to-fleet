@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Scan excluded files and directories during quick scans' is set to 'Enabled: 1'
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Scan\QuickScanIncludeExclusions' AND data = 1);
+  critical: false
+  description: |
+    This policy setting manages whether or not Microsoft Defender Antivirus scans excluded files and directories when running a Quick Scan.
+    The recommended state for this setting is: Enabled: 1.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled: 1':
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Microsoft Defender Antivirus\Scan\Scan excluded files and directories during quick scans'
+    Note: This Group Policy path is provided by the Group Policy template
+    'WindowsDefender.admx/adml' that is included with the Microsoft Windows 11 Release 24H2 Administrative Templates (or newer).
+  platform: windows

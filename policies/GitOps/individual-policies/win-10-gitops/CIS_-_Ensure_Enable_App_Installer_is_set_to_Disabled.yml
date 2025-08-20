@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Enable App Installer' is set to 'Disabled'
+  platform: windows
+  description: |
+    This policy setting controls whether user have access to the Windows Package Manager. Windows Package Manager is a package manager solution that consists of a command line tool and set of services for installing applications on Microsoft Windows 10 and 11.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Disabled':
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Desktop App Installer\Enable App Installer'
+    Note: This Group Policy path may not exist by default. It is provided by the Group Policy template DesktopAppInstaller.admx/adml that is included with the Microsoft Windows 11 Release 22H2 Administrative Templates (or newer).
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppInstaller\\EnableAppInstaller' AND (data = 0));

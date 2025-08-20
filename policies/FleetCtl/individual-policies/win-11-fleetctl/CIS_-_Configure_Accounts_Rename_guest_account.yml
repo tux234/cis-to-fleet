@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Configure 'Accounts Rename guest account'
+  query: SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/LocalPoliciesSecurityOptions/Accounts_RenameGuestAccount</LocURI></Target></Item></Get></SyncBody>" and mdm_command_output != "Guest";
+  critical: false
+  description: |
+    The built-in local guest account is another well-known name to attackers. It is recommended to
+    rename this account to something that does not indicate its purpose. Even if you disable this
+    account, which is recommended, ensure that you rename it for added security.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to value different than 'Guest':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Accounts: Rename guest account'
+  platform: windows

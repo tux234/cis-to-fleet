@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Audit PNP Activity' is set to 'Success'
+  query: |
+    SELECT 1 FROM mdm_bridge where mdm_command_input =
+    "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Audit/AccountManagement_AuditUserAccountManagement</LocURI></Target></Item></Get></SyncBody>" 
+    AND mdm_command_output = "3";
+  critical: false
+  description: |
+    Creates audit events whenever there is a change in user status, e.g. if an account is created or an account's password changed.
+    This makes it easier to investigate a future security incident if required.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the
+    following UI path to 'Success and Failure':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Advanced Audit Policy Configuration\Audit Policies\Account Management\Audit User Account Management'
+  platform: windows

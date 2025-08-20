@@ -1,0 +1,10 @@
+- name: CIS - Ensure 'Xbox Live Game Save (XblGameSave)' is set to 'Disabled'
+  platform: windows
+  description: |
+    This service syncs save data for Xbox Live save enabled game.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to 'Disabled':
+    'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\Xbox Live Game Save'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\XblGameSave\\Start' AND data == 4);

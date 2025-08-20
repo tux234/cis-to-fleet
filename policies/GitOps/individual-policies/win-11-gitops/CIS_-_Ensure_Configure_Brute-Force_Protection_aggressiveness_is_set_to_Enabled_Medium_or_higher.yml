@@ -1,0 +1,14 @@
+- name: |
+    CIS - Ensure 'Configure Brute-Force Protection aggressiveness' is set to 'Enabled: Medium' or higher
+  platform: windows
+  description: |
+    This policy setting configures whether Brute-Force Protection in Microsoft Defender Antivirus is enabled.
+    Brute-force protection can detect and block attempts to forcibly sign in to a system.
+    The recommended state for this setting is: Enabled: Medium. Configuring this setting to High also conforms to the benchmark.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to 'Enabled: Medium' or higher:
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Microsoft Defender Antivirus\Remediation\Behavioral Network Blocks\Brute-Force Protection\Configure Brute-Force Protection aggressiveness'
+    Note: This Group Policy path is provided by the Group Policy template
+    'WindowsDefender.admx/adml' that is included with the Microsoft Windows 11 Release 24H2 Administrative Templates (or newer).
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Remediation\Behavioral Network Blocks\Brute Force Protection\BruteForceProtectionAggressiveness' AND data IN (1, 2));

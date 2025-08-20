@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Time Is Set Within Appropriate Limits (Fleetd Required)
+  query: SELECT * FROM sntp_request WHERE server = 'time.apple.com' AND clock_offset_ms <= 270000 AND clock_offset_ms >= -270000;
+  critical: false
+  description: |
+    Correct date and time settings are required for authentication protocols, file creation, modification dates and log entries.
+    The time offset compared to time.apple.com must be between -270.x and 270.x seconds.
+  resolution: Make sure the device can connect to time.apple.com to synchronize time.
+  platform: darwin
