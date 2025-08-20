@@ -466,11 +466,6 @@ jobs:
             ---
             
             🤖 *This PR was created automatically. Review the generated policies before merging.*
-          labels: |
-            automated
-            cis-policies
-            fleet
-            security
 
       - name: Summary
         if: steps.check-changes.outputs.no-changes == 'false'
