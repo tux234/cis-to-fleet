@@ -1,6 +1,6 @@
 # CIS to Fleet
 
-**The canonical, portable solution for converting CIS benchmarks to Fleet-compatible policy files.**
+**A little bash script for converting CIS benchmarks to Fleet-compatible policy files.**
 
 Convert [Center for Internet Security (CIS)](https://www.cisecurity.org/) benchmark policies from the [Fleet repository](https://github.com/fleetdm/fleet/tree/main/ee/cis) into clean, Fleet-ready YAML files for streamlined security compliance management.
 
