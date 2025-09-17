@@ -4,16 +4,6 @@
 
 Convert [Center for Internet Security (CIS)](https://www.cisecurity.org/) benchmark policies from the [Fleet repository](https://github.com/fleetdm/fleet/tree/main/ee/cis) into clean, Fleet-ready YAML files for streamlined security compliance management.
 
-## Why Bash?
-
-This implementation prioritizes **portability**, **simplicity**, and **ease of use**:
-
-- 🚀 **Fast**: Native Bash execution (~50ms startup)
-- 📦 **Lightweight**: Single script file, minimal dependencies  
-- 🌐 **Universal**: Works on macOS, Linux, WSL, and most CI/CD systems
-- 🔧 **Simple**: No build process, runtime setup, or complex toolchains
-- ⚡ **Efficient**: Direct API integration with smart caching
-
 ## Quick Start
 
 ```bash
