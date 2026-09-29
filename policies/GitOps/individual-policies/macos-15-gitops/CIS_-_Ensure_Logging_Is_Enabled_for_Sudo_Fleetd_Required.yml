@@ -1,4 +1,4 @@
-- name: CIS -  Ensure Logging Is Enabled for Sudo (Fleetd Required)
+- name: CIS - Ensure Logging Is Enabled for Sudo (Fleetd Required)
   platform: darwin
   description: |
     In order to properly monitor the use of the sudo command, logs events for

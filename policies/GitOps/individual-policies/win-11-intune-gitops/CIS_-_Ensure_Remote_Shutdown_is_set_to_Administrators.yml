@@ -1,0 +1,17 @@
+- name: CIS - Ensure 'Remote Shutdown' is set to 'Administrators'
+  platform: windows
+  description: |-
+    This policy setting allows users to shut down Windows Vista-based or newer computers
+    from remote locations on the network. Anyone who has been assigned this user right
+    can cause a denial of service (DoS) condition, which would make the computer
+    unavailable to service user requests. Therefore, it is recommended that only highly
+    trusted administrators be assigned this user right.
+    The recommended state for this setting is: *S-1-5-32-544 (Administrators).
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to *S-1-5-32-544 (Administrators).
+    User Rights\Remote Shutdown
+
+    Note: Include only one User or Group per line in the Settings Catalog configuration
+    screen.
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/RemoteShutdown</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%Administrators%';

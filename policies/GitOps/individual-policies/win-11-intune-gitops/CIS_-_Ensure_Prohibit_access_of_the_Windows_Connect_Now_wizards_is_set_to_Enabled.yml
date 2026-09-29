@@ -1,0 +1,5 @@
+- name: CIS - Ensure 'Prohibit access of the Windows Connect Now wizards' is set to 'Enabled'
+  platform: windows
+  description: 'This policy setting prohibits access to Windows Connect Now (WCN) wizards. The recommended state for this setting is: Enabled.'
+  resolution: To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Enabled. Administrative Templates\Network\Windows Connect Now\Prohibit access of the Windows Connect Now wizards
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/ADMX_WindowsConnectNow/WCN_DisableWcnUi_2</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%<enabled/>%';

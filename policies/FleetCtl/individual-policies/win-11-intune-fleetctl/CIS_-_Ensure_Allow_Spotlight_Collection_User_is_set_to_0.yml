@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Allow Spotlight Collection (User)' is set to '0'
+  query: SELECT 1 FROM registry WHERE path LIKE 'HKEY_USERS\S-1-%\SOFTWARE\Policies\Microsoft\Windows\CloudContent\DisableWindowsSpotlightFeatures' AND data = '1' LIMIT 1;
+  critical: false
+  description: |
+    This policy setting removes the Spotlight collection setting in Personalization, rendering
+    the user unable to select and subsequently download daily images from Microsoft to the
+    system desktop.
+    The recommended state for this setting is: 0.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to 0:
+    Experience\Allow Spotlight Collection (User)
+  platform: windows

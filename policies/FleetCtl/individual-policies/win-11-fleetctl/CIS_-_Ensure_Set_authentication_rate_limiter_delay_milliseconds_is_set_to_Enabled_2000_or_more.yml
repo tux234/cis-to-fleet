@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Set authentication rate limiter delay (milliseconds)' is set to 'Enabled: 2000' or more
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\InvalidAuthenticationDelayTimeInMs' AND data >= 2000);
+  name: "CIS - Ensure 'Set authentication rate limiter delay (milliseconds)' is set to 'Enabled: 2000' or more"
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\InvalidAuthenticationDelayTimeInMs' AND CAST(data AS INTEGER) >= 2000);
   critical: false
   description: |
     This policy settings configures the SMB server invalid authentication delay value in milliseconds.

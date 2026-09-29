@@ -9,6 +9,6 @@ spec:
     or threads. This user right bypasses any permissions that are in place to protect objects to give ownership to the specified user.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'Administrators'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Take ownership of files or other objects'
   platform: windows

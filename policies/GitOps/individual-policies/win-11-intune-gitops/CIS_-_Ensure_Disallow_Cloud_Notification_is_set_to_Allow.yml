@@ -1,0 +1,5 @@
+- name: CIS - Ensure 'Disallow Cloud Notification' is set to 'Allow'
+  platform: windows
+  description: 'This policy setting blocks applications from using the network to send notifications to update tiles, tile badges, toast, or raw notifications. This policy setting turns off the connection between Windows and the Windows Push Notification Service (WNS). This policy setting also stops applications from being able to poll application services to update tiles. The recommended state for this setting is: Allow.'
+  resolution: To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Allow. Notifications\Disallow Cloud Notification
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Notifications/DisallowCloudNotification</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '0';

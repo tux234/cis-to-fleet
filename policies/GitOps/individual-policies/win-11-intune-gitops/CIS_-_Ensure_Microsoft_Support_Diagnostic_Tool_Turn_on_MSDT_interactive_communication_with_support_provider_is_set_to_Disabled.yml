@@ -1,0 +1,5 @@
+- name: 'CIS - Ensure ''Microsoft Support Diagnostic Tool: Turn on MSDT interactive communication with support provider'' is set to ''Disabled'''
+  platform: windows
+  description: 'This policy setting configures Microsoft Support Diagnostic Tool (MSDT) interactive communication with the support provider. MSDT gathers diagnostic data for analysis by support professionals. The recommended state for this setting is: Disabled.'
+  resolution: 'To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Disabled. Administrative Templates\System\Troubleshooting and Diagnostics\Microsoft Support Diagnostic Tool\Microsoft Support Diagnostic Tool: Turn on MSDT interactive communication with support provider'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/ADMX_MSDT/MsdtSupportProvider</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%<disabled/>%';

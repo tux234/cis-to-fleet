@@ -1,0 +1,16 @@
+- name: CIS - Ensure 'Deny Log On As Batch Job' to include 'Guests'
+  platform: windows
+  description: |-
+    This policy setting determines which accounts will not be able to log on to the computer
+    as a batch job. A batch job is not a batch (.bat) file, but rather a batch-queue facility.
+    Accounts that use the Task Scheduler to schedule jobs need this user right.
+    This user right supersedes the Log on as a batch job user right, which could be used
+    to allow accounts to schedule jobs that consume excessive system resources. Such an
+    occurrence could cause a DoS condition. Failure to assign this user right to the
+    recommended accounts can be a security risk.
+    The recommended state for this setting is to include: *S-1-5-32-546 (Guests).
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to *S-1-5-32-546 (Guests).
+    User Rights\Deny Log On As Batch Job
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/DenyLogOnAsBatchJob</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%Guests%';

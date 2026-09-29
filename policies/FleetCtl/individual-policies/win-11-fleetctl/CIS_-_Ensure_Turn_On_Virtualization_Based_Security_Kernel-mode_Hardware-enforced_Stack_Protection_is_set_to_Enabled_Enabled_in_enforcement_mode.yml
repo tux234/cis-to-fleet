@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Turn On Virtualization Based Security: Kernel-mode Hardware-enforced Stack Protection' is set to 'Enabled: Enabled in enforcement mode'
+  name: "CIS - Ensure 'Turn On Virtualization Based Security: Kernel-mode Hardware-enforced Stack Protection' is set to 'Enabled: Enabled in enforcement mode'"
   query: SELECT 1 FROM REGISTRY WHERE (PATH = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceGuard\ConfigureKernelShadowStacksLaunch' AND data = 1);
   critical: false
   description: |

@@ -1,0 +1,12 @@
+- name: CIS - Ensure 'Block Non Admin User Install' is set to 'Allow'
+  platform: windows
+  description: |-
+    This setting manages non-Administrator users' ability to install Windows app packages.
+    The recommended state for this setting is: Allow.
+    Warning: If the Self Service Password Reset (SSPR) feature is used in Microsoft Entra
+    ID, an exception to this recommendation is needed as it's known to interfere with SSPR.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Allow.
+    Microsoft App Store\Block Non Admin User Install
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Installer\DisableMSI' AND data = '1';

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'ASR: Block executable files from running unless they meet a prevalence, age, or trusted list criterion' is set to 'Audit' or higher"
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Defender/AttackSurfaceReductionRules</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output LIKE '%01443614-CD74-433A-B99E-2ECDC07BFC25=1%' OR mdm_command_output LIKE '%01443614-CD74-433A-B99E-2ECDC07BFC25=2%');
+  critical: false
+  description: |
+    This rule blocks executable files, such as .exe, .dll, or .scr, from launching. Thus,
+    launching untrusted or unknown executable files can be risky, as it might not be initially
+    clear if the files are malicious.
+    The recommended state for this setting is: Audit. Configuring this setting to Block also
+    conforms to the benchmark.
+    Note: Cloud-delivered protection must be enabled to use this rule.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Audit or Block.
+    Defender\Block executable files from running unless they meet a prevalence,
+    age, or trusted list criterion
+  platform: windows

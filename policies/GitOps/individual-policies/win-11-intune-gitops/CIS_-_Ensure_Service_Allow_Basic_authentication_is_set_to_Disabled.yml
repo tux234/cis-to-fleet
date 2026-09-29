@@ -1,0 +1,13 @@
+- name: CIS - Ensure Service 'Allow Basic authentication is set to Disabled'
+  platform: windows
+  description: |2-
+     This policy setting allows you to manage whether the Windows Remote Management
+    (WinRM) service accepts Basic authentication from a remote client.
+    The recommended state for this setting is: Disabled.
+  resolution: |-
+
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Disabled.
+    Administrative Templates\Windows Components\Windows Remote Management
+    (WinRM)\WinRM Service\Allow Basic authentication
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Service\AllowBasic' AND data = '0';

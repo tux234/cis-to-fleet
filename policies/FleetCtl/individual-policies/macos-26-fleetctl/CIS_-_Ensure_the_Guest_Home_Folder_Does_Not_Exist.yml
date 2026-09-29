@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure the Guest Home Folder Does Not Exist
+  query: SELECT 1 WHERE NOT EXISTS (SELECT 1 FROM file WHERE path = '/Users/Guest');
+  critical: false
+  description: The Guest home folder is unneeded after the Guest account is disabled and could be used inappropriately. The presence of the Guest home folder can also cause automated audits to fail when looking for compliant settings within all User folders.
+  resolution: |
+    Terminal Method:
+      /usr/bin/sudo /bin/rm -R /Users/Guest
+  platform: darwin

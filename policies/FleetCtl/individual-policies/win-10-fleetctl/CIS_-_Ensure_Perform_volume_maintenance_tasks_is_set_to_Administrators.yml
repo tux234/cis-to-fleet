@@ -7,6 +7,6 @@ spec:
   description: This policy setting allows users to manage the system's volume or disk configuration, which could allow a user to delete a volume and cause data loss as well as a denial-ofservice condition.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'Administrators'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Perform volume maintenance tasks'
   platform: windows

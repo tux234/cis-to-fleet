@@ -1,0 +1,5 @@
+- name: 'CIS - Ensure ''Enforce drive encryption type on operating system drives: Select the encryption type: (device)'' is set to ''Enabled: Used Space Only encryption'' or ''Enabled: Full encryption'''
+  platform: windows
+  description: 'This policy setting configures the encryption type (space only and whole) used by BitLocker Drive Encryption. The recommended state for this setting is: Enabled: Used Space Only encryption or Enabled: Full encryption. Note: Changing the encryption type does not affect drives that are already encrypted or if encryption is in progress.'
+  resolution: 'To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Used Space Only Encryption or Full encryption Administrative Templates\Windows Components\BitLocker Drive Encryption\Operating System Drives\Enforce drive encryption type on operating system drives: Select the encryption type: (Device)'
+  query: SELECT 1 FROM registry WHERE path LIKE 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PolicyManager\Providers\%\default\Device\BitLocker\SystemDrivesEncryptionType' AND data LIKE '%OSEncryptionTypeDropDown_Name" value="2"%';

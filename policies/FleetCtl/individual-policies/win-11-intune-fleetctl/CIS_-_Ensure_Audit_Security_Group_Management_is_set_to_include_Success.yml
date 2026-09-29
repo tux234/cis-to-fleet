@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Audit Security Group Management' is set to include 'Success'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Audit/AccountManagement_AuditSecurityGroupManagement</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output = '1' OR mdm_command_output = '3');
+  critical: false
+  description: |
+    This subcategory reports each event of security group management, such as when a
+    security group is created, changed, or deleted or when a member is added to or
+    removed from a security group. If you enable this Audit policy setting, administrators
+    can track events to detect malicious, accidental, and authorized creation of security
+    group accounts. Events for this subcategory include:
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    
+    4727: A security-enabled global group was created.
+    4728: A member was added to a security-enabled global group.
+    4729: A member was removed from a security-enabled global group.
+    4730: A security-enabled global group was deleted.
+    4731: A security-enabled local group was created.
+    4732: A member was added to a security-enabled local group.
+    4733: A member was removed from a security-enabled local group.
+    4734: A security-enabled local group was deleted.
+    4735: A security-enabled local group was changed.
+    4737: A security-enabled global group was changed.
+    4754: A security-enabled universal group was created.
+    4755: A security-enabled universal group was changed.
+    4756: A member was added to a security-enabled universal group.
+    4757: A member was removed from a security-enabled universal group.
+    4758: A security-enabled universal group was deleted.
+    4764: A group's type was changed.
+    
+    The recommended state for this setting is to include: Success.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Success.
+    Auditing\Audit Security Group Management
+  platform: windows

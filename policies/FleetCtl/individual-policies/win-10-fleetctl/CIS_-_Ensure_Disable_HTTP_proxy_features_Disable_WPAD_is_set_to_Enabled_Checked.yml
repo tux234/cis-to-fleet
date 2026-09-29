@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'Disable HTTP proxy features: Disable WPAD' is set to 'Enabled: Checked'"
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp\DisableWpad' AND CAST(data AS INTEGER) = 1;
+  critical: false
+  description: |
+    This policy setting determines whether Web Proxy Auto-Discovery protocol (WPAD) is
+    disabled on the system. WPAD is used to discover Proxy Auto-Config (PAC) files from
+    the local network.
+    The recommended state for this setting is: Enabled: Checked.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Enabled: Checked':
+    'Computer Configuration\Policies\Administrative Templates\Center for Internet Security (CIS)\Additional Benchmark Settings\Disable HTTP proxy features: Disable WPAD'
+    Note: This Group Policy path is NOT provided by Microsoft. The Group Policy template CIS.admx/adml is included with the CIS Microsoft Windows Build Kits published after January 2026.
+  platform: windows

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Audit insecure guest logon' (Lanman Server) is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\AuditInsecureGuestLogon' AND data = 1;
+  critical: false
+  description: This policy determines whether the SMB server will log events when the client is logged on as guest account. Insecure guest logons can be used by file servers to allow unauthenticated access to shared folders.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Network\Lanman Server\Audit insecure guest logon'
+  platform: windows

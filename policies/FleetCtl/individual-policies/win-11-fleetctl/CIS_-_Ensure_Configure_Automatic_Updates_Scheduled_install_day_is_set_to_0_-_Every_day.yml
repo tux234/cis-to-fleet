@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure Automatic Updates: Scheduled install day' is set to '0 - Every day'
+  name: "CIS - Ensure 'Configure Automatic Updates: Scheduled install day' is set to '0 - Every day'"
   query: |
     SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU\\NoAutoUpdate' AND data = 0)
     AND EXISTS (

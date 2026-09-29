@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Save BitLocker recovery information to AD DS for fixed data drives' is set to 'Enabled: False'"
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE\FDVActiveDirectoryBackup' AND data = '0';
+  critical: false
+  description: "This policy setting allows you to control how BitLocker-protected fixed data drives are recovered in the absence of the required credentials. This policy setting is applied when you turn on BitLocker. In \"Save BitLocker recovery information to Active Directory Domain Services\" choose which BitLocker recovery information to store in AD DS for fixed data drives. The recommended state for this setting is: Enabled: False."
+  resolution: "To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Enabled: False. Administrative Templates\\Windows Components\\BitLocker Drive Encryption\\Fixed Data Drives\\Choose how BitLocker-protected fixed drives can be recovered: Save BitLocker recovery information to AD DS for fixed data drives"
+  platform: windows

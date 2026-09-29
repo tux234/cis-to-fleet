@@ -396,7 +396,7 @@
         );  
 - name: CIS - Ensure the Time Service Is Enabled
   platform: darwin
-  description: In macOS 10.14, Apple replace ntp with timed for time services, and is used to ensure correct time is kept. Correct date and time settings are required for authentication protocols, file creation, modification dates and log entries. 
+  description: "In macOS 10.14, Apple replace ntp with timed for time services, and is used to ensure correct time is kept. Correct date and time settings are required for authentication protocols, file creation, modification dates and log entries. "
   resolution: |
     Ask your system administrator to deploy a script that will configure:
     /usr/bin/sudo /bin/launchctl load -w /System/Library/LaunchDaemons/com.apple.timed.plist
@@ -1996,7 +1996,12 @@
         f.path LIKE '/Library/%'
         AND f.type = 'directory'
         AND (CAST(SUBSTR(f.mode,-1) AS INTEGER) & 2) = 2
-        AND NOT ((CAST(f.mode AS INTEGER) & 01000) = 01000)
+        -- Exclude sticky-bit dirs. osquery reports mode as a 4-char
+        -- octal string like "1777" (sticky) or "0755". The first digit
+        -- encodes setuid(4)/setgid(2)/sticky(1). SQLite has no native
+        -- octal literals, so we compare the first char's integer value
+        -- to the possible sticky combinations (1, 3, 5, 7).
+        AND CAST(SUBSTR(f.mode, 1, 1) AS INTEGER) NOT IN (1, 3, 5, 7)
         AND NOT EXISTS (
           SELECT 1 FROM extended_attributes ea
           WHERE ea.path = f.path
@@ -2060,7 +2065,7 @@
         );  
 - name: CIS - Ensure Complex Password Must Contain Special Character Is Configured (MDM Required)
   platform: darwin
-  description: Complex passwords contain one character from each of the following classes: English uppercase letters, English lowercase letters, Westernized Arabic numerals, and non- alphanumeric characters. Ensure that a special character is part of the password policy on the computer.
+  description: "Complex passwords contain one character from each of the following classes: English uppercase letters, English lowercase letters, Westernized Arabic numerals, and non- alphanumeric characters. Ensure that a special character is part of the password policy on the computer."
   resolution: Ask your system administrator to deploy an MDM profile that ensures Complex Password Must Contain Special Characters
   query: |
     SELECT 1 WHERE 

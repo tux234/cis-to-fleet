@@ -1,0 +1,16 @@
+- name: CIS - Ensure 'Enable Structured Exception Handling Overwrite Protection (SEHOP)' is set to 'Enabled'
+  platform: windows
+  description: |-
+    Windows includes support for Structured Exception Handling Overwrite Protection
+    (SEHOP). We recommend enabling this feature to improve the security profile of the
+    computer.
+    The recommended state for this setting is: Enabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled.
+    Administrative Templates\MS Security Guide\Enable Structured Exception
+    Handling Overwrite Protection (SEHOP)
+
+    More information is available at MSKB 956607: How to enable Structured Exception
+    Handling Overwrite Protection (SEHOP) in Windows operating systems
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\kernel\DisableExceptionChainValidation' AND data = '0';

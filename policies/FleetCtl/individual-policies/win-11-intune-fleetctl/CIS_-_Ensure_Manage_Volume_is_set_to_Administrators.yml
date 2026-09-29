@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Manage Volume' is set to 'Administrators'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/ManageVolume</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%Administrators%';
+  critical: false
+  description: |
+    This policy setting allows users to manage the system's volume or disk configuration,
+    which could allow a user to delete a volume and cause data loss as well as a denial-ofservice condition.
+    The recommended state for this setting is: *S-1-5-32-544 (Administrators).
+    Note: A workstation with Microsoft SQL Server installed will require a special exception
+    to this recommendation for the account that runs the SQL Server service to be granted
+    this user right.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to *S-1-5-32-544 (Administrators).
+    User Rights\Manage Volume
+    
+    Note: Include only one User or Group per line in the Settings Catalog configuration
+    screen.
+    \
+  platform: windows

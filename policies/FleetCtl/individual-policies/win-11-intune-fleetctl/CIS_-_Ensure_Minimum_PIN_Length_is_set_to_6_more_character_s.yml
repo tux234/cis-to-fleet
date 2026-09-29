@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Minimum PIN Length' is set to '6 more character(s)'
+  query: SELECT 1 FROM registry WHERE path LIKE 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Policies\PassportForWork\%\Device\Policies\PINComplexity\MinimumPINLength' AND CAST(data AS INTEGER) >= 6;
+  critical: false
+  description: |
+    Minimum PIN length configures the minimum number of characters required for the PIN.
+    The lowest number you can configure for this policy setting is 4. The largest number you
+    can configure must be less than the number configured in the Maximum PIN length
+    policy setting or the number 127, whichever is the lowest.
+    The recommended state for this setting is: 6 more character(s).
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to 6 (or more character(s)):
+    Windows Hello For Business\Minimum PIN Length
+  platform: windows

@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Impersonate Client' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/ImpersonateClient</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output LIKE '%Administrators%' AND mdm_command_output LIKE '%LOCAL SERVICE%' AND mdm_command_output LIKE '%NETWORK SERVICE%' AND mdm_command_output LIKE '%SERVICE%');
+  critical: false
+  description: |
+    The policy setting allows programs that run on behalf of a user to impersonate that user
+    (or another specified account) so that they can act on behalf of the user. If this user right
+    is required for this kind of impersonation, an unauthorized user will not be able to
+    convince a client to connect—for example, by remote procedure call (RPC) or named
+    pipes—to a service that they have created to impersonate that client, which could
+    elevate the unauthorized user's permissions to administrative or system levels.
+    Services that are started by the Service Control Manager have the built-in Service group
+    added by default to their access tokens. COM servers that are started by the COM
+    infrastructure and configured to run under a specific account also have the Service
+    group added to their access tokens. As a result, these processes are assigned this user
+    right when they are started.
+    Also, a user can impersonate an access token if any of the following conditions exist:
+    •
+    •
+    •
+    
+    The access token that is being impersonated is for this user.
+    The user, in this logon session, logged on to the network with explicit credentials
+    to create the access token.
+    The requested level is less than Impersonate, such as Anonymous or Identify.
+    
+    An attacker with the Impersonate a client after authentication user right could create
+    a service, trick a client to make them connect to the service, and then impersonate that
+    client to elevate the attacker's level of access to that of the client.
+    The recommended state for this setting is: *S-1-5-32-544, *S-1-5-19, *S-1-5-20 and
+    *S-1-5-6 (Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE).
+    Note: This user right is considered a "sensitive privilege" for the purposes of auditing.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to *S-1-5-32-544, *S-1-5-19, *S-1-5-20 and *S-1-5-6
+    (Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE).
+    User Rights\Impersonate Client
+    
+    Note: Include only one User or Group per line in the Settings Catalog configuration
+    screen.
+  platform: windows

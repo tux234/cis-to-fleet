@@ -1,0 +1,17 @@
+- name: CIS - Ensure 'Account Logon Logoff Audit Group Membership' is set to include 'Success'
+  platform: windows
+  description: |-
+    This policy allows you to audit the group membership information in the user’s logon
+    token. Events in this subcategory are generated on the computer on which a logon
+    session is created. For an interactive logon, the security audit event is generated on the
+    computer that the user logged on to. For a network logon, such as accessing a shared
+    folder on the network, the security audit event is generated on the computer hosting the
+    resource.
+    The recommended state for this setting is to include: Success.
+    Note: A Windows 10, Server 2016 or newer OS is required to access and set this value
+    in Group Policy.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Success.
+    Auditing\Account Logon Logoff Audit Group Membership
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Audit/AccountLogonLogoff_AuditGroupMembership</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output = '1' OR mdm_command_output = '3');

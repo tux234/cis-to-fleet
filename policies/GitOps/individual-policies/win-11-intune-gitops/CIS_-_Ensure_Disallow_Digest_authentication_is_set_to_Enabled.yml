@@ -1,0 +1,12 @@
+- name: CIS - Ensure 'Disallow Digest authentication' is set to 'Enabled'
+  platform: windows
+  description: |-
+    This policy setting allows you to manage whether the Windows Remote Management
+    (WinRM) client will not use Digest authentication.
+    The recommended state for this setting is: Enabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled.
+    Administrative Templates\Windows Components\Windows Remote Management
+    (WinRM)\WinRM Client\Disallow Digest authentication
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\AllowDigest' AND data = '0';

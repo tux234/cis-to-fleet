@@ -1,0 +1,12 @@
+- name: CIS - Ensure 'Turn on convenience PIN sign-in' is set to 'Disabled'
+  platform: windows
+  description: |-
+    This policy setting allows you to control whether a user can sign in using a convenience
+    PIN.
+    Note: The user's password will be cached in the system vault when using this feature.
+    The recommended state for this setting is: Disabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Disabled.
+    Administrative Templates\System\Logon\Turn on convenience PIN sign-in
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/CredentialProviders/AllowPINLogon</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%<disabled/>%';

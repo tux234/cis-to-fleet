@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Configure Lsa Protected Process is set to 'Enabled with UEFI Lock...'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System\RunAsPPL' AND data = '1';
+  critical: false
+  description: |
+    This policy setting controls whether the Local Security Authority Subservice Service
+    (LSASS) runs in protected mode and also has the option to lock in protected mode with
+    Unified Extensible Firmware Interface (UEFI). The Local Security Authority (LSA), which
+    includes the LSASS process, validates users for local and remote sign-ins and enforces
+    local security policies.
+    The recommended state for this setting is: Enabled with UEFI lock. LSA will run
+    as protected process and this configuration is UEFI locked.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled with UEFI lock....
+    Local Security Authority\Configure Lsa Protected Process
+  platform: windows

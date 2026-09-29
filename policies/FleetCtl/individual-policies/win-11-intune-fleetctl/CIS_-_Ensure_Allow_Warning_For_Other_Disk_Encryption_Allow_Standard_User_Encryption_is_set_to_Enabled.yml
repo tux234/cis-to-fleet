@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'Allow Warning For Other Disk Encryption: Allow Standard User Encryption' is set to 'Enabled'"
+  query: SELECT 1 FROM registry WHERE path LIKE 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PolicyManager\Providers\%\default\Device\BitLocker\AllowStandardUserEncryption' AND data = '1';
+  critical: false
+  description: "This setting allows Admins to enforce \"Require Device Encryption\" policy for scenarios where policy is pushed while current logged-on user is non-admin/standard user. This policy is tied to \"Allow Warning For Other Disk Encryption\" policy being set to \"0\", i.e, Silent encryption is enforced. If \"Allow Warning For Other Disk Encryption\" isn't set, or is set to \"1\", \"Require Device Encryption\" policy won't try to encrypt drive(s) if a standard user is the current logged-on user in the system. The recommended state for this setting is: Enabled."
+  resolution: "To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Enabled: Bitlocker\\Allow Standard User Encryption"
+  platform: windows

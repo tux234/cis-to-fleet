@@ -1,0 +1,13 @@
+- name: CIS - Ensure 'Enable Private Network Firewall' is set to 'True'
+  platform: windows
+  description: |-
+    Select True (recommended) to have Windows Firewall with Advanced Security use the
+    settings for this profile to filter network traffic. If you select False, Windows Firewall with
+    Advanced Security will not use any of the firewall rules or connection security rules for
+    this profile.
+    The recommended state for this setting is: True (recommended).
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to True (recommended):
+    Firewall\Enable Private Network Firewall
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\StandardProfile\EnableFirewall' AND data = '1';

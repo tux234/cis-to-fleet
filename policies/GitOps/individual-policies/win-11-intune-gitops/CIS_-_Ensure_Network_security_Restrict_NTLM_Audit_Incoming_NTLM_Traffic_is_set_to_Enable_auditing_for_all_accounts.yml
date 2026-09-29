@@ -1,0 +1,13 @@
+- name: 'CIS - Ensure ''Network security: Restrict NTLM: Audit Incoming NTLM Traffic'' is set to ''Enable auditing for all accounts'''
+  platform: windows
+  description: |-
+    This policy setting allows the auditing of incoming NTLM traffic. Events for this setting
+    are recorded in the operational event log (e.g. Applications and Services
+    Log\Microsoft\Windows\NTLM).
+    The recommended state for this setting is: Enable auditing for all accounts.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enable auditing for all accounts:
+    Local Policies Security Options\Network security: Restrict NTLM: Audit
+    Incoming NTLM Traffic
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/LocalPoliciesSecurityOptions/NetworkSecurity_RestrictNTLM_AuditIncomingNTLMTraffic</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '2';

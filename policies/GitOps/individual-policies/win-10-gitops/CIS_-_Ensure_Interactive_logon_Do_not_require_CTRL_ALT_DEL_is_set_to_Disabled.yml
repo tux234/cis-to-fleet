@@ -1,4 +1,5 @@
-- name: CIS - Ensure 'Interactive logon Do not require CTRL+ALT+DEL' is set to 'Disabled'
+- name: |
+    CIS - Ensure 'Interactive logon: Do not require CTRL+ALT+DEL' is set to 'Disabled'
   platform: windows
   description: |
     This policy setting determines whether users must press CTRL+ALT+DEL before they log on.

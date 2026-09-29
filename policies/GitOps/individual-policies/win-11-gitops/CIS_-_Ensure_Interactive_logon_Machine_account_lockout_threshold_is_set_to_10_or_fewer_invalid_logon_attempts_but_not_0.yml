@@ -7,4 +7,4 @@
     Ask your system administrator to establish the recommended configuration via GP, set the following UI path to '10 or fewer invalid logon attempts, but not 0':
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Interactive logon: Machine account lockout threshold'
   query: |
-    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\MaxDevicePasswordFailedAttempts' AND data <= 10 AND data != 0);
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\MaxDevicePasswordFailedAttempts' AND CAST(data AS INTEGER) <= 10 AND data != 0);

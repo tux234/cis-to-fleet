@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Access to Audit Records Is Controlled
+  query: |
+    SELECT 1 WHERE
+      NOT EXISTS (
+        SELECT 1 FROM file
+        WHERE path = '/etc/security/audit_control'
+          AND (uid != 0 OR gid != 0 OR mode NOT IN ('0440', '0400'))
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM file
+        WHERE path LIKE '/var/audit/%'
+          AND (uid != 0 OR gid != 0 OR mode NOT IN ('0440', '0400'))
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM file
+        WHERE path LIKE (
+          SELECT dir FROM (
+            SELECT line, CONCAT(regex_match(line, '^dir:(.+)', 1), '/%') AS dir
+            FROM file_lines
+            WHERE path = '/etc/security/audit_control'
+              AND line LIKE 'dir:%'
+          )
+        )
+        AND (uid != 0 OR gid != 0 OR mode NOT IN ('0440', '0400'))
+      );
+  critical: false
+  description: The audit system on macOS writes important operational and security information that can be both useful for an attacker and a place for an attacker to attempt to obfuscate unwanted changes that were recorded. As part of defense-in-depth, the /etc/security/audit_control configuration and the audit log directory (default /var/audit) should be owned by root:wheel with mode 440 and no ACLs.
+  resolution: |
+    Terminal Method:
+      /usr/bin/sudo /usr/sbin/chown -R root:wheel /etc/security/audit_control
+      /usr/bin/sudo /bin/chmod -R 440 /etc/security/audit_control
+      /usr/bin/sudo /usr/sbin/chown -R root:wheel $(/usr/bin/grep '^dir' /etc/security/audit_control | /usr/bin/awk -F: '{print $2}')
+      /usr/bin/sudo /bin/chmod -R 440 $(/usr/bin/grep '^dir' /etc/security/audit_control | /usr/bin/awk -F: '{print $2}')
+  platform: darwin

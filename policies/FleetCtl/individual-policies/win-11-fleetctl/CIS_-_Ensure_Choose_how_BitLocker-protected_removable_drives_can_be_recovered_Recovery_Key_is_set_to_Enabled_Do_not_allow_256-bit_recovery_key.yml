@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected removable drives can be recovered: Recovery Key' is set to 'Enabled: Do not allow 256-bit recovery key'
+  name: "CIS - Ensure 'Choose how BitLocker-protected removable drives can be recovered: Recovery Key' is set to 'Enabled: Do not allow 256-bit recovery key'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\RDVRecoveryKey' AND data = 0);
   critical: false
   description: |

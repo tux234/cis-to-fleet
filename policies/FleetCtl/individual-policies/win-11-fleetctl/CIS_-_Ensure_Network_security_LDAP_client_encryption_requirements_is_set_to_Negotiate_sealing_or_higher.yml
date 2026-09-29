@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network security: LDAP client encryption requirements' is set to 'Negotiate sealing' or higher
+  name: "CIS - Ensure 'Network security: LDAP client encryption requirements' is set to 'Negotiate sealing' or higher"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LDAP\ldapclientconfidentiality' AND data IN (1, 2));
   critical: false
   description: |

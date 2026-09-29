@@ -1,0 +1,12 @@
+- name: CIS - Ensure 'Detailed Tracking Audit PNP Activity' is set to include 'Success'
+  platform: windows
+  description: |-
+    This policy setting allows you to audit when plug and play detects an external device.
+    The recommended state for this setting is to include: Success.
+    Note: A Windows 10, Server 2016 or newer OS is required to access and set this value
+    in Group Policy.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Success.
+    Auditing\Detailed Tracking Audit PNP Activity
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Audit/DetailedTracking_AuditPNPActivity</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output = '1' OR mdm_command_output = '3');

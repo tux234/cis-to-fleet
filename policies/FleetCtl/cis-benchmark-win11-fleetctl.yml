@@ -316,13 +316,13 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Create a token object' is set to an empty list
+  name: CIS - Ensure 'Create a token object' is set to 'No One'
   query: SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/CreateToken</LocURI></Target></Item></Get></SyncBody>" AND mdm_command_output == "";
   critical: false
   description: This policy setting allows a process to create an access token, which may provide elevated rights to access sensitive data.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to an empty list:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'No One':
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Create a token object'
   platform: windows
 ---
@@ -342,7 +342,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Create permanent shared objects' is set to an empty list
+  name: CIS - Ensure 'Create permanent shared objects' is set to 'No One'
   query: SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/CreatePermanentSharedObjects</LocURI></Target></Item></Get></SyncBody>" AND mdm_command_output == "";
   critical: false
   description: |
@@ -351,7 +351,7 @@ spec:
     not necessary to specifically assign this user right.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to an empty list:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'No One':
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Create permanent shared objects'
   platform: windows
 ---
@@ -399,8 +399,8 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Deny access to this computer from the network' includes 'Guest'
-  query: SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/DenyAccessFromNetwork</LocURI></Target></Item></Get></SyncBody>" AND (regex_match(mdm_command_output,".*(Guest).*",0) is not null);
+  name: CIS - Ensure 'Deny access to this computer from the network' to include 'Guests, Local account'
+  query: SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/DenyAccessFromNetwork</LocURI></Target></Item></Get></SyncBody>" AND (regex_match(mdm_command_output,".*(Guest).*",0) is not null) AND (regex_match(mdm_command_output,".*(Local account).*",0) is not null);
   critical: false
   description: |
     This policy setting prohibits users from connecting to a computer from across the network, which
@@ -410,14 +410,14 @@ spec:
     this computer from the network user right if an account is subject to both policies.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path includes 'Guest'
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path includes 'Guests, Local account'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Deny access to this computer from the network'
   platform: windows
 ---
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Deny log on as a batch job' includes 'Guests'
+  name: CIS - Ensure 'Deny log on as a batch job' to include 'Guests'
   query: SELECT 1 FROM cis_audit where item = "2.2.17" AND (regex_match(value,".*(?=.*Guests).*",0) is not null);
   critical: false
   description: |
@@ -432,7 +432,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Deny log on as a service' includes 'Guests'
+  name: CIS - Ensure 'Deny log on as a service' to include 'Guests'
   query: SELECT 1 FROM cis_audit where item = "2.2.18" AND (regex_match(value,".*(?=.*Guests).*",0) is not null);
   critical: false
   description: |
@@ -447,7 +447,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Deny log on locally' includes 'Guest'
+  name: CIS - Ensure 'Deny log on locally' to include 'Guests'
   query: SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/DenyLocalLogOn</LocURI></Target></Item></Get></SyncBody>" AND (regex_match(mdm_command_output,".*(Guest).*",0) is not null);
   critical: false
   description: |
@@ -463,26 +463,26 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Deny log on through Remote Desktop Services' includes 'Guest'
-  query: SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/DenyRemoteDesktopServicesLogOn</LocURI></Target></Item></Get></SyncBody>" AND (regex_match(mdm_command_output,".*(Guest).*",0) is not null);
+  name: CIS - Ensure 'Deny log on through Remote Desktop Services' to include 'Guests, Local account'
+  query: SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/DenyRemoteDesktopServicesLogOn</LocURI></Target></Item></Get></SyncBody>" AND (regex_match(mdm_command_output,".*(Guest).*",0) is not null) AND (regex_match(mdm_command_output,".*(Local account).*",0) is not null);
   critical: false
   description: This policy setting determines whether users can log on as Remote Desktop clients. This user right supersedes the Allow log on through Remote Desktop Services user right if an account is subject to both policies.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path includes 'Guests'
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path includes 'Guests, Local account'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Deny log on through Remote Desktop Services'
   platform: windows
 ---
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Enable computer and user accounts to be trusted for delegation' is set to an empty list
+  name: CIS - Ensure 'Enable computer and user accounts to be trusted for delegation' is set to 'No One'
   query: SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/EnableDelegation</LocURI></Target></Item></Get></SyncBody>" AND mdm_command_output == "";
   critical: false
   description: This policy setting allows users to change the Trusted for Delegation setting on a computer object in Active Directory. Abuse of this privilege could allow unauthorized users to impersonate other users on the network.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'No One'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Enable computer and user accounts to be trusted for delegation'
   platform: windows
 ---
@@ -500,7 +500,7 @@ spec:
     right.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'Administrators'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Force shutdown from a remote system'
   platform: windows
 ---
@@ -513,7 +513,7 @@ spec:
   description: This policy setting determines which users or processes can generate audit records in the Security log.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'LOCAL SERVICE, NETWORK SERVICE'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Generate security audits'
   platform: windows
 ---
@@ -531,7 +531,7 @@ spec:
     they have created to impersonate that client, which could elevate the unauthorized user's permissions to administrative or system levels.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE, SERVICE'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Impersonate a client after authentication'
   platform: windows
 ---
@@ -547,7 +547,7 @@ spec:
     user right is not required by administrative tools that are supplied with the operating system but might be required by software development tools.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'Administrators, Window Manager\Window Manager Group'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Increase scheduling priority'
   platform: windows
 ---
@@ -564,20 +564,20 @@ spec:
     Windows.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
-    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Increase scheduling priority'
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'Administrators'
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Load and unload device drivers'
   platform: windows
 ---
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Lock pages in memory' is set to an empty list
+  name: CIS - Ensure 'Lock pages in memory' is set to 'No One'
   query: SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/LockMemory</LocURI></Target></Item></Get></SyncBody>" AND mdm_command_output == "";
   critical: false
   description: This policy setting allows a process to keep data in physical memory, which prevents the system from paging the data to virtual memory on disk. If this user right is assigned, significant degradation of system performance can occur.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'No One'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Lock pages in memory'
   platform: windows
 ---
@@ -595,7 +595,7 @@ spec:
     after gaining user level access to a computer.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'Administrators'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Log on as a batch job'
   platform: windows
 ---
@@ -613,7 +613,7 @@ spec:
     Vista-based (and newer) computers, no users or groups have this privilege by default.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'No One'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Log on as a service'
   platform: windows
 ---
@@ -626,14 +626,14 @@ spec:
   description: This policy setting determines which users can change the auditing options for files and directories and clear the Security log.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'Administrators'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Manage auditing and security log'
   platform: windows
 ---
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Modify an object label' is set to an empty list
+  name: CIS - Ensure 'Modify an object label' is set to 'No One'
   query: SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/ModifyObjectLabel</LocURI></Target></Item></Get></SyncBody>" AND mdm_command_output == "";
   critical: false
   description: |
@@ -642,7 +642,7 @@ spec:
     can modify the label of an object owned by that user to a lower level without this privilege.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'No One'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Modify an object label'
   platform: windows
 ---
@@ -658,7 +658,7 @@ spec:
     Configuration. Modification of these values and could lead to a hardware failure that would result in a denial of service condition.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'Administrators'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Modify firmware environment values'
   platform: windows
 ---
@@ -671,7 +671,7 @@ spec:
   description: This policy setting allows users to manage the system's volume or disk configuration, which could allow a user to delete a volume and cause data loss as well as a denial-ofservice condition.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'Administrators'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Perform volume maintenance tasks'
   platform: windows
 ---
@@ -690,7 +690,7 @@ spec:
     information that could be used to mount an attack on the system.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'Administrators'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Profile single process'
   platform: windows
 ---
@@ -739,7 +739,7 @@ spec:
     directories user right.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'Administrators'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Restore files and directories'
   platform: windows
 ---
@@ -769,7 +769,7 @@ spec:
     or threads. This user right bypasses any permissions that are in place to protect objects to give ownership to the specified user.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'Administrators'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Take ownership of files or other objects'
   platform: windows
 ---
@@ -865,7 +865,7 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'Devices Prevent users from installing printer drivers' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Print\\Providers\\LanManPrint Services\\Servers\\AddPrinterDrivers' AND data == 1);
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Print\\Providers\\LanMan Print Services\\Servers\\AddPrinterDrivers' AND data == 1);
   critical: false
   description: |
     For a computer to print to a shared printer, the driver for that shared printer must be
@@ -880,7 +880,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Digitally encrypt or sign secure channel data (always)' is set to 'Enabled'
+  name: "CIS - Ensure 'Domain member: Digitally encrypt or sign secure channel data (always)' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\RequireSignOrSeal' AND data != 0;
   critical: false
   description: |
@@ -901,7 +901,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Digitally encrypt secure channel data (when possible)' is set to 'Enabled'
+  name: "CIS - Ensure 'Domain member: Digitally encrypt secure channel data (when possible)' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\SealSecureChannel' AND data != 0;
   critical: false
   description: |
@@ -922,7 +922,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Digitally sign secure channel data (when possible)' is set to 'Enabled'
+  name: "CIS - Ensure 'Domain member: Digitally sign secure channel data (when possible)' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\SignSecureChannel' AND data != 0);
   critical: false
   description: |
@@ -944,7 +944,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Disable machine account password changes' is set to 'Disabled'
+  name: "CIS - Ensure 'Domain member: Disable machine account password changes' is set to 'Disabled'"
   query: |
     SELECT 1 FROM registry WHERE
       path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\DisablePasswordChange' AND data = 0;
@@ -970,11 +970,11 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Maximum machine account password age' is set to '30 or fewer days, but not 0'
+  name: "CIS - Ensure 'Domain member: Maximum machine account password age' is set to '30 or fewer days, but not 0'"
   query: |
     SELECT 1 FROM registry WHERE
       path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\MaximumPasswordAge'
-    AND data <= 30 AND data != 0;
+    AND CAST(data AS INTEGER) <= 30 AND data != 0;
   critical: false
   description: |
     This policy setting determines the maximum allowable age for a computer account password. By
@@ -997,7 +997,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Require strong (Windows 2000 or later) session key' is set to 'Enabled'
+  name: "CIS - Ensure 'Domain member: Require strong (Windows 2000 or later) session key' is set to 'Enabled'"
   query: |
     SELECT 1 FROM registry WHERE
       path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters\RequireStrongKey' AND data != 0;
@@ -1055,7 +1055,7 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'Interactive logon Machine account lockout threshold' is set to '10 or fewer invalid logon attempts, but not 0'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\MaxDevicePasswordFailedAttempts' AND data <= 10 AND data != 0);
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\MaxDevicePasswordFailedAttempts' AND CAST(data AS INTEGER) <= 10 AND data != 0);
   critical: false
   description: This security setting determines the number of failed logon attempts that causes the machine to be locked out.
   resolution: |
@@ -1068,7 +1068,7 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'Interactive logon Machine inactivity limit' is set to '900 or fewer second(s), but not 0'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\InactivityTimeoutSecs' AND data <= 900 AND data != 0);
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\InactivityTimeoutSecs' AND CAST(data AS INTEGER) <= 900 AND data != 0);
   critical: false
   description: Windows notices inactivity of a logon session, and if the amount of inactive time exceeds the inactivity limit, then the screen saver will run, locking the session.
   resolution: |
@@ -1144,7 +1144,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure that 'Microsoft network client Digitally sign communications (always)' is set to 'Enabled'
+  name: "CIS - Ensure 'Microsoft network client: Digitally sign communications (always)' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\CurrentControlSet\\Services\\LanmanWorkstation\\Parameters\\RequireSecuritySignature' AND data != 0);
   critical: false
   description: This policy setting determines whether packet signing is required by the SMB client component.
@@ -1157,7 +1157,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure that 'Microsoft network client Digitally sign communications (if server agrees)' is set to 'Enabled'
+  name: "CIS - Ensure 'Microsoft network client: Digitally sign communications (if server agrees)' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\CurrentControlSet\\Services\\LanmanWorkstation\\Parameters\\EnableSecuritySignature' AND data != 0);
   critical: false
   description: This policy setting determines whether the SMB client will attempt to negotiate SMB packet signing.
@@ -1170,7 +1170,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure that 'Microsoft network client Send unencrypted password to third-party SMB servers' is set to 'Disabled'
+  name: "CIS - Ensure 'Microsoft network client: Send unencrypted password to third-party SMB servers' is set to 'Disabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\CurrentControlSet\\Services\\LanmanWorkstation\\Parameters\\EnablePlainTextPassword' AND data = 0);
   critical: false
   description: This policy setting determines whether the SMB redirector will send plaintext passwords during authentication to third-party SMB servers that do not support password encryption.
@@ -1183,7 +1183,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure that 'Microsoft network server Amount of idle time required before suspending session' is set to '15 or fewer minute(s)'
+  name: "CIS - Ensure 'Microsoft network server: Amount of idle time required before suspending session' is set to '15 or fewer minute(s)'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\CurrentControlSet\\Services\\LanManServer\\Parameters\\autodisconnect' AND CAST(data AS INTEGER) <= 15 AND CAST(data AS INTEGER) >= 0);
   critical: false
   description: |
@@ -1200,7 +1200,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure that 'Microsoft network server Digitally sign communications (always)' is set to 'Enabled'
+  name: "CIS - Ensure 'Microsoft network server: Digitally sign communications (always)' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\CurrentControlSet\\Services\\LanManServer\\Parameters\\requiresecuritysignature' AND data != 0);
   critical: false
   description: |
@@ -1216,7 +1216,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure that 'Microsoft network server Digitally sign communications (if client agrees)' is set to 'Enabled'
+  name: "CIS - Ensure 'Microsoft network server: Digitally sign communications (if client agrees)' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\CurrentControlSet\\Services\\LanManServer\\Parameters\\enablesecuritysignature' AND data != 0);
   critical: false
   description: |
@@ -1232,7 +1232,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure that 'Microsoft network server Disconnect clients when logon hours expire' is set to 'Enabled'
+  name: "CIS - Ensure 'Microsoft network server: Disconnect clients when logon hours expire' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\CurrentControlSet\\Services\\LanManServer\\Parameters\\enableforcedlogoff' AND data != 0);
   critical: false
   description: |
@@ -1248,7 +1248,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure that 'Microsoft network server Server SPN target name validation level' is set to 'Accept if provided by client'
+  name: "CIS - Ensure 'Microsoft network server: Server SPN target name validation level' is set to 'Accept if provided by client'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\CurrentControlSet\\Services\\LanManServer\\Parameters\\SmbServerNameHardeningLevel' AND data = 1);
   critical: false
   description: |
@@ -1264,7 +1264,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network access : Allow anonymous SID/Name translation' is set to 'Disabled'
+  name: "CIS - Ensure 'Network access : Allow anonymous SID/Name translation' is set to 'Disabled'"
   query: SELECT 1 FROM cis_audit where item = "2.3.10.1" AND value = "0";
   critical: false
   description: |
@@ -1279,7 +1279,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network access: Do not allow anonymous enumeration of SAM accounts' is set to 'Enabled'
+  name: "CIS - Ensure 'Network access: Do not allow anonymous enumeration of SAM accounts' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\restrictanonymoussam' AND data != 0);
   critical: false
   description: |
@@ -1296,7 +1296,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network access: Do not allow anonymous enumeration of SAM accounts and shares' is set to 'Enabled'
+  name: "CIS - Ensure 'Network access: Do not allow anonymous enumeration of SAM accounts and shares' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\restrictanonymous' AND data != 0);
   critical: false
   description: |
@@ -1312,7 +1312,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network access: Do not allow storage of passwords and credentials for network authentication' is set to 'Enabled'
+  name: "CIS - Ensure 'Network access: Do not allow storage of passwords and credentials for network authentication' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\disabledomaincreds' AND data != 0);
   critical: false
   description: |
@@ -1327,7 +1327,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network access: Let Everyone permissions apply to anonymous users' is set to 'Disabled'
+  name: "CIS - Ensure 'Network access: Let Everyone permissions apply to anonymous users' is set to 'Disabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\everyoneincludesanonymous' AND data == 0);
   critical: false
   description: |
@@ -1341,7 +1341,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network access: Named Pipes that can be accessed anonymously' is set to 'None'
+  name: "CIS - Ensure 'Network access: Named Pipes that can be accessed anonymously' is set to 'None'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\LanManServer\\Parameters\NullSessionPipes' and data == '');
   critical: false
   description: |
@@ -1356,7 +1356,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network access: Remotely accessible registry paths' is configured
+  name: "CIS - Ensure 'Network access: Remotely accessible registry paths' is configured"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\SecurePipeServers\\Winreg\\AllowedExactPaths\Machine' and data == 'System\CurrentControlSet\Control\ProductOptions,System\CurrentControlSet\Control\Server Applications,Software\Microsoft\Windows NT\CurrentVersion');
   critical: false
   description: |
@@ -1374,7 +1374,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network access: Remotely accessible registry paths and sub-paths' is configured
+  name: "CIS - Ensure 'Network access: Remotely accessible registry paths and sub-paths' is configured"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\SecurePipeServers\\Winreg\\AllowedPaths\Machine' and data == 'System\CurrentControlSet\Control\Print\Printers,System\CurrentControlSet\Services\Eventlog,Software\Microsoft\OLAP Server,Software\Microsoft\Windows NT\CurrentVersion\Print,Software\Microsoft\Windows NT\CurrentVersion\Windows,System\CurrentControlSet\Control\ContentIndex,System\CurrentControlSet\Control\Terminal Server,System\CurrentControlSet\Control\Terminal Server\UserConfig,System\CurrentControlSet\Control\Terminal Server\DefaultUserConfiguration,Software\Microsoft\Windows NT\CurrentVersion\Perflib,System\CurrentControlSet\Services\SysmonLog');
   critical: false
   description: |
@@ -1400,7 +1400,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network access: Restrict anonymous access to Named Pipes and Shares' is set to 'Enabled'
+  name: "CIS - Ensure 'Network access: Restrict anonymous access to Named Pipes and Shares' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\LanManServer\\Parameters\restrictnullsessaccess' and data == '1');
   critical: false
   description: |
@@ -1420,8 +1420,8 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network access: Restrict clients allowed to make remote calls to SAM' is set to 'Administrators: Remote Access: Allow'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\RestrictRemoteSAM' and (data == '' or data == 'O:BAG:BAD:'));
+  name: "CIS - Ensure 'Network access: Restrict clients allowed to make remote calls to SAM' is set to 'Administrators: Remote Access: Allow'"
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\RestrictRemoteSAM' and data == 'O:BAG:BAD:(A;;RC;;;BA)');
   critical: false
   description: This policy setting allows you to restrict remote RPC connections to SAM.
   resolution: |
@@ -1433,7 +1433,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network access: Shares that can be accessed anonymously' is set to 'None'
+  name: "CIS - Ensure 'Network access: Shares that can be accessed anonymously' is set to 'None'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\LanManServer\\Parameters\NullSessionShares' and data == '');
   critical: false
   description: |
@@ -1449,7 +1449,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network access: Sharing and security model for local accounts' is set to 'Classic - local users authenticate as themselves'
+  name: "CIS - Ensure 'Network access: Sharing and security model for local accounts' is set to 'Classic - local users authenticate as themselves'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\forceguest' AND data == 0);
   critical: false
   description: |
@@ -1519,7 +1519,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network security Do not store LAN Manager hash value on next password change' is set to 'Enabled'
+  name: "CIS - Ensure 'Network security: Do not store LAN Manager hash value on next password change' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\NoLmHash' COLLATE NOCASE AND data != 0);
   critical: false
   description: |
@@ -1537,7 +1537,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network security: LDAP client encryption requirements' is set to 'Negotiate sealing' or higher
+  name: "CIS - Ensure 'Network security: LDAP client encryption requirements' is set to 'Negotiate sealing' or higher"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LDAP\ldapclientconfidentiality' AND data IN (1, 2));
   critical: false
   description: |
@@ -1589,7 +1589,7 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'Network security LDAP client signing requirements' is set to 'Negotiate signing or higher'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\ldap\\ldapclientintegrity' AND data >= 1);
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\ldap\\ldapclientintegrity' AND CAST(data AS INTEGER) >= 1);
   critical: false
   description: This policy setting determines the level of data signing that is requested on behalf of clients that issue LDAP BIND requests.
   resolution: |
@@ -1653,7 +1653,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'User Account Control: Admin Approval Mode for the Built-in Administrator account' is set to 'Enabled'
+  name: "CIS - Ensure 'User Account Control: Admin Approval Mode for the Built-in Administrator account' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\FilterAdministratorToken' AND data == 1);
   critical: false
   description: |
@@ -1667,7 +1667,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'User Account Control: Behavior of the elevation prompt for administrators in Admin Approval Mode' is set to 'Prompt for consent on the secure desktop'
+  name: "CIS - Ensure 'User Account Control: Behavior of the elevation prompt for administrators in Admin Approval Mode' is set to 'Prompt for consent on the secure desktop'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\ConsentPromptBehaviorAdmin' AND data == 2);
   critical: false
   description: |
@@ -1681,7 +1681,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'User Account Control: Behavior of the elevation prompt for standard users' is set to 'Automatically deny elevation requests'
+  name: "CIS - Ensure 'User Account Control: Behavior of the elevation prompt for standard users' is set to 'Automatically deny elevation requests'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\ConsentPromptBehaviorUser' AND data == 0);
   critical: false
   description: |
@@ -1695,7 +1695,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'User Account Control: Detect application installations and prompt for elevation' is set to 'Enabled'
+  name: "CIS - Ensure 'User Account Control: Detect application installations and prompt for elevation' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\EnableInstallerDetection' and data == 1);
   critical: false
   description: |
@@ -1709,7 +1709,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'User Account Control: Only elevate UIAccess applications that are installed in secure locations' is set to 'Enabled'
+  name: "CIS - Ensure 'User Account Control: Only elevate UIAccess applications that are installed in secure locations' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\EnableSecureUIAPaths' and data == '1');
   critical: false
   description: |
@@ -1725,7 +1725,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'User Account Control: Run all administrators in Admin Approval Mode' is set to 'Enabled'
+  name: "CIS - Ensure 'User Account Control: Run all administrators in Admin Approval Mode' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\EnableLUA' and data == 1);
   critical: false
   description: |
@@ -1739,7 +1739,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'User Account Control: Switch to the secure desktop when prompting for elevation' is set to 'Enabled'
+  name: "CIS - Ensure 'User Account Control: Switch to the secure desktop when prompting for elevation' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\PromptOnSecureDesktop' and data == 1);
   critical: false
   description: |
@@ -1753,7 +1753,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'User Account Control: Virtualize file and registry write failures to per-user locations' is set to 'Enabled'
+  name: "CIS - Ensure 'User Account Control: Virtualize file and registry write failures to per-user locations' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\EnableVirtualization' and data == 1);
   critical: false
   description: |
@@ -1804,7 +1804,7 @@ spec:
   name: CIS - Ensure 'Computer Browser (Browser)' is set to 'Disabled' or 'Not Installed'
   query: |
     SELECT 1 WHERE 
-        NOT EXISTS ( SELECT 1 FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Browser\\Start' )
+        NOT EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Browser\\Start' )
         OR 
         EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Browser\\Start' AND data == 4 );
   critical: false
@@ -1866,7 +1866,7 @@ spec:
   name: CIS - Ensure 'IIS Admin Service (IISADMIN)' is set to 'Disabled' or 'Not Installed'
   query: |
     SELECT 1 WHERE 
-    NOT EXISTS ( SELECT 1 FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\IISADMIN\\Start' )
+    NOT EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\IISADMIN\\Start' )
     OR 
     EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\IISADMIN\\Start' AND data == 4 );
   critical: false
@@ -1888,7 +1888,7 @@ spec:
   name: CIS - Ensure 'Infrared monitor service (irmon)' is set to 'Disabled' or 'Not Installed'
   query: |
     SELECT 1 WHERE 
-    NOT EXISTS ( SELECT 1 FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\irmon\\Start' )
+    NOT EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\irmon\\Start' )
     OR 
     EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\irmon\\Start' AND data == 4 );
   critical: false
@@ -1922,7 +1922,7 @@ spec:
   name: CIS - Ensure 'LxssManager (LxssManager)' is set to 'Disabled' or 'Not Installed'
   query: |
     SELECT 1 WHERE 
-    NOT EXISTS ( SELECT 1 FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\LxssManager\\Start' )
+    NOT EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\LxssManager\\Start' )
     OR 
     EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\LxssManager\\Start' AND data == 4 );
   critical: false
@@ -1942,7 +1942,7 @@ spec:
   name: CIS - Ensure 'Microsoft FTP Service (FTPSVC)' is set to 'Disabled' or 'Not Installed'
   query: |
     SELECT 1 WHERE 
-    NOT EXISTS ( SELECT 1 FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\FTPSVC\\Start' )
+    NOT EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\FTPSVC\\Start' )
     OR 
     EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\FTPSVC\\Start' AND data == 4 );
   critical: false
@@ -1977,7 +1977,7 @@ spec:
   name: CIS - Ensure 'OpenSSH SSH Server (sshd)' is set to 'Disabled' or 'Not Installed'
   query: |
     SELECT 1 WHERE 
-    NOT EXISTS ( SELECT 1 FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\sshd\\Start' )
+    NOT EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\sshd\\Start' )
     OR 
     EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\sshd\\Start' AND data == 4 );
   critical: false
@@ -2139,13 +2139,12 @@ kind: policy
 spec:
   name: CIS - Ensure 'Simple TCP/IP Services (simptcp)' is set to 'Disabled' or to 'Not Installed'
   query: |
-    SELECT CASE 
-        WHEN NOT EXISTS (SELECT * FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\simptcp\\Start') THEN 1 
-        WHEN (SELECT data FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\simptcp\\Start') == '4' THEN 1 
-        ELSE 0 
-    END AS result;
+    SELECT 1 WHERE
+        NOT EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\simptcp\\Start' )
+        OR
+        EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\simptcp\\Start' AND data == 4 );
   critical: false
-  description: The service supports the following TCP/IP services: Character Generator, Daytime, Discard, Echo, and Quote of the Day.
+  description: "The service supports the following TCP/IP services: Character Generator, Daytime, Discard, Echo, and Quote of the Day."
   resolution: |
     Automatic method:
     Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to 'Disabled' or to 'Not Installed':
@@ -2157,11 +2156,10 @@ kind: policy
 spec:
   name: CIS - Ensure 'SNMP Service (SNMP)' is set to 'Disabled' or to 'Not Installed'
   query: |
-    SELECT CASE 
-        WHEN NOT EXISTS (SELECT * FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\SNMP\\Start') THEN 1 
-        WHEN (SELECT data FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\SNMP\\Start') == '4' THEN 1 
-        ELSE 0 
-    END AS result;
+    SELECT 1 WHERE
+        NOT EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\SNMP\\Start' )
+        OR
+        EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\SNMP\\Start' AND data == 4 );
   critical: false
   description: The service enables Simple Network Management Protocol (SNMP) requests to be processed by this computer.
   resolution: |
@@ -2175,11 +2173,10 @@ kind: policy
 spec:
   name: CIS - Ensure 'Special Administration Console Helper (sacsvr)' is set to 'Disabled' or to 'Not Installed'
   query: |
-    SELECT CASE 
-        WHEN NOT EXISTS (SELECT * FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\sacsvr\\Start') THEN 1 
-        WHEN (SELECT data FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\sacsvr\\Start') == '4' THEN 1 
-        ELSE 0 
-    END AS result;
+    SELECT 1 WHERE
+        NOT EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\sacsvr\\Start' )
+        OR
+        EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\sacsvr\\Start' AND data == 4 );
   critical: false
   description: The service allows administrators to remotely access a command prompt using Emergency Management Services.
   resolution: |
@@ -2221,11 +2218,10 @@ kind: policy
 spec:
   name: CIS - Ensure 'Web Management Service (WMSvc)' is set to 'Disabled' or to 'Not Installed'
   query: |
-    SELECT CASE 
-        WHEN NOT EXISTS (SELECT * FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\WMSvc\\Start') THEN 1 
-        WHEN (SELECT data FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\WMSvc\\Start') == '4' THEN 1 
-        ELSE 0 
-    END AS result;
+    SELECT 1 WHERE
+        NOT EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\WMSvc\\Start' )
+        OR
+        EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\WMSvc\\Start' AND data == 4 );
   critical: false
   description: This web management Service enables remote and delegated management capabilities for administrators to manage for the Web server, sites and applications present on the machine.
   resolution: |
@@ -2271,11 +2267,10 @@ kind: policy
 spec:
   name: CIS - Ensure 'Windows Media Player Network Sharing Service (WMPNetworkSvc)' is set to 'Disabled' or to 'Not Installed'
   query: |
-    SELECT CASE 
-        WHEN NOT EXISTS (SELECT * FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\WMPNetworkSvc\\Start') THEN 1 
-        WHEN (SELECT data FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\WMPNetworkSvc\\Start') == '4' THEN 1 
-        ELSE 0 
-    END AS result;
+    SELECT 1 WHERE
+        NOT EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\WMPNetworkSvc\\Start' )
+        OR
+        EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\WMPNetworkSvc\\Start' AND data == 4 );
   critical: false
   description: This service shares Windows Media Player libraries to other networked players and media devices using Universal Plug and Play.
   resolution: |
@@ -2360,11 +2355,10 @@ kind: policy
 spec:
   name: CIS - Ensure 'World Wide Web Publishing Service (W3SVC)' is set to 'Disabled' or to 'Not Installed'
   query: |
-    SELECT CASE 
-        WHEN NOT EXISTS (SELECT * FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\W3SVC\\Start') THEN 1 
-        WHEN (SELECT data FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\W3SVC\\Start') == '4' THEN 1 
-        ELSE 0 
-    END AS result;
+    SELECT 1 WHERE
+        NOT EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\W3SVC\\Start' )
+        OR
+        EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\W3SVC\\Start' AND data == 4 );
   critical: false
   description: This service provides Web connectivity and administration through the Internet Information Services Manager.
   resolution: |
@@ -2428,7 +2422,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Domain: Firewall state' is set to 'On (recommended)'
+  name: "CIS - Ensure 'Windows Firewall: Domain: Firewall state' is set to 'On (recommended)'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile\EnableFirewall' and data = 1);
   critical: false
   description: |
@@ -2442,7 +2436,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure security policy processing: Do not apply during periodic background processing' is set to 'Enabled: FALSE'
+  name: "CIS - Ensure 'Configure security policy processing: Do not apply during periodic background processing' is set to 'Enabled: FALSE'"
   query: SELECT 1 FROM registry WHERE path LIKE 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{%}\NoGPOListChanges' AND data = '0';
   critical: false
   description: |
@@ -2457,7 +2451,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure security policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'
+  name: "CIS - Ensure 'Configure security policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'"
   query: SELECT 1 FROM registry WHERE path LIKE 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{%}\NoBackgroundPolicy' AND data = '0';
   critical: false
   description: |
@@ -2514,7 +2508,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network security: Restrict NTLM: Audit Incoming NTLM Traffic' is set to 'Enable auditing for all accounts'
+  name: "CIS - Ensure 'Network security: Restrict NTLM: Audit Incoming NTLM Traffic' is set to 'Enable auditing for all accounts'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0\AuditReceivingNTLMTraffic' AND data = 2);
   critical: false
   description: |
@@ -2528,7 +2522,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network security: Restrict NTLM: Outgoing NTLM traffic to remote servers' is set to 'Audit all' or higher
+  name: "CIS - Ensure 'Network security: Restrict NTLM: Outgoing NTLM traffic to remote servers' is set to 'Audit all' or higher"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0\RestrictSendingNTLMTraffic' AND data in (1,2));
   critical: false
   description: |
@@ -2557,7 +2551,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure password backup directory' is set to 'Enabled: Active Directory' or 'Enabled: Azure Active Directory'
+  name: "CIS - Ensure 'Configure password backup directory' is set to 'Enabled: Active Directory' or 'Enabled: Azure Active Directory'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS\BackupDirectory' AND data in (1, 2));
   critical: false
   description: |
@@ -2575,7 +2569,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Enable password encryption' is set to 'Enabled' 
+  name: "CIS - Ensure 'Enable password encryption' is set to 'Enabled' "
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS\ADPasswordEncryptionEnabled' AND data = 1);
   critical: false
   description: |
@@ -2593,7 +2587,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Post-authentication actions: Grace period (hours)' is set to 'Enabled: 8 or fewer hours, but not 0'
+  name: "CIS - Ensure 'Post-authentication actions: Grace period (hours)' is set to 'Enabled: 8 or fewer hours, but not 0'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS\PostAuthenticationResetDelay' AND cast(data as integer) BETWEEN 1 AND 8);
   critical: false
   description: |
@@ -2610,7 +2604,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Post-authentication actions: Actions' is set to 'Enabled: Reset the password and logoff the managed account' or higher 
+  name: "CIS - Ensure 'Post-authentication actions: Actions' is set to 'Enabled: Reset the password and logoff the managed account' or higher "
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS\PostAuthenticationActions' AND data in (3,5));
   critical: false
   description: |
@@ -2659,7 +2653,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Domain: Inbound connections' is set to 'Block (default)'
+  name: "CIS - Ensure 'Windows Firewall: Domain: Inbound connections' is set to 'Block (default)'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\\Policies\\Microsoft\WindowsFirewall\DomainProfile\DefaultInboundAction' and data = 1);
   critical: false
   description: |
@@ -2673,7 +2667,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Domain: Settings: Display a notification' is set to 'No'
+  name: "CIS - Ensure 'Windows Firewall: Domain: Settings: Display a notification' is set to 'No'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile\DisableNotifications' and data = 1);
   critical: false
   description: |
@@ -2687,7 +2681,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\domainfw.log'
+  name: "CIS - Ensure 'Windows Firewall: Domain: Logging: Name' is set to '%SystemRoot%\\System32\\logfiles\\firewall\\domainfw.log'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging\LogFilePath' and data = '%SystemRoot%\System32\logfiles\firewall\domainfw.log');
   critical: false
   description: |
@@ -2701,7 +2695,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Domain: Logging: Size limit (KB)' is set to '16,384 KB or greater'
+  name: "CIS - Ensure 'Windows Firewall: Domain: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\\Microsoft\WindowsFirewall\DomainProfile\Logging\LogFileSize' and CAST(data as integer) >= 16384 );
   critical: false
   description: |
@@ -2715,7 +2709,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'
+  name: "CIS - Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging\LogDroppedPackets' and data == 1);
   critical: false
   description: |
@@ -2729,7 +2723,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'
+  name: "CIS - Ensure 'Windows Firewall: Domain: Logging: Log successful connections' is set to 'Yes'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging\LogSuccessfulConnections' and data = 1 );
   critical: false
   description: |
@@ -2743,7 +2737,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Private: Firewall state' is set to 'On (recommended)'
+  name: "CIS - Ensure 'Windows Firewall: Private: Firewall state' is set to 'On (recommended)'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile\EnableFirewall' and data == 1);
   critical: false
   description: |
@@ -2757,7 +2751,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Private: Inbound connections' is set to 'Block (default)'
+  name: "CIS - Ensure 'Windows Firewall: Private: Inbound connections' is set to 'Block (default)'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile\DefaultInboundAction' and data == 1);
   critical: false
   description: |
@@ -2771,7 +2765,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Private: Settings: Display a notification' is set to 'No'
+  name: "CIS - Ensure 'Windows Firewall: Private: Settings: Display a notification' is set to 'No'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile\DisableNotifications' and data == 0);
   critical: false
   description: |
@@ -2785,8 +2779,8 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Private: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\privatefw.log'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile\\Logging\LogFilePath' AND data ='%systemroot%\system32\logfiles\firewall\pfirewall.log');
+  name: "CIS - Ensure 'Windows Firewall: Private: Logging: Name' is set to '%SystemRoot%\\System32\\logfiles\\firewall\\privatefw.log'"
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile\\Logging\LogFilePath' AND data = '%SystemRoot%\System32\logfiles\firewall\privatefw.log');
   critical: false
   description: |
     Use this option to specify the path and name of the file in which Windows Firewall will write its log information.
@@ -2799,7 +2793,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Private: Logging: Size limit (KB)' is set to '16,384 KB or greater'
+  name: "CIS - Ensure 'Windows Firewall: Private: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile\\Logging\LogFileSize' and CAST(data AS INTEGER) >= 16384 );
   critical: false
   description: |
@@ -2813,7 +2807,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Private: Logging: Log dropped packets' is set to 'Yes'
+  name: "CIS - Ensure 'Windows Firewall: Private: Logging: Log dropped packets' is set to 'Yes'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile\\Logging\LogDroppedPackets' and data == 1);
   critical: false
   description: |
@@ -2827,7 +2821,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Private: Logging: Log successful connections' is set to 'Yes'
+  name: "CIS - Ensure 'Windows Firewall: Private: Logging: Log successful connections' is set to 'Yes'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile\\Logging\LogSuccessfulConnections' and data == 1);
   critical: false
   description: |
@@ -2841,7 +2835,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Public: Firewall state' is set to 'On (recommended)'
+  name: "CIS - Ensure 'Windows Firewall: Public: Firewall state' is set to 'On (recommended)'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\EnableFirewall' and data == 1);
   critical: false
   description: |
@@ -2855,7 +2849,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Public: Inbound connections' is set to 'Block (default)'
+  name: "CIS - Ensure 'Windows Firewall: Public: Inbound connections' is set to 'Block (default)'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\DefaultInboundAction' and data == 1);
   critical: false
   description: |
@@ -2869,7 +2863,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Public: Settings: Display a notification' is set to 'No'
+  name: "CIS - Ensure 'Windows Firewall: Public: Settings: Display a notification' is set to 'No'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\DisableNotifications' and data == 0);
   critical: false
   description: |
@@ -2883,7 +2877,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Public: Settings: Apply local firewall rules' is set to 'No'
+  name: "CIS - Ensure 'Windows Firewall: Public: Settings: Apply local firewall rules' is set to 'No'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\AllowLocalPolicyMerge' and data == 0);
   critical: false
   description: |
@@ -2897,7 +2891,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Public: Settings: Apply local connection security rules' is set to 'No'
+  name: "CIS - Ensure 'Windows Firewall: Public: Settings: Apply local connection security rules' is set to 'No'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\AllowLocalIPsecPolicyMerge' and data == 0);
   critical: false
   description: |
@@ -2911,8 +2905,8 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Public: Logging: Name' is set to '%SystemRoot%\System32\logfiles\firewall\publicfw.log'
-  query: SELECT * FROM registry WHERE (key = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\\Logging\LogFilePath' and data == '%SystemRoot%\System32\logfiles\firewall\publicfw.log');
+  name: "CIS - Ensure 'Windows Firewall: Public: Logging: Name' is set to '%SystemRoot%\\System32\\logfiles\\firewall\\publicfw.log'"
+  query: SELECT * FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\\Logging\LogFilePath' and data == '%SystemRoot%\System32\logfiles\firewall\publicfw.log');
   critical: false
   description: |
     Use this option to specify the path and name of the file in which Windows Firewall will write its log information.
@@ -2925,8 +2919,8 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Public: Logging: Size limit (KB)' is set to '16,384 KB or greater'
-  query: SELECT * FROM registry WHERE (key = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\\Logging\LogFileSize' and data >= 16384 );
+  name: "CIS - Ensure 'Windows Firewall: Public: Logging: Size limit (KB)' is set to '16,384 KB or greater'"
+  query: SELECT * FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\\Logging\LogFileSize' and CAST(data AS INTEGER) >= 16384 );
   critical: false
   description: |
     Use this option to specify the size limit of the file in which Windows Firewall will write its log information.
@@ -2939,8 +2933,8 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Public: Logging: Log dropped packets' is set to 'Yes'
-  query: SELECT * FROM registry WHERE (key = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\\Logging\LogDroppedPackets' and data == 1);
+  name: "CIS - Ensure 'Windows Firewall: Public: Logging: Log dropped packets' is set to 'Yes'"
+  query: SELECT * FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\\Logging\LogDroppedPackets' and data == 1);
   critical: false
   description: |
     Use this option to log when Windows Firewall with Advanced Security discards an inbound packet
@@ -2955,8 +2949,8 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Public: Logging: Log successful connections' is set to 'Yes'
-  query: SELECT 1 FROM registry WHERE (key = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\\Logging\LogSuccessfulConnections' and data == 1 );
+  name: "CIS - Ensure 'Windows Firewall: Public: Logging: Log successful connections' is set to 'Yes'"
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\\Logging\LogSuccessfulConnections' and data == 1 );
   critical: false
   description: |
     Use this option to log when Windows Firewall with Advanced Security allows an inbound connection. The log records why and when the connection was formed. Look for entries with the word ALLOW in the action column of the log.
@@ -3023,7 +3017,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Audit PNP Activity' is set to 'Success'
+  name: CIS - Ensure 'Audit User Account Management' is set to 'Success and Failure'
   query: |
     SELECT 1 FROM mdm_bridge where mdm_command_input =
     "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Audit/AccountManagement_AuditUserAccountManagement</LocURI></Target></Item></Get></SyncBody>" 
@@ -3641,7 +3635,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters'
+  name: "CIS - Ensure 'Password Settings: Password Complexity' is set to 'Enabled: Large letters + small letters + numbers + special characters'"
   query: SELECT 1 FROM registry where path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\Microsoft Services\\AdmPwd\\PasswordComplexity' AND data = 4;
   critical: false
   description: |
@@ -3657,8 +3651,8 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Password Settings: Password Length' is set to 'Enabled: 15 or more'
-  query: SELECT 1 FROM registry where path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\Microsoft Services\\AdmPwd\\PasswordLength'  AND data >= 15;
+  name: "CIS - Ensure 'Password Settings: Password Length' is set to 'Enabled: 15 or more'"
+  query: SELECT 1 FROM registry where path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\Microsoft Services\\AdmPwd\\PasswordLength'  AND CAST(data AS INTEGER) >= 15;
   critical: false
   description: |
     In May 2015, Microsoft released the Local Administrator Password Solution (LAPS) tool, which is free and supported software that allows an organization to automatically set randomized and unique local Administrator account passwords on domain-attached workstations and Member Servers. The passwords are stored in a confidential attribute of the domain computer account and can be retrieved from Active Directory by approved Sysadmins when needed.
@@ -3673,8 +3667,8 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Password Settings: Password Age (Days)' is set to 'Enabled: 30 or fewer'
-  query: SELECT 1 FROM registry where path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\Microsoft Services\\AdmPwd\\PasswordAgeDays'  AND data <= 30;
+  name: "CIS - Ensure 'Password Settings: Password Age (Days)' is set to 'Enabled: 30 or fewer'"
+  query: SELECT 1 FROM registry where path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\Microsoft Services\\AdmPwd\\PasswordAgeDays'  AND CAST(data AS INTEGER) <= 30;
   critical: false
   description: |
     In May 2015, Microsoft released the Local Administrator Password Solution (LAPS) tool, which is free and supported software that allows an organization to automatically set randomized and unique local Administrator account passwords on domain-attached workstations and Member Servers. The passwords are stored in a confidential attribute of the domain computer account and can be retrieved from Active Directory by approved Sysadmins when needed.
@@ -3708,7 +3702,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure SMB v1 client driver' is set to 'Enabled: Disable driver (recommended)'
+  name: "CIS - Ensure 'Configure SMB v1 client driver' is set to 'Enabled: Disable driver (recommended)'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\MrxSmb10\Start' AND data = 4);
   critical: false
   description: This setting configures the start type for the Server Message Block version 1 (SMBv1) client driver service (MRxSmb10), which is recommended to be disabled.
@@ -3747,7 +3741,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'NetBT NodeType configuration' is set to 'Enabled: P-node (recommended)'
+  name: "CIS - Ensure 'NetBT NodeType configuration' is set to 'Enabled: P-node (recommended)'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\NetBT\\Parameters\NodeType' AND data = 2);
   critical: false
   description: |
@@ -3782,7 +3776,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'MSS: (AutoAdminLogon) Enable Automatic Logon' is set to 'Disabled'
+  name: "CIS - Ensure 'MSS: (AutoAdminLogon) Enable Automatic Logon' is set to 'Disabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\AutoAdminLogon' AND data = 0);
   critical: false
   description: This setting is separate from the Welcome screen feature in Windows XP and Windows Vista; if that feature is disabled, this setting is not disabled. If you configure a computer for automatic logon, anyone who can physically gain access to the computer can also gain access to everything that is on the computer, including any network or networks to which the computer is connected. Also, if you enable automatic logon, the password is stored in the registry in plaintext, and the specific registry key that stores this value is remotely readable by the Authenticated Users group.
@@ -3808,7 +3802,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'MSS: (DisableIPSourceRouting) IP source routing protection level' is set to 'Enabled: Highest protection, source routing is completely disabled' (Automated)'
+  name: "CIS - Ensure 'MSS: (DisableIPSourceRouting) IP source routing protection level' is set to 'Enabled: Highest protection, source routing is completely disabled' (Automated)'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters\DisableIPSourceRouting' AND data = 2);
   critical: false
   description: IP source routing is a mechanism that allows the sender to determine the IP route that a datagram should follow through the network.
@@ -3821,7 +3815,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'MSS: (DisableIPSourceRouting) IP source routing protection level' is set to 'Enabled: Highest protection, source routing is completely disabled''
+  name: "CIS - Ensure 'MSS: (DisableIPSourceRouting) IP source routing protection level' is set to 'Enabled: Highest protection, source routing is completely disabled''"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\DisableIPSourceRouting' AND data = 2);
   critical: false
   description: IP source routing is a mechanism that allows the sender to determine the IP route that a datagram should take through the network. It is recommended to configure this setting to Not Defined for enterprise environments and to Highest Protection for high security environments to completely disable source routing.
@@ -3834,7 +3828,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'MSS: (DisableSavePassword) Prevent the dial-up password from being saved' is set to 'Enabled'
+  name: "CIS - Ensure 'MSS: (DisableSavePassword) Prevent the dial-up password from being saved' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\RasMan\\Parameters\DisableSavePassword' AND data = 2);
   critical: false
   description: When you dial a phonebook or VPN entry in Dial-Up Networking, you can use the "Save Password" option so that your Dial-Up Networking password is cached and you will not need to enter it on successive dial attempts. For security, administrators may want to prevent users from caching passwords.
@@ -3847,7 +3841,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'MSS: (EnableICMPRedirect) Allow ICMP redirects to override OSPF generated routes' is set to 'Disabled'
+  name: "CIS - Ensure 'MSS: (EnableICMPRedirect) Allow ICMP redirects to override OSPF generated routes' is set to 'Disabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\EnableICMPRedirect' AND data = 0);
   critical: false
   description: Internet Control Message Protocol (ICMP) redirects cause the IPv4 stack to plumb host routes. These routes override the Open Shortest Path First (OSPF) generated routes.
@@ -3860,7 +3854,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'MSS: (NoNameReleaseOnDemand) Allow the computer to ignore NetBIOS name release requests except from WINS servers' is set to 'Enabled'
+  name: "CIS - Ensure 'MSS: (NoNameReleaseOnDemand) Allow the computer to ignore NetBIOS name release requests except from WINS servers' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\NetBT\\Parameters\NoNameReleaseOnDemand' AND data = 1);
   critical: false
   description: NetBIOS over TCP/IP is a network protocol that among other things provides a way to easily resolve NetBIOS names that are registered on Windows-based systems to the IP addresses that are configured on those systems. This setting determines whether the computer releases its NetBIOS name when it receives a name-release request.
@@ -3873,7 +3867,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'MSS: (PerformRouterDiscovery) Allow IRDP to detect and configure Default Gateway addresses' is set to 'Disabled'
+  name: "CIS - Ensure 'MSS: (PerformRouterDiscovery) Allow IRDP to detect and configure Default Gateway addresses' is set to 'Disabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\PerformRouterDiscovery' AND data = 0);
   critical: false
   description: This setting is used to enable or disable the Internet Router Discovery Protocol (IRDP), which allows the system to detect and configure default gateway addresses automatically as described in RFC 1256 on a per-interface basis.
@@ -3886,7 +3880,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'MSS: (SafeDllSearchMode) Enable Safe DLL search mode' is set to 'Enabled'
+  name: "CIS - Ensure 'MSS: (SafeDllSearchMode) Enable Safe DLL search mode' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\SafeDllSearchMode' AND data = 1);
   critical: false
   description: |
@@ -3905,8 +3899,8 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'MSS: (ScreenSaverGracePeriod) The time in seconds before the screen saver grace period expires' is set to 'Enabled: 5 or fewer seconds'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\ScreenSaverGracePeriod' AND data <= 5);
+  name: "CIS - Ensure 'MSS: (ScreenSaverGracePeriod) The time in seconds before the screen saver grace period expires' is set to 'Enabled: 5 or fewer seconds'"
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\ScreenSaverGracePeriod' AND CAST(data AS INTEGER) <= 5);
   critical: false
   description: Windows includes a grace period between when the screen saver is launched and when the console is actually locked automatically when screen saver locking is enabled.
   resolution: |
@@ -3918,7 +3912,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'MSS: (TcpMaxDataRetransmissions IPv6) How many times unacknowledged data is retransmitted' is set to 'Enabled: 3'
+  name: "CIS - Ensure 'MSS: (TcpMaxDataRetransmissions IPv6) How many times unacknowledged data is retransmitted' is set to 'Enabled: 3'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\TCPIP6\\Parameters\TcpMaxDataRetransmissions' AND data = 3);
   critical: false
   description: This setting controls the number of times that TCP retransmits an individual data segment (non-connect segment) before the connection is aborted. The retransmission time-out is doubled with each successive retransmission on a connection. It is reset when responses resume. The base time-out value is dynamically determined by the measured round-trip time on the connection.
@@ -3931,7 +3925,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'MSS: (TcpMaxDataRetransmissions) How many times unacknowledged data is retransmitted' is set to 'Enabled: 3'
+  name: "CIS - Ensure 'MSS: (TcpMaxDataRetransmissions) How many times unacknowledged data is retransmitted' is set to 'Enabled: 3'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\TcpMaxDataRetransmissions' AND data = 3);
   critical: false
   description: This setting controls the number of times that TCP retransmits an individual data segment (non-connect segment) before the connection is aborted. The retransmission time-out is doubled with each successive retransmission on a connection. It is reset when responses resume. The base time-out value is dynamically determined by the measured round-trip time on the connection.
@@ -3944,8 +3938,8 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'MSS: (WarningLevel) Percentage threshold for the security event log at which the system will generate a warning' is set to 'Enabled: 90% or less'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Eventlog\\Security\WarningLevel' AND data <= 90);
+  name: "CIS - Ensure 'MSS: (WarningLevel) Percentage threshold for the security event log at which the system will generate a warning' is set to 'Enabled: 90% or less'"
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Eventlog\\Security\WarningLevel' AND CAST(data AS INTEGER) <= 90);
   critical: false
   description: This setting can generate a security audit in the Security event log when the log reaches a user-defined threshold.
   resolution: |
@@ -4072,7 +4066,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Mandate the minimum version of SMB' is set to 'Enabled: 3.1.1'
+  name: "CIS - Ensure 'Mandate the minimum version of SMB' is set to 'Enabled: 3.1.1'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\MinSmb2Dialect' AND data = 785);
   critical: false
   description: |
@@ -4107,8 +4101,8 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Set authentication rate limiter delay (milliseconds)' is set to 'Enabled: 2000' or more
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\InvalidAuthenticationDelayTimeInMs' AND data >= 2000);
+  name: "CIS - Ensure 'Set authentication rate limiter delay (milliseconds)' is set to 'Enabled: 2000' or more"
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\InvalidAuthenticationDelayTimeInMs' AND CAST(data AS INTEGER) >= 2000);
   critical: false
   description: |
     This policy settings configures the SMB server invalid authentication delay value in milliseconds.
@@ -4174,7 +4168,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'MSS: (KeepAliveTime) How often keep-alive packets are sent in milliseconds' is set to 'Enabled: 300,000 or 5 minutes'
+  name: "CIS - Ensure 'MSS: (KeepAliveTime) How often keep-alive packets are sent in milliseconds' is set to 'Enabled: 300,000 or 5 minutes'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\KeepAliveTime' AND data = 300000);
   critical: false
   description: This value controls how often TCP attempts to verify that an idle connection is still intact by sending a keep-alive packet. If the remote computer is still reachable, it acknowledges the keep-alive packet.
@@ -4310,7 +4304,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Point and Print Restrictions: When installing drivers for a new connection' is set to 'Enabled: Show warning and elevation prompt'
+  name: "CIS - Ensure 'Point and Print Restrictions: When installing drivers for a new connection' is set to 'Enabled: Show warning and elevation prompt'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\Printers\PointAndPrint\NoWarningNoElevationOnInstall' AND data = 0);
   critical: false
   description: This policy setting controls whether computers will show a warning and a security elevation prompt when users create a new printer connection using Point and Print.
@@ -4322,7 +4316,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Point and Print Restrictions: When updating drivers for an existing connection' is set to 'Enabled: Show warning and elevation prompt'
+  name: "CIS - Ensure 'Point and Print Restrictions: When updating drivers for an existing connection' is set to 'Enabled: Show warning and elevation prompt'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows NT\Printers\PointAndPrint\UpdatePromptSettings' AND data = 0);
   critical: false
   description: This policy setting controls whether computers will show a warning and a security elevation prompt when users are updating drivers for an existing connection using Point and Print.
@@ -4351,7 +4345,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure NetBIOS settings' is set to 'Enabled: Disable NetBIOS name resolution on public networks'
+  name: "CIS - Ensure 'Configure NetBIOS settings' is set to 'Enabled: Disable NetBIOS name resolution on public networks'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient\EnableNetbios' AND (data = 0));
   critical: false
   description: This policy setting specifies if the Domain Name System (DNS) client will perform name resolution over Network Basic Input/Output System (NetBIOS). NetBIOS is a legacy name resolution method for internal Microsoft networking that predates the use of DNS for that purpose (pre–Active Directory). Some legacy applications still require the use of NetBIOS for full functionality.
@@ -4375,7 +4369,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure Redirection Guard' is set to 'Enabled: Redirection Guard Enabled' 
+  name: "CIS - Ensure 'Configure Redirection Guard' is set to 'Enabled: Redirection Guard Enabled' "
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Printers\RedirectionGuardPolicy' AND (data = 1));
   critical: false
   description: This policy setting determines whether Redirection Guard is enabled for the print spooler. Redirection Guard can prevent file redirections from being used within the print spooler.
@@ -4388,7 +4382,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure RPC connection settings: Protocol to use for outgoing RPC connections' is set to 'Enabled: RPC over TCP' 
+  name: "CIS - Ensure 'Configure RPC connection settings: Protocol to use for outgoing RPC connections' is set to 'Enabled: RPC over TCP' "
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Printers\RPC\RpcUseNamedPipeProtocol' AND (data = 0));
   critical: false
   description: This policy setting controls which protocol and protocol settings to use for outgoing Remote Procedure Call (RPC) connections to a remote print spooler.
@@ -4401,7 +4395,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure RPC connection settings: Use authentication for outgoing RPC connections' is set to 'Enabled: Default' 
+  name: "CIS - Ensure 'Configure RPC connection settings: Use authentication for outgoing RPC connections' is set to 'Enabled: Default' "
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Printers\RPC\RpcAuthentication' AND (data = 0));
   critical: false
   description: This policy setting controls which protocol and protocol settings to use for outgoing Remote Procedure Call (RPC) connections to a remote print spooler.
@@ -4414,7 +4408,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure RPC listener settings: Protocols to allow for incoming RPC connections' is set to 'Enabled: RPC over TCP'
+  name: "CIS - Ensure 'Configure RPC listener settings: Protocols to allow for incoming RPC connections' is set to 'Enabled: RPC over TCP'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Printers\RPC\RpcProtocols' AND (data = 5));
   critical: false
   description: This policy setting controls which protocols incoming Remote Procedure Call (RPC) connections to the print spooler are allowed to use.
@@ -4427,7 +4421,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure RPC listener settings: Authentication protocol to use for incoming RPC connections:' is set to 'Enabled: Negotiate' or higher
+  name: "CIS - Ensure 'Configure RPC listener settings: Authentication protocol to use for incoming RPC connections:' is set to 'Enabled: Negotiate' or higher"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Printers\RPC\ForceKerberosForRpc' AND (data = 0));
   critical: false
   description: This policy setting controls which protocols incoming Remote Procedure Call (RPC) connections to the print spooler are allowed to use.
@@ -4440,7 +4434,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Manage processing of Queue-specific files' is set to 'Enabled: Limit Queue-specific files to Color profiles'
+  name: "CIS - Ensure 'Manage processing of Queue-specific files' is set to 'Enabled: Limit Queue-specific files to Color profiles'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Printers\CopyFilesPolicy' AND (data = 1));
   critical: false
   description: This policy setting manages how queue-specific files are processed during printer installation. At printer installation time, a vendor-supplied installation application can specify a set of files, of any type, to be associated with a particular print queue. The files are downloaded to each client that connects to the print server.
@@ -4503,7 +4497,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Encryption Oracle Remediation' is set to 'Enabled: Force Updated Clients'
+  name: "CIS - Ensure 'Encryption Oracle Remediation' is set to 'Enabled: Force Updated Clients'"
   query: SELECT 1 FROM REGISTRY WHERE (PATH = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\CredSSP\\Parameters\AllowEncryptionOracle' AND data = 0);
   critical: false
   description: Some versions of the CredSSP protocol that is used by some applications (such as Remote Desktop Connection) are vulnerable to an encryption oracle attack against the client. This policy controls compatibility with vulnerable clients and servers and allows you to set the level of protection desired for the encryption oracle vulnerability.
@@ -4539,7 +4533,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Turn On Virtualization Based Security: Select Platform Security Level' is set to 'Secure Boot' or higher
+  name: "CIS - Ensure 'Turn On Virtualization Based Security: Select Platform Security Level' is set to 'Secure Boot' or higher"
   query: SELECT 1 FROM REGISTRY WHERE (PATH = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\DeviceGuard\RequirePlatformSecurityFeatures' AND data in (1,3));
   critical: false
   description: |
@@ -4556,7 +4550,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Turn On Virtualization Based Security: Select Platform Security Level' is set to 'Secure Boot and DMA Protection'
+  name: "CIS - Ensure 'Turn On Virtualization Based Security: Select Platform Security Level' is set to 'Secure Boot and DMA Protection'"
   query: SELECT 1 FROM REGISTRY WHERE (PATH = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceGuard\RequirePlatformSecurityFeatures' AND data = 3);
   critical: false
   description: This policy setting specifies whether Virtualization Based Security is enabled. Virtualization Based Security uses the Windows Hypervisor to provide support for security services.
@@ -4568,7 +4562,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Turn On Virtualization Based Security: Virtualization Based Protection of Code Integrity' is set to 'Enabled with UEFI lock'
+  name: "CIS - Ensure 'Turn On Virtualization Based Security: Virtualization Based Protection of Code Integrity' is set to 'Enabled with UEFI lock'"
   query: SELECT 1 FROM REGISTRY WHERE (PATH = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceGuard\HypervisorEnforcedCodeIntegrity' AND data = 1);
   critical: false
   description: This setting enables virtualization based protection of Kernel Mode Code Integrity. When this is enabled, kernel mode memory protections are enforced and the Code Integrity validation path is protected by the Virtualization Based Security feature.
@@ -4580,7 +4574,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Turn On Virtualization Based Security: Require UEFI Memory Attributes Table' is set to 'True (checked)'
+  name: "CIS - Ensure 'Turn On Virtualization Based Security: Require UEFI Memory Attributes Table' is set to 'True (checked)'"
   query: SELECT 1 FROM REGISTRY WHERE (PATH = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceGuard\HVCIMATRequired' AND data = 1);
   critical: false
   description: This option will only enable Virtualization Based Protection of Code Integrity on devices with UEFI firmware support for the Memory Attributes Table. Devices without the UEFI Memory Attributes Table may have firmware that is incompatible with Virtualization Based Protection of Code Integrity which in some cases can lead to crashes or data loss or incompatibility with certain plug-in cards. If not setting this option the targeted devices should be tested to ensure compatibility.
@@ -4592,7 +4586,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Turn On Virtualization Based Security: Credential Guard Configuration' is set to 'Enabled with UEFI lock'
+  name: "CIS - Ensure 'Turn On Virtualization Based Security: Credential Guard Configuration' is set to 'Enabled with UEFI lock'"
   query: SELECT 1 FROM REGISTRY WHERE (PATH = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceGuard\LsaCfgFlags' AND data = 1);
   critical: false
   description: This setting lets users turn on Credential Guard with virtualization-based security to help protect credentials. The "Enabled with UEFI lock" option ensures that Credential Guard cannot be disabled remotely. In order to disable the feature, you must set the Group Policy to "Disabled" as well as remove the security functionality from each computer, with a physically present user, in order to clear configuration persisted in UEFI.
@@ -4604,7 +4598,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Turn On Virtualization Based Security: Secure Launch Configuration' is set to 'Enabled'
+  name: "CIS - Ensure 'Turn On Virtualization Based Security: Secure Launch Configuration' is set to 'Enabled'"
   query: SELECT 1 FROM REGISTRY WHERE (PATH = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceGuard\ConfigureSystemGuardLaunch' AND data = 1);
   critical: false
   description: Secure Launch protects the Virtualization Based Security environment from exploited vulnerabilities in device firmware.
@@ -4616,7 +4610,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Turn On Virtualization Based Security: Kernel-mode Hardware-enforced Stack Protection' is set to 'Enabled: Enabled in enforcement mode'
+  name: "CIS - Ensure 'Turn On Virtualization Based Security: Kernel-mode Hardware-enforced Stack Protection' is set to 'Enabled: Enabled in enforcement mode'"
   query: SELECT 1 FROM REGISTRY WHERE (PATH = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceGuard\ConfigureKernelShadowStacksLaunch' AND data = 1);
   critical: false
   description: |
@@ -4649,8 +4643,8 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Prevent installation of devices using drivers that match these device setup classes: Prevent installation of devices using drivers for these device setup' is set to 'IEEE 1394 device setup classes'
-  query: SELECT data FROM registry WHERE ((key = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceInstall\\Restrictions\\DenyDeviceClasses\' AND data IN ('{d48179be-ec20-11d1-b6b8-00c04fa372a7}', '{7ebefbc0-3200-11d2-b4c2-00a0C9697d07}', '{c06ff265-ae09-48f0-812c-16753d7cba83}', '{6bdd1fc1-810f-11d0-bec7-08002be2092f}')) AND ((SELECT COUNT(*) FROM registry WHERE (key = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceInstall\\Restrictions\\DenyDeviceClasses\' AND data IN ('{d48179be-ec20-11d1-b6b8-00c04fa372a7}', '{7ebefbc0-3200-11d2-b4c2-00a0C9697d07}', '{c06ff265-ae09-48f0-812c-16753d7cba83}', '{6bdd1fc1-810f-11d0-bec7-08002be2092f}'))))=4);
+  name: "CIS - Ensure 'Prevent installation of devices using drivers that match these device setup classes: Prevent installation of devices using drivers for these device setup' is set to 'IEEE 1394 device setup classes'"
+  query: SELECT data FROM registry WHERE ((key = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceInstall\\Restrictions\\DenyDeviceClasses' AND data IN ('{d48179be-ec20-11d1-b6b8-00c04fa372a7}', '{7ebefbc0-3200-11d2-b4c2-00a0C9697d07}', '{c06ff265-ae09-48f0-812c-16753d7cba83}', '{6bdd1fc1-810f-11d0-bec7-08002be2092f}')) AND ((SELECT COUNT(*) FROM registry WHERE (key = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceInstall\\Restrictions\\DenyDeviceClasses' AND data IN ('{d48179be-ec20-11d1-b6b8-00c04fa372a7}', '{7ebefbc0-3200-11d2-b4c2-00a0C9697d07}', '{c06ff265-ae09-48f0-812c-16753d7cba83}', '{6bdd1fc1-810f-11d0-bec7-08002be2092f}'))))=4);
   critical: false
   description: |
     This policy setting allows you to specify a list of device setup class globally unique identifiers (GUIDs) for device drivers that Windows is prevented from installing. This policy setting takes precedence over any other policy setting that allows Windows to install a device.
@@ -4664,7 +4658,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Prevent installation of devices using drivers that match these device setup classes: Also apply to matching devices that are already installed.' is set to 'True' (checked)
+  name: "CIS - Ensure 'Prevent installation of devices using drivers that match these device setup classes: Also apply to matching devices that are already installed.' is set to 'True' (checked)"
   query: SELECT 1 FROM REGISTRY WHERE (PATH = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceInstall\\Restrictions\DenyDeviceClassesRetroactive' AND data = 1);
   critical: false
   description: |
@@ -4691,7 +4685,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Boot-Start Driver Initialization Policy' is set to 'Enabled: Good, unknown and bad but critical' (Automated)
+  name: "CIS - Ensure 'Boot-Start Driver Initialization Policy' is set to 'Enabled: Good, unknown and bad but critical' (Automated)"
   query: SELECT 1 FROM REGISTRY WHERE (PATH = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Policies\\EarlyLaunch\DriverLoadPolicy' AND data = 3);
   critical: false
   description: |
@@ -4710,7 +4704,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure registry policy processing: Do not apply during periodic background processing' is set to 'Enabled: FALSE'
+  name: "CIS - Ensure 'Configure registry policy processing: Do not apply during periodic background processing' is set to 'Enabled: FALSE'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Group Policy\\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\NoBackgroundPolicy' AND data = 0);
   critical: false
   description: The "Do not apply during periodic background processing" option prevents the system from updating affected policies in the background while the computer is in use. When background updates are disabled, policy changes will not take effect until the next user logon or system restart.
@@ -4723,7 +4717,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure registry policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'
+  name: "CIS - Ensure 'Configure registry policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Group Policy\\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\NoGPOListChanges' AND data = 0);
   critical: false
   description: The "Process even if the Group Policy objects have not changed" option updates and reapplies policies even if the policies have not changed.
@@ -4956,7 +4950,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Support device authentication using certificate' is set to 'Enabled: Automatic'
+  name: "CIS - Ensure 'Support device authentication using certificate' is set to 'Enabled: Automatic'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\kerberos\\parameters\DevicePKInitBehavior' AND data = 0) AND (SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\kerberos\\parameters\DevicePKInitEnabled' AND data = 1));
   critical: false
   description: |
@@ -4971,7 +4965,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Enumeration policy for external devices incompatible with Kernel DMA Protection' is set to 'Enabled: Block All'
+  name: "CIS - Ensure 'Enumeration policy for external devices incompatible with Kernel DMA Protection' is set to 'Enabled: Block All'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Kernel DMA Protection\DeviceEnumerationPolicy' AND data = 0);
   critical: false
   description: This policy is intended to provide additional security against external DMA-capable devices. It allows for more control over the enumeration of external DMA-capable devices that are not compatible with DMA Remapping/device memory isolation and sandboxing.
@@ -5231,7 +5225,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure SAM change password RPC methods policy' is set to 'Enabled: Block all change password RPC methods'
+  name: "CIS - Ensure 'Configure SAM change password RPC methods policy' is set to 'Enabled: Block all change password RPC methods'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\SAM\SamrChangeUserPasswordApiPolicy' AND data = 1);
   critical: false
   description: |
@@ -5247,7 +5241,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Restrict Unauthenticated RPC clients' is set to 'Enabled: Authenticated'
+  name: "CIS - Ensure 'Restrict Unauthenticated RPC clients' is set to 'Enabled: Authenticated'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Rpc\RestrictRemoteClients' AND data = 1);
   critical: false
   description: |
@@ -5266,7 +5260,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Microsoft Support Diagnostic Tool: Turn on MSDT interactive communication with support provider' is set to 'Disabled'
+  name: "CIS - Ensure 'Microsoft Support Diagnostic Tool: Turn on MSDT interactive communication with support provider' is set to 'Disabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\ScriptedDiagnosticsProvider\\Policy\DisableQueryRemoteServer' AND data = 0);
   critical: false
   description: This policy setting configures Microsoft Support Diagnostic Tool (MSDT) interactive communication with the support provider. MSDT gathers diagnostic data for analysis by support professionals.
@@ -5319,7 +5313,7 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'Enable Windows NTP Server' is set to 'Disabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\Software\\Policies\\Microsoft\\W32Time\\TimeProviders\\NtpServer' AND data = 0);
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\Software\\Policies\\Microsoft\\W32Time\\TimeProviders\\NtpServer\Enabled' AND data = 0);
   critical: false
   description: This policy setting allows you to specify whether the Windows NTP Server is enabled.
   resolution: |
@@ -5331,7 +5325,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure the behavior of the sudo command' is set to 'Enabled: Disabled'
+  name: "CIS - Ensure 'Configure the behavior of the sudo command' is set to 'Enabled: Disabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Sudo\Enabled' AND data = 0);
   critical: false
   description: |
@@ -5577,7 +5571,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Allow data recovery agent' is set to 'Enabled: True'
+  name: "CIS - Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Allow data recovery agent' is set to 'Enabled: True'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\Microsoft\\FVE\FDVManageDRA' AND data = 1);
   critical: false
   description: |
@@ -5592,7 +5586,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Recovery Password' is set to 'Enabled: Allow 48-digit recovery password' or higher
+  name: "CIS - Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Recovery Password' is set to 'Enabled: Allow 48-digit recovery password' or higher"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\FDVRecoveryPassword' AND data in (1,2));
   critical: false
   description: |
@@ -5608,7 +5602,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Recovery Key' is set to 'Enabled: Allow 256-bit recovery key or higher'
+  name: "CIS - Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Recovery Key' is set to 'Enabled: Allow 256-bit recovery key or higher'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\FDVRecoveryKey' AND data in (1,2));
   critical: false
   description: |
@@ -5623,7 +5617,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Omit recovery options from the BitLocker setup wizard' is set to 'Enabled: True'
+  name: "CIS - Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Omit recovery options from the BitLocker setup wizard' is set to 'Enabled: True'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\FDVHideRecoveryPage' AND data = 1);
   critical: false
   description: |
@@ -5638,7 +5632,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Save BitLocker recovery information to AD DS for fixed data drives' is set to 'Enabled: False'
+  name: "CIS - Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Save BitLocker recovery information to AD DS for fixed data drives' is set to 'Enabled: False'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\FDVActiveDirectoryBackup' AND data = 0);
   critical: false
   description: |
@@ -5653,7 +5647,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Configure storage of BitLocker recovery information to AD DS' is set to 'Enabled: Backup recovery passwords and key packages'
+  name: "CIS - Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Configure storage of BitLocker recovery information to AD DS' is set to 'Enabled: Backup recovery passwords and key packages'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\FDVActiveDirectoryInfoToStore' AND data = 1);
   critical: false
   description: |
@@ -5668,7 +5662,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Do not enable BitLocker until recovery information is stored to AD DS for fixed data drives' is set to 'Enabled: False'
+  name: "CIS - Ensure 'Choose how BitLocker-protected fixed drives can be recovered: Do not enable BitLocker until recovery information is stored to AD DS for fixed data drives' is set to 'Enabled: False'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\FDVRequireActiveDirectoryBackup' AND data = 0);
   critical: false
   description: |
@@ -5728,7 +5722,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure use of smart cards on fixed data drives: Require use of smart cards on fixed data drives' is set to 'Enabled: True'
+  name: "CIS - Ensure 'Configure use of smart cards on fixed data drives: Require use of smart cards on fixed data drives' is set to 'Enabled: True'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\FDVEnforceUserCert' AND data = 1);
   critical: false
   description: |
@@ -5792,7 +5786,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Allow data recovery agent' is set to 'Enabled: False'
+  name: "CIS - Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Allow data recovery agent' is set to 'Enabled: False'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\OSManageDRA' AND data = 0);
   critical: false
   description: |
@@ -5807,7 +5801,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Recovery Password' is set to 'Enabled: Require 48-digit recovery password'
+  name: "CIS - Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Recovery Password' is set to 'Enabled: Require 48-digit recovery password'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\OSRecoveryPassword' AND data = 1);
   critical: false
   description: |
@@ -5822,7 +5816,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Recovery Key' is set to 'Enabled: Do not allow 256-bit recovery key'
+  name: "CIS - Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Recovery Key' is set to 'Enabled: Do not allow 256-bit recovery key'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\OSRecoveryKey' AND data = 0);
   critical: false
   description: |
@@ -5837,7 +5831,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Omit recovery options from the BitLocker setup wizard' is set to 'Enabled: True'
+  name: "CIS - Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Omit recovery options from the BitLocker setup wizard' is set to 'Enabled: True'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\OSHideRecoveryPage' AND data = 1);
   critical: false
   description: |
@@ -5852,7 +5846,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Save BitLocker recovery information to AD DS for operating system drives' is set to 'Enabled: True'
+  name: "CIS - Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Save BitLocker recovery information to AD DS for operating system drives' is set to 'Enabled: True'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\OSActiveDirectoryBackup' AND data = 1);
   critical: false
   description: |
@@ -5867,7 +5861,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Configure storage of BitLocker recovery information to AD DS:' is set to 'Enabled: Store recovery passwords and key packages'
+  name: "CIS - Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Configure storage of BitLocker recovery information to AD DS:' is set to 'Enabled: Store recovery passwords and key packages'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\OSActiveDirectoryInfoToStore' AND data = 1);
   critical: false
   description: |
@@ -5882,7 +5876,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Do not enable BitLocker until recovery information is stored to AD DS for operating system drives' is set to 'Enabled: True'
+  name: "CIS - Ensure 'Choose how BitLocker-protected operating system drives can be recovered: Do not enable BitLocker until recovery information is stored to AD DS for operating system drives' is set to 'Enabled: True'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\OSRequireActiveDirectoryBackup' AND data = 1);
   critical: false
   description: |
@@ -5940,7 +5934,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Require additional authentication at startup: Allow BitLocker without a compatible TPM' is set to 'Enabled: False'
+  name: "CIS - Ensure 'Require additional authentication at startup: Allow BitLocker without a compatible TPM' is set to 'Enabled: False'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\EnableBDEWithNoTPM' AND data = 0);
   critical: false
   description: This policy setting allows you to configure whether you can use BitLocker without a Trusted Platform Module (TPM), instead using a password or startup key on a USB flash drive. This policy setting is applied when you turn on BitLocker.
@@ -5985,7 +5979,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected removable drives can be recovered: Allow data recovery agent' is set to 'Enabled: True'
+  name: "CIS - Ensure 'Choose how BitLocker-protected removable drives can be recovered: Allow data recovery agent' is set to 'Enabled: True'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\RDVManageDRA' AND data = 1);
   critical: false
   description: |
@@ -6000,7 +5994,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected removable drives can be recovered: Recovery Password' is set to 'Enabled: Do not allow 48- digit recovery password'
+  name: "CIS - Ensure 'Choose how BitLocker-protected removable drives can be recovered: Recovery Password' is set to 'Enabled: Do not allow 48- digit recovery password'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\RDVRecoveryPassword' AND data = 0);
   critical: false
   description: |
@@ -6015,7 +6009,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected removable drives can be recovered: Recovery Key' is set to 'Enabled: Do not allow 256-bit recovery key'
+  name: "CIS - Ensure 'Choose how BitLocker-protected removable drives can be recovered: Recovery Key' is set to 'Enabled: Do not allow 256-bit recovery key'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\RDVRecoveryKey' AND data = 0);
   critical: false
   description: |
@@ -6030,7 +6024,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected removable drives can be recovered: Omit recovery options from the BitLocker setup wizard' is set to 'Enabled: True'
+  name: "CIS - Ensure 'Choose how BitLocker-protected removable drives can be recovered: Omit recovery options from the BitLocker setup wizard' is set to 'Enabled: True'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\RDVHideRecoveryPage' AND data = 1);
   critical: false
   description: |
@@ -6045,7 +6039,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected removable drives can be recovered: Save BitLocker recovery information to AD DS for removable data drives' is set to 'Enabled: False'
+  name: "CIS - Ensure 'Choose how BitLocker-protected removable drives can be recovered: Save BitLocker recovery information to AD DS for removable data drives' is set to 'Enabled: False'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\RDVActiveDirectoryBackup' AND data = 0);
   critical: false
   description: |
@@ -6060,7 +6054,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected removable drives can be recovered: Configure storage of BitLocker recovery information to AD DS:' is set to 'Enabled: Backup recovery passwords and key packages'
+  name: "CIS - Ensure 'Choose how BitLocker-protected removable drives can be recovered: Configure storage of BitLocker recovery information to AD DS:' is set to 'Enabled: Backup recovery passwords and key packages'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\RDVActiveDirectoryInfoToStore' AND data = 1);
   critical: false
   description: |
@@ -6075,7 +6069,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Choose how BitLocker-protected removable drives can be recovered: Do not enable BitLocker until recovery information is stored to AD DS for removable data drives' is set to 'Enabled: False'
+  name: "CIS - Ensure 'Choose how BitLocker-protected removable drives can be recovered: Do not enable BitLocker until recovery information is stored to AD DS for removable data drives' is set to 'Enabled: False'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\RDVRequireActiveDirectoryBackup' AND data = 0);
   critical: false
   description: |
@@ -6133,7 +6127,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure use of smart cards on removable data drives: Require use of smart cards on removable data drives' is set to 'Enabled: True'
+  name: "CIS - Ensure 'Configure use of smart cards on removable data drives: Require use of smart cards on removable data drives' is set to 'Enabled: True'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\RDVEnforceUserCert' AND data = 1);
   critical: false
   description: |
@@ -6163,7 +6157,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Deny write access to removable drives not protected by BitLocker: Do not allow write access to devices configured in another organization' is set to 'Enabled: False'
+  name: "CIS - Ensure 'Deny write access to removable drives not protected by BitLocker: Do not allow write access to devices configured in another organization' is set to 'Enabled: False'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\RDVDenyCrossOrg' AND data = 0);
   critical: false
   description: This policy setting configures whether the computer will be able to write data to BitLocker- protected removable drives that were configured in another organization.
@@ -6239,7 +6233,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Require pin for pairing' is set to 'Enabled: First Time' OR 'Enabled: Always'
+  name: "CIS - Ensure 'Require pin for pairing' is set to 'Enabled: First Time' OR 'Enabled: Always'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\Windows\\Connect\RequirePinForPairing' AND data = 2);
   critical: false
   description: This policy setting controls whether or not a PIN is required for pairing to a wireless display device.
@@ -6287,7 +6281,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Allow Diagnostic Data' is set to 'Enabled: Diagnostic data off (not recommended)' or 'Enabled: Send required diagnostic data'
+  name: "CIS - Ensure 'Allow Diagnostic Data' is set to 'Enabled: Diagnostic data off (not recommended)' or 'Enabled: Send required diagnostic data'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection\AllowTelemetry' AND (data = 0 OR data = 1));
   critical: false
   description: |
@@ -6304,7 +6298,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure Authenticated Proxy usage for the Connected User Experience and Telemetry service' is set to 'Enabled: Disable Authenticated Proxy usage'
+  name: "CIS - Ensure 'Configure Authenticated Proxy usage for the Connected User Experience and Telemetry service' is set to 'Enabled: Disable Authenticated Proxy usage'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection\DisableEnterpriseAuthProxy' AND data = 1);
   critical: false
   description: This policy setting controls whether the Connected User Experience and Telemetry service can automatically use an authenticated proxy to send data back to Microsoft.
@@ -6384,7 +6378,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Download Mode' is NOT set to 'Enabled: Internet'
+  name: "CIS - Ensure 'Download Mode' is NOT set to 'Enabled: Internet'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization\DODownloadMode' AND data = 3);
   critical: false
   description: |
@@ -6417,7 +6411,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configures LSASS to run as a protected process' is set to 'Enabled: Enabled with UEFI Lock' 
+  name: "CIS - Ensure 'Configures LSASS to run as a protected process' is set to 'Enabled: Enabled with UEFI Lock' "
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\RunAsPPL' and data = 1);
   critical: false
   description: |
@@ -6457,7 +6451,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Application: Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'
+  name: "CIS - Ensure 'Application: Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\Policies\\Microsoft\\Windows\\EventLog\\Application\Retention' AND data = 0);
   critical: false
   description: This policy setting controls Event Log behavior when the log file reaches its maximum size.
@@ -6471,8 +6465,8 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Application: Specify the maximum log file size (KB)' is set to 'Enabled: 32,768 or greater'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\Application\\MaxSize' AND data >= 32768 );
+  name: "CIS - Ensure 'Application: Specify the maximum log file size (KB)' is set to 'Enabled: 32,768 or greater'"
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\Application\\MaxSize' AND CAST(data AS INTEGER) >= 32768 );
   critical: false
   description: This policy setting specifies the maximum size of the log file in kilobytes. The maximum log file size can be configured between 1 megabyte (1,024 kilobytes) and 4 terabytes (4,194,240 kilobytes) in kilobyte increments.
   resolution: |
@@ -6485,7 +6479,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Security: Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'
+  name: "CIS - Ensure 'Security: Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\Security\Retention' AND data = 0);
   critical: false
   description: This policy setting controls Event Log behavior when the log file reaches its maximum size.
@@ -6499,8 +6493,8 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Security: Specify the maximum log file size (KB)' is set to 'Enabled: 196,608 or greater'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\Security\MaxSize' AND data >= 196608 );
+  name: "CIS - Ensure 'Security: Specify the maximum log file size (KB)' is set to 'Enabled: 196,608 or greater'"
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\Security\MaxSize' AND CAST(data AS INTEGER) >= 196608 );
   critical: false
   description: This policy setting specifies the maximum size of the log file in kilobytes. The maximum log file size can be configured between 1 megabyte (1,024 kilobytes) and 4 terabytes (4,194,240 kilobytes) in kilobyte increments.
   resolution: |
@@ -6513,7 +6507,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Setup: Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'
+  name: "CIS - Ensure 'Setup: Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\Setup\Retention' AND data = 0);
   critical: false
   description: This policy setting controls Event Log behavior when the log file reaches its maximum size.
@@ -6527,8 +6521,8 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Setup: Specify the maximum log file size (KB)' is set to 'Enabled: 32,768 or greater'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\Setup\MaxSize' AND data >= 32768);
+  name: "CIS - Ensure 'Setup: Specify the maximum log file size (KB)' is set to 'Enabled: 32,768 or greater'"
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\Setup\MaxSize' AND CAST(data AS INTEGER) >= 32768);
   critical: false
   description: This policy setting specifies the maximum size of the log file in kilobytes. The maximum log file size can be configured between 1 megabyte (1,024 kilobytes) and 4 terabytes (4,194,240 kilobytes) in kilobyte increments.
   resolution: |
@@ -6541,7 +6535,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'System: Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'
+  name: "CIS - Ensure 'System: Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\System\Retention' AND data = 0);
   critical: false
   description: This policy setting controls Event Log behavior when the log file reaches its maximum size.
@@ -6555,8 +6549,8 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'System: Specify the maximum log file size (KB)' is set to 'Enabled: 32,768 or greater'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\System\MaxSize' AND data >= 32768 );
+  name: "CIS - Ensure 'System: Specify the maximum log file size (KB)' is set to 'Enabled: 32,768 or greater'"
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\System\MaxSize' AND CAST(data AS INTEGER) >= 32768 );
   critical: false
   description: This policy setting specifies the maximum size of the log file in kilobytes. The maximum log file size can be configured between 1 megabyte (1,024 kilobytes) and 4 terabytes (4,194,240 kilobytes) in kilobyte increments.
   resolution: |
@@ -6740,7 +6734,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured
+  name: "CIS - Ensure 'Configure Attack Surface Reduction rules: Set the state for each ASR rule' is configured"
   query: |
     SELECT 1
     WHERE EXISTS (
@@ -6793,7 +6787,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Prevent users and apps from accessing dangerous websites' is set to 'Enabled: Block'
+  name: "CIS - Ensure 'Prevent users and apps from accessing dangerous websites' is set to 'Enabled: Block'"
   query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Windows Defender Exploit Guard\\Network Protection\\EnableNetworkProtection' AND data = 1;
   critical: false
   description: This policy setting controls Microsoft Defender Exploit Guard network protection.
@@ -6925,7 +6919,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure Brute-Force Protection aggressiveness' is set to 'Enabled: Medium' or higher
+  name: "CIS - Ensure 'Configure Brute-Force Protection aggressiveness' is set to 'Enabled: Medium' or higher"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Remediation\Behavioral Network Blocks\Brute Force Protection\BruteForceProtectionAggressiveness' AND data IN (1, 2));
   critical: false
   description: |
@@ -6942,7 +6936,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure Remote Encryption Protection Mode' is set to 'Enabled: Audit' or higher
+  name: "CIS - Ensure 'Configure Remote Encryption Protection Mode' is set to 'Enabled: Audit' or higher"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Remediation\Behavioral Network Blocks\Brute Force Protection\BruteForceProtectionConfiguredState' AND data IN (1, 2));
   critical: false
   description: |
@@ -6961,7 +6955,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure how aggressively Remote Encryption Protection blocks threats' is set to 'Enabled: Medium' or higher
+  name: "CIS - Ensure 'Configure how aggressively Remote Encryption Protection blocks threats' is set to 'Enabled: Medium' or higher"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Remediation\Behavioral Network Blocks\Remote Encryption Protection\RemoteEncryptionProtectionAggressiveness' AND data IN (1, 2));
   critical: false
   description: |
@@ -6992,7 +6986,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Scan excluded files and directories during quick scans' is set to 'Enabled: 1'
+  name: "CIS - Ensure 'Scan excluded files and directories during quick scans' is set to 'Enabled: 1'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Scan\QuickScanIncludeExclusions' AND data = 1);
   critical: false
   description: |
@@ -7023,7 +7017,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Trigger a quick scan after X days without any scans' is set to 'Enabled: 7'
+  name: "CIS - Ensure 'Trigger a quick scan after X days without any scans' is set to 'Enabled: 7'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Scan\DaysUntilAggressiveCatchupQuickScan' AND data = 7);
   critical: false
   description: |
@@ -7054,7 +7048,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure detection for potentially unwanted applications' is set to 'Enabled: Block'
+  name: "CIS - Ensure 'Configure detection for potentially unwanted applications' is set to 'Enabled: Block'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\PUAProtection' AND data = 1);
   critical: false
   description: This policy setting controls detection and action for Potentially Unwanted Applications (PUA), which are sneaky unwanted application bundlers or their bundled applications, that can deliver adware or malware.
@@ -7135,7 +7129,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure Microsoft Defender Application Guard clipboard settings: Clipboard behavior setting' is set to 'Enabled: Enable clipboard operation from an isolated session to the host'
+  name: "CIS - Ensure 'Configure Microsoft Defender Application Guard clipboard settings: Clipboard behavior setting' is set to 'Enabled: Enable clipboard operation from an isolated session to the host'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\AppHVSI\AppHVSIClipboardSettings' AND data = 1);
   critical: false
   description: This policy setting allows you to decide how the clipboard behaves while in Microsoft Defender Application Guard.
@@ -7148,7 +7142,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Turn on Microsoft Defender Application Guard in Managed Mode' is set to 'Enabled: 1'
+  name: "CIS - Ensure 'Turn on Microsoft Defender Application Guard in Managed Mode' is set to 'Enabled: 1'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\AppHVSI\AllowAppHVSI_ProviderSet' AND data = 1);
   critical: false
   description: |
@@ -7266,7 +7260,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Allow Cloud Search' is set to 'Enabled: Disable Cloud Search'
+  name: "CIS - Ensure 'Allow Cloud Search' is set to 'Enabled: Disable Cloud Search'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search\\AllowCloudSearch' AND data = 0);
   critical: false
   description: This policy setting allows search and Cortana to search cloud sources like OneDrive and SharePoint.
@@ -7294,7 +7288,7 @@ spec:
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search\\AllowCortanaAboveLock' AND data = 0);
   critical: false
   description: This policy setting determines whether or not the user can interact with Cortana using speech while the system is locked.
-  resolution: To establish the recommended configuration via GP, set the following UI path to 'Disabled':
+  resolution: "To establish the recommended configuration via GP, set the following UI path to 'Disabled':"
   platform: windows
 ---
 apiVersion: v1
@@ -7324,7 +7318,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Disable Cloud Clipboard integration for server-to-client data transfer' is set to 'Enabled' 
+  name: "CIS - Ensure 'Disable Cloud Clipboard integration for server-to-client data transfer' is set to 'Enabled' "
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services\\Client\\DisableCloudClipboardIntegration' and data = 1);
   critical: false
   description: This policy setting controls whether data transferred from the remote session to the client using clipboard redirection is added to the client-side cloud clipboard.
@@ -7436,7 +7430,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Require use of specific security layer for remote (RDP) connections' is set to 'Enabled: SSL'
+  name: "CIS - Ensure 'Require use of specific security layer for remote (RDP) connections' is set to 'Enabled: SSL'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services\\SecurityLayer' AND data = 2);
   critical: false
   description: This policy setting specifies whether to require the use of a specific security layer to secure communications between clients and RD Session Host servers during Remote Desktop Protocol (RDP) connections.
@@ -7460,7 +7454,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Set client connection encryption level' is set to 'Enabled: High Level'
+  name: "CIS - Ensure 'Set client connection encryption level' is set to 'Enabled: High Level'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services\\MinEncryptionLevel' AND data = 3);
   critical: false
   description: |
@@ -7476,7 +7470,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Set time limit for active but idle Remote Desktop Services sessions' is set to 'Enabled: 15 minutes or less, but not Never (0)'
+  name: "CIS - Ensure 'Set time limit for active but idle Remote Desktop Services sessions' is set to 'Enabled: 15 minutes or less, but not Never (0)'"
   query: |
     SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services\\MaxIdleTime' AND CAST(data AS INTEGER) <= 900000 AND CAST(data AS
     INTEGER) != 0);
@@ -7490,7 +7484,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Set time limit for disconnected sessions' is set to 'Enabled: 1 minute'
+  name: "CIS - Ensure 'Set time limit for disconnected sessions' is set to 'Enabled: 1 minute'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services\\MaxDisconnectionTime' AND data = 60000);
   critical: false
   description: This setting helps to prevent active Remote Desktop sessions from tying up the computer for long periods of time while not in use, preventing computing resources from being consumed by large numbers of disconnected but still active sessions.
@@ -7651,7 +7645,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'
+  name: "CIS - Ensure 'Configure Windows Defender SmartScreen' is set to 'Enabled: Warn and prevent bypass'"
   query: |
     SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\System\EnableSmartScreen' AND data = 1)
       AND EXISTS (
@@ -7681,7 +7675,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Enable ESS with Supported Peripherals' is set to 'Enabled: 1' 
+  name: "CIS - Ensure 'Enable ESS with Supported Peripherals' is set to 'Enabled: 1' "
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Policies\\PassportForWork\\Biometrics\\EnableESSwithSupportedPeripherals' AND data = 1);
   critical: false
   description: Enhanced Sign-in Security isolates Windows Hello biometric (face and fingerprint) template data and matching operations to trusted hardware or specified memory regions.
@@ -7964,7 +7958,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure Automatic Updates' is set to 'Enabled: 3'
+  name: "CIS - Ensure 'Configure Automatic Updates' is set to 'Enabled: 3'"
   query: |
     SELECT EXISTS (
       SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU\\NoAutoUpdate' AND data = 0)
@@ -7981,7 +7975,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure Automatic Updates: Scheduled install day' is set to '0 - Every day'
+  name: "CIS - Ensure 'Configure Automatic Updates: Scheduled install day' is set to '0 - Every day'"
   query: |
     SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU\\NoAutoUpdate' AND data = 0)
     AND EXISTS (
@@ -8021,7 +8015,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Select when Preview Builds and Feature Updates are received' is set to 'Enabled: 180 or more days'
+  name: "CIS - Ensure 'Select when Preview Builds and Feature Updates are received' is set to 'Enabled: 180 or more days'"
   query: |
     SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\DeferFeatureUpdates' AND CAST(data AS INTEGER) = 1)
     AND EXISTS (
@@ -8037,7 +8031,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Select when Quality Updates are received' is set to 'Enabled: 0 days'
+  name: "CIS - Ensure 'Select when Quality Updates are received' is set to 'Enabled: 0 days'"
   query: |
     SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\DeferQualityUpdates' AND data = 1)
     AND EXISTS (
@@ -8129,7 +8123,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Enable App Installer ms-appinstaller protocol' is set to 'Disabled' 
+  name: "CIS - Ensure 'Enable App Installer ms-appinstaller protocol' is set to 'Disabled' "
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppInstaller\\EnableMSAppInstallerProtocol' AND (data = 0));
   critical: false
   description: This policy setting controls whether users can install packages from a website that is using the ms-appinstaller protocol. The ms-appinstaller protocol allows users to install an application by clicking a link on a website.
@@ -8172,7 +8166,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Restrict clipboard transfer from server to client' is set to 'Enabled: Disable clipboard transfers from server to client'
+  name: "CIS - Ensure 'Restrict clipboard transfer from server to client' is set to 'Enabled: Disable clipboard transfers from server to client'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\SCClipLevel' AND data = 0);
   critical: false
   description: |
@@ -8201,7 +8195,7 @@ spec:
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Allow Windows Ink Workspace' is set to 'Enabled: On, but disallow access above lock' OR 'Enabled: Disabled'
+  name: "CIS - Ensure 'Allow Windows Ink Workspace' is set to 'Enabled: On, but disallow access above lock' OR 'Enabled: Disabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsInkWorkspace\AllowWindowsInkWorkspace' AND (data = 0 OR data = 1));
   critical: false
   description: This policy setting determines whether Windows Ink items are allowed above the lock screen.
@@ -8404,4 +8398,225 @@ spec:
     To establish the recommended configuration via GP, set the following UI path to Enabled:
     'User Configuration\Policies\Administrative Templates\Windows Components\Windows Media Player\Playback\Prevent Codec Download'
     Note: This Group Policy path is provided by the Group Policy template WindowsMediaPlayer.admx/adml that is included with all versions of the Microsoft Windows Administrative Templates.
+  platform: windows
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'MSS: (DisableIPSourceRouting IPv6) IP source routing protection level' is set to 'Enabled: Highest protection, source routing is completely disabled'"
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip6\Parameters\DisableIPSourceRouting' AND CAST(data AS INTEGER) = 2;
+  critical: false
+  description: IP source routing is a mechanism that allows the sender to determine the IP route that a datagram should follow through the network.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path as prescribed:
+    'Computer Configuration\Policies\Administrative Templates\MSS (Legacy)\MSS: (DisableIPSourceRouting IPv6) IP source routing protection level'
+  platform: windows
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'MSS: (DisableIPSourceRouting) IP source routing protection level' is set to 'Enabled: Highest protection, source routing is completely disabled'"
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\DisableIPSourceRouting' AND CAST(data AS INTEGER) = 2;
+  critical: false
+  description: IP source routing is a mechanism that allows the sender to determine the IP route that a datagram should follow through the network.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path as prescribed:
+    'Computer Configuration\Policies\Administrative Templates\MSS (Legacy)\MSS: (DisableIPSourceRouting) IP source routing protection level'
+  platform: windows
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Audit insecure guest logon' (Lanman Server) is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\AuditInsecureGuestLogon' AND data = 1;
+  critical: false
+  description: This policy determines whether the SMB server will log events when the client is logged on as guest account. Insecure guest logons can be used by file servers to allow unauthenticated access to shared folders.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Network\Lanman Server\Audit insecure guest logon'
+  platform: windows
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Enable remote mailslots' (Lanman Server) is set to 'Disabled'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Bowser\EnableMailslots' AND data = 0;
+  critical: false
+  description: This policy settings controls whether the SMB server will use remote mailslots over the computer browser service. The remote mailslots protocol is an old, simple, unreliable, and insecure inter-process communication method.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Disabled:
+    'Computer Configuration\Policies\Administrative Templates\Network\Lanman Server\Enable remote mailslots'
+  platform: windows
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'Mandate the minimum version of SMB' (Lanman Server) is set to 'Enabled: 3.1.1'"
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\MinSmb2Dialect' AND CAST(data AS INTEGER) = 785;
+  critical: false
+  description: This policy settings controls the minimum version of Server Message Block (SMB) protocol that can be used on the system. SMBv1 is no longer enabled by default due to its security risks, and although SMBv2 is more robust than v1, it does not support encryption like its successor.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Enabled: 3.1.1:
+    'Computer Configuration\Policies\Administrative Templates\Network\Lanman Server\Mandate the minimum version of SMB'
+  platform: windows
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Audit insecure guest logon' (Lanman Workstation) is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\AuditInsecureGuestLogon' AND data = 1;
+  critical: false
+  description: This policy determines whether the SMB client will log events when the client is logged on as guest account. Insecure guest logons can be used by file servers to allow unauthenticated access to shared folders.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Network\Lanman Workstation\Audit insecure guest logon'
+  platform: windows
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Enable remote mailslots' (Lanman Workstation) is set to 'Disabled'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\NetworkProvider\EnableMailslots' AND data = 0;
+  critical: false
+  description: This policy settings controls whether the SMB client will use remote mailslots over Multiple UNC Provider (MUP). The remote mailslots protocol is an old, simple, unreliable, and insecure inter-process communication method.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Disabled:
+    'Computer Configuration\Policies\Administrative Templates\Network\Lanman Workstation\Enable remote mailslots'
+  platform: windows
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'Mandate the minimum version of SMB' (Lanman Workstation) is set to 'Enabled: 3.1.1'"
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\MinSmb2Dialect' AND CAST(data AS INTEGER) = 785;
+  critical: false
+  description: This policy settings controls the minimum version of Server Message Block (SMB) protocol that can be used on the system. The newer SMB v3 is supported on all currently supported Microsoft Windows OSes.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Enabled: 3.1.1:
+    'Computer Configuration\Policies\Administrative Templates\Network\Lanman Workstation\Mandate the minimum version of SMB'
+  platform: windows
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'Minimize the number of simultaneous connections to the Internet or a Windows Domain' is set to 'Enabled: 3 = Prevent Wi-Fi when on Ethernet'"
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WcmSvc\GroupPolicy\fMinimizeConnections' AND CAST(data AS INTEGER) = 3;
+  critical: false
+  description: This policy setting prevents computers from establishing multiple simultaneous connections to either the Internet or to a Windows domain.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Enabled: 3 = Prevent Wi-Fi when on Ethernet:
+    'Computer Configuration\Policies\Administrative Templates\Network\Windows Connection Manager\Minimize the number of simultaneous connections to the Internet or a Windows Domain'
+  platform: windows
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Prohibit connection to non-domain networks when connected to domain authenticated network' is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WcmSvc\GroupPolicy\fBlockNonDomain' AND data = 1;
+  critical: false
+  description: This policy setting prevents computers from connecting to both a domain based network and a non-domain based network at the same time.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Network\Windows Connection Manager\Prohibit connection to non-domain networks when connected to domain authenticated network'
+  platform: windows
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Allow Windows to automatically connect to suggested open hotspots, to networks shared by contacts, and to hotspots offering paid services' is set to 'Disabled'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config\AutoConnectAllowedOEM' AND data = 0;
+  critical: false
+  description: This policy setting determines whether users can enable WLAN settings including Connect to suggested open hotspots, Connect to networks shared by my contacts, and Enable paid services. Automatically connecting to an open hotspot or network can introduce the system to a rogue network with malicious intent.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Disabled:
+    'Computer Configuration\Policies\Administrative Templates\Network\WLAN Service\WLAN Settings\Allow Windows to automatically connect to suggested open hotspots, to networks shared by contacts, and to hotspots offering paid services'
+  platform: windows
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'Configure RPC listener settings: Authentication protocol to use for incoming RPC connections' is set to 'Enabled: Negotiate' or higher"
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC\ForceKerberosForRpc' AND (data = 0 OR data = 1);
+  critical: false
+  description: "This policy setting controls which protocols incoming Remote Procedure Call (RPC) connections to the print spooler are allowed to use. Configuring this setting to Enabled: Kerberos also conforms to the benchmark."
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Enabled: Negotiate or Enabled: Kerberos:
+    'Computer Configuration\Policies\Administrative Templates\Printers\Configure RPC listener settings: Configure protocol options for incoming RPC connections'
+  platform: windows
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'Configure RPC over TCP port' is set to 'Enabled: 0'"
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC\RpcTcpPort' AND data = 0;
+  critical: false
+  description: This policy setting controls which port is used for RPC over TCP for incoming connections to the print spooler and outgoing connections to remote print spoolers. Using dynamic ports makes it more difficult for a threat actor to know which port is being used.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Enabled: 0:
+    'Computer Configuration\Policies\Administrative Templates\Printers\Configure RPC over TCP port'
+  platform: windows
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Enable / disable CLFS logfile authentication' is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Policies\ClfsAuthenticationChecking' AND data = 1;
+  critical: false
+  description: This policy setting configures Common Log File System (CLFS) logfile authentication. Logfile authentication provides the ability for the CLFS driver to detect malicious modifications made to logfiles. CLFS is a security feature which hardens logfile parsing. If modifications to logfiles are detected, CLFS will consider the logfile unsafe for parsing and return an error to the caller. It is also able to detect modifications by writing authentication codes to logfiles which combines file data with a system-unique cryptographic key.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\System\Filesystem\Enable / disable CLFS logfile authentication'
+  platform: windows
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Allow Recall to be enabled' is set to 'Disabled'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsAI\AllowRecallEnablement' AND data = 0;
+  critical: false
+  description: This policy setting controls whether the Recall optional component is available for end users to enable on the system. Microsoft Recall periodically captures screenshots of the system display, creating a searchable timeline of activity including apps, documents, and websites. Saving snapshots of all user activity could result in sensitive information such as passwords or banking details being stored insecurely and making it easily accessible.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Disabled:
+    'Computer Configuration\Policies\Administrative Templates\Windows Components\Windows AI\Allow Recall to be enabled'
+  platform: windows
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'Disable HTTP proxy features: Disable WPAD' is set to 'Enabled: Checked'"
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp\DisableWpad' AND data = 1;
+  critical: false
+  description: This policy setting determines whether Web Proxy Auto-Discovery protocol (WPAD) is disabled on the system. WPAD is used to discover Proxy Auto-Config (PAC) files from the local network. WPAD could expose the system to Man-In-The-Middle (MITM) attacks. If an organization depends on HTTP proxy configuration, it is recommended that other client configuration mechanisms be used instead, such as Group Policy.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Enabled: Checked:
+    'Computer Configuration\Policies\Administrative Templates\Center for Internet Security (CIS)\Additional Benchmark Settings\Disable HTTP proxy features: Disable WPAD'
+  platform: windows
+---
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'Disable HTTP proxy features: Disable proxy authentication' is set to 'Enabled: Disable authentication over loopback interfaces' or higher"
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\DisableProxyAuthenticationSchemes' AND (data = 256 OR data = 287);
+  critical: false
+  description: This policy setting determines whether Windows can authenticate over a loopback interface. It is best to limit the sign-in interface to only known and trusted services, so malicious actors can't impersonate them. Configuring this setting to 'Disable all authentication protocols and loopback authentication' also conforms to the benchmark.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Enabled: Disable authentication over loopback interfaces or Disable all authentication protocols and loopback authentication:
+    'Computer Configuration\Policies\Administrative Templates\Center for Internet Security (CIS)\Additional Benchmark Settings\Disable HTTP proxy features: Disable proxy authentication'
   platform: windows

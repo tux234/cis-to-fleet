@@ -1,0 +1,13 @@
+- name: CIS - Ensure 'Allow Clipboard Redirection' is set to 'Not allowed'
+  platform: windows
+  description: |-
+    This policy setting enables or disables clipboard sharing with the Windows Sandbox.
+    The recommended state for this setting is: Not allowed.
+    Note: The Windows Sandbox feature was first introduced in Windows 10 R1903, and
+    allows a temporary "clean install" virtual instance of Windows to be run inside the host,
+    for the ostensible purpose of testing applications without making changes to the host.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Not allowed.
+    Windows Sandbox\Allow Clipboard Redirection
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\fDisableClip' AND data = '1';

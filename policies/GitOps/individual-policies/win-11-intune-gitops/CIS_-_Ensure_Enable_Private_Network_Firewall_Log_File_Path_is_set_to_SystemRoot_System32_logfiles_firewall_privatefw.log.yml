@@ -1,0 +1,13 @@
+- name: 'CIS - Ensure ''Enable Private Network Firewall: Log File Path'' is set to ''%SystemRoot%\System32\logfiles\firewall\privatefw.log'''
+  platform: windows
+  description: |-
+    Use this option to specify the path and name of the file in which Windows Firewall will
+    write its log information.
+    The recommended state for this setting is:
+    %SystemRoot%\System32\logfiles\firewall\privatefw.log.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to
+    %SystemRoot%\System32\logfiles\firewall\privatefw.log:
+    Firewall\Enable Private Network Firewall: Log File Path
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Firewall/MdmStore/PrivateProfile/LogFilePath</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%privatefw.log';

@@ -1,0 +1,14 @@
+- name: CIS - Ensure 'Turn off app notifications on the lock screen' is set to 'Enabled'
+  platform: windows
+  description: |-
+    This policy setting allows you to prevent app notifications from appearing on the lock
+    screen.
+    The recommended state for this setting is: Enabled.
+    Warning: If the Self Service Password Reset (SSPR) feature is used in Microsoft Entra
+    ID, an exception to this recommendation is needed as it's known to interfere with SSPR.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled.
+    Administrative Templates\System\Logon\Turn off app notifications on the lock
+    screen
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/AboveLock/AllowToasts</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '0';

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Support device authentication using certificate' is set to 'Enabled: Automatic'
+  name: "CIS - Ensure 'Support device authentication using certificate' is set to 'Enabled: Automatic'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\kerberos\\parameters\DevicePKInitBehavior' AND data = 0) AND (SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\kerberos\\parameters\DevicePKInitEnabled' AND data = 1));
   critical: false
   description: |

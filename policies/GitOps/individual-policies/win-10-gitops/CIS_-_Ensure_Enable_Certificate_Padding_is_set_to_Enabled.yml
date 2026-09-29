@@ -12,4 +12,4 @@
     'Computer Configuration\Policies\Administrative Templates\MS Security Guide\Enable Certificate Padding'
     Note: This Group Policy path does not exist by default. An additional Group Policy template (SecGuide.admx/adml) is required
   query: |
-    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography\Wintrust\Config\EnableCertPaddingCheck' AND data = 1);
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography\Wintrust\Config\EnableCertPaddingCheck' AND (data = 1 OR data = '1'));

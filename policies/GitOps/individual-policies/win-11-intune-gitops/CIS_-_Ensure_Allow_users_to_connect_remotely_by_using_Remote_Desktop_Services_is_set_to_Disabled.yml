@@ -1,0 +1,5 @@
+- name: CIS - Ensure 'Allow users to connect remotely by using Remote Desktop Services' is set to 'Disabled'
+  platform: windows
+  description: 'This policy setting allows you to configure remote access to computers by using Remote Desktop Services. The recommended state for this setting is: Disabled.'
+  resolution: To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Disabled. Administrative Templates\Windows Components\Remote Desktop Services\Remote Desktop Session Host\Connections\Allow users to connect remotely by using Remote Desktop Services
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\fDenyTSConnections' AND data = '1';

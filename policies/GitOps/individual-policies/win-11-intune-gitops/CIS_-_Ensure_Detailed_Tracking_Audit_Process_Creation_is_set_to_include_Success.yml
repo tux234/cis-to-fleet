@@ -1,0 +1,20 @@
+- name: CIS - Ensure 'Detailed Tracking Audit Process Creation' is set to include 'Success'
+  platform: windows
+  description: |-
+    This subcategory reports the creation of a process and the name of the program or user
+    that created it. Events for this subcategory include:
+    •
+    •
+
+    4688: A new process has been created.
+    4696: A primary token was assigned to process.
+
+    Refer to Microsoft Knowledge Base article 947226: Description of security events in
+    Windows Vista and in Windows Server 2008 for the most recent information about this
+    setting.
+    The recommended state for this setting is to include: Success.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Success.
+    Auditing\Detailed Tracking Audit Process Creation
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Audit/DetailedTracking_AuditProcessCreation</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output = '1' OR mdm_command_output = '3');

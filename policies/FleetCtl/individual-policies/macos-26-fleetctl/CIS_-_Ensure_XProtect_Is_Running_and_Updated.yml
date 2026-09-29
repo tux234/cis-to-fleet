@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure XProtect Is Running and Updated
+  query: |
+    SELECT 1 WHERE (
+      SELECT COUNT(DISTINCT name) FROM processes
+      WHERE name IN ('xprotectd', 'XProtectPluginService') AND uid = 0
+    ) = 2;
+  critical: false
+  description: |
+    XProtect is Apple's native signature-based antivirus technology. XProtect both finds and blocks the execution of known malware. No matter what other tools are being used, XProtect should have the latest signatures available.
+    
+    Note: XProtect can only be disabled while SIP is disabled. If XProtect is disabled while SIP is enabled, there needs to be a significant investigation on this system and assume it is compromised.
+  resolution: |
+    Terminal Method:
+      /usr/bin/sudo /bin/launchctl load -w /Library/Apple/System/Library/LaunchDaemons/com.apple.XProtect.daemon.scan.plist
+      /usr/bin/sudo /bin/launchctl load -w /Library/Apple/System/Library/LaunchDaemons/com.apple.XprotectFramework.PluginService.plist
+      /usr/bin/sudo /usr/bin/xprotect update
+  platform: darwin

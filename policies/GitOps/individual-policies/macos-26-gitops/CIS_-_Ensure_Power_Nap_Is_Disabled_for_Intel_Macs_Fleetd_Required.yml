@@ -1,0 +1,17 @@
+- name: CIS - Ensure Power Nap Is Disabled for Intel Macs (Fleetd Required)
+  platform: darwin
+  description: |
+    Power Nap allows the system to stay in low power mode, especially while on battery power, and periodically connect to previously known networks with stored credentials for user applications to phone home and get updates. Disabling this feature mitigates the risk of an attacker remotely waking the system and gaining access.
+  resolution: |
+    Terminal Method:
+      /usr/bin/sudo /usr/bin/pmset -a powernap 0
+  query: |
+    SELECT 1 FROM (
+      SELECT
+        COALESCE(JSON_EXTRACT(JSON_EXTRACT(json_result, '$.AC Power:'), '$.powernap'), '') AS powernap_ac,
+        COALESCE(JSON_EXTRACT(JSON_EXTRACT(json_result, '$.Battery Power:'), '$.powernap'), '') AS powernap_battery
+      FROM pmset
+      WHERE getting = 'custom'
+        AND powernap_battery != '1'
+        AND powernap_ac != '1'
+    );

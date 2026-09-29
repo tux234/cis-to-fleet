@@ -1,0 +1,12 @@
+- name: CIS - Ensure NFS Server Is Disabled
+  platform: darwin
+  description: |
+    macOS can act as an NFS fileserver. NFSD is still part of the Operating System and can be easily turned on to export shares and provide remote connectivity to an end-user computer. File serving should not be done from a user desktop — dedicated servers should be used. The `/etc/exports` file contains the list of NFS shared directories; if it exists, it is likely that NFS sharing has been enabled in the past or may be available periodically.
+  resolution: |
+    Terminal Method:
+      /usr/bin/sudo /bin/launchctl disable system/com.apple.nfsd
+      /usr/bin/sudo /bin/rm -rf /etc/exports
+  query: |
+    SELECT 1 WHERE
+      NOT EXISTS (SELECT 1 FROM processes WHERE path = '/sbin/nfsd')
+      AND NOT EXISTS (SELECT 1 FROM file WHERE path = '/etc/exports');

@@ -1,0 +1,5 @@
+- name: CIS - Ensure 'Windows Error Reporting Service (WerSvc)' is set to 'Disabled'
+  platform: windows
+  description: 'Allows errors to be reported when programs stop working or responding and allows existing solutions to be delivered. Also allows logs to be generated for diagnostic and repair services. The recommended state for this setting is: Disabled.'
+  resolution: 'Remediation of this service is currently not possible through Settings Catalog or a custom profile OMA-URI. Instead, it can be scripted and deployed through the Intune Scripts or Remediations blade or by other means. To establish the recommended configuration via PowerShell, run the following cmdlet: Set-Service -Name WerSvc -StartupType Disabled'
+  query: SELECT 1 WHERE COALESCE((SELECT UPPER(start_type) FROM services WHERE name = 'WerSvc'), 'DISABLED') = 'DISABLED';

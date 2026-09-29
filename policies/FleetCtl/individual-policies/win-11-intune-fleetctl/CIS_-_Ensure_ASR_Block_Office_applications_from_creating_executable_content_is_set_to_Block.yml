@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'ASR: Block Office applications from creating executable content' is set to 'Block'"
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Defender/AttackSurfaceReductionRules</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output LIKE '%3B576869-A4EC-4529-8536-B80A7769E899=1%' OR mdm_command_output LIKE '%3B576869-A4EC-4529-8536-B80A7769E899=2%');
+  critical: false
+  description: |
+    This rule prevents scripts from launching potentially malicious downloaded content.
+    Malware written in JavaScript or VBScript often acts as a downloader to fetch and
+    launch other malware from the Internet. Although not common, line-of-business
+    applications sometimes use scripts to download and launch installers.
+    The recommended state for this setting is: Block.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Block.
+    Defender\Block Office applications from creating executable content
+  platform: windows

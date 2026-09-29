@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Mandate the minimum version of SMB' (Lanman Server) is set to 'Enabled: 3.1.1'
+  platform: windows
+  description: |
+    This policy settings controls the minimum version of Server Message Block (SMB) protocol that can be used on the system. SMBv1 is no longer enabled by default due to its security risks, and although SMBv2 is more robust than v1, it does not support encryption like its successor.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Enabled: 3.1.1:
+    'Computer Configuration\Policies\Administrative Templates\Network\Lanman Server\Mandate the minimum version of SMB'
+  query: |
+    SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\MinSmb2Dialect' AND CAST(data AS INTEGER) = 785;

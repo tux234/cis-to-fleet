@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Siri Is Disabled (MDM Required)
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.applicationaccess' AND
+          name='allowAssistant' AND
+          (value = 0 OR value = 'false') AND
+          username = ''
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.applicationaccess' AND
+          name='allowAssistant' AND
+          (value != 0 AND value != 'false')
+      );
+  critical: false
+  description: |
+    With macOS 10.12 Sierra, Apple has introduced Siri from iOS to macOS. While there are data spillage concerns with the use of data-gathering personal assistant software, in cases where sensitive or protected data is processed and Siri could expose that information through assisting a user in navigating their machine, it should be disabled.
+    
+    Siri is being disabled because the listen for "Siri" or "Hey Siri" feature cannot be disabled globally or even through a user specific plist. Due to this, there is no guarantee that Listen for is disabled and therefore the mic is live and capturing everything around it.
+    
+    Note: Previously the benchmark would pass using the com.apple.ironwood.support profile payload. That is a deprecated payload and now com.apple.applicationaccess should be used.
+  resolution: |
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.applicationaccess
+      - Key: allowAssistant, Value: <false/>
+  platform: darwin

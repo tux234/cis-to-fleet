@@ -1,0 +1,5 @@
+- name: CIS - Ensure 'Link-Layer Topology Discovery Mapper (lltdsvc)' is set to 'Disabled'
+  platform: windows
+  description: 'Creates a Network Map, consisting of PC and device topology (connectivity) information, and metadata describing each PC and device. The recommended state for this setting is: Disabled.'
+  resolution: 'Remediation of this service is currently not possible through Settings Catalog or a custom profile OMA-URI. Instead, it can be scripted and deployed through the Intune Scripts or Remediations blade or by other means. To establish the recommended configuration via PowerShell, run the following cmdlet: Set-Service -Name lltdsvc -StartupType Disabled'
+  query: SELECT 1 WHERE COALESCE((SELECT UPPER(start_type) FROM services WHERE name = 'lltdsvc'), 'DISABLED') = 'DISABLED';

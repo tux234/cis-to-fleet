@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Audit Special Logon' is set to include 'Success'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Audit/AccountLogonLogoff_AuditSpecialLogon</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output = '1' OR mdm_command_output = '3');
+  critical: false
+  description: |
+    This subcategory reports when a special logon is used. A special logon is a logon that
+    has administrator-equivalent privileges and can be used to elevate a process to a higher
+    level. Events for this subcategory include:
+    •
+    
+    4964: Special groups have been assigned to a new logon.
+    
+    The recommended state for this setting is to include: Success.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Success.
+    Auditing\Audit Special Logon
+  platform: windows

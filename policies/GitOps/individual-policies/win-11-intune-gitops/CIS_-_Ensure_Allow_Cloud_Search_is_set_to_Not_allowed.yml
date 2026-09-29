@@ -1,0 +1,5 @@
+- name: CIS - Ensure 'Allow Cloud Search' is set to 'Not allowed'
+  platform: windows
+  description: 'This policy setting allows search and Cortana to search cloud sources like OneDrive and SharePoint. The recommended state for this setting is: Not allowed.'
+  resolution: 'To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Not allowed: Search\Allow Cloud Search'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Search/AllowCloudSearch</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '0';

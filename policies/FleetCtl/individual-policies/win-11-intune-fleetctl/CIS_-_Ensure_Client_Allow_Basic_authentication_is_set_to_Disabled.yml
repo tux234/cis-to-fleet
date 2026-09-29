@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Client 'Allow Basic authentication is set to Disabled'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\AllowBasic' AND data = '0';
+  critical: false
+  description: "\nThis policy setting allows you to manage whether the Windows Remote Management\n(WinRM) client uses Basic authentication.\nThe recommended state for this setting is: Disabled.\nNote: Clients that use Microsoft's Exchange Online service (Office 365) will require an\nexception to this recommendation, to instead have this setting set to Enabled.\nExchange Online uses Basic authentication over HTTPS, and so the Exchange Online\nauthentication traffic will still be safely encrypted."
+  resolution: "\nTo establish the recommended configuration via configuration profiles, set the following\nSettings Catalog path to Disabled.\nAdministrative Templates\\Windows Components\\Windows Remote Management\n(WinRM)\\WinRM Client\\Allow Basic authentication"
+  platform: windows

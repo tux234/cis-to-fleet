@@ -1,0 +1,5 @@
+- name: CIS - Ensure Application 'Control Event Log behavior when the log file reaches its maximum size' is set to 'Disabled'
+  platform: windows
+  description: " This policy setting controls Event Log behavior when the log file reaches its maximumsize.\nThe recommended state for this setting is: Disabled.\nNote: Old events may or may not be retained according to the Backup log automatically\nwhen full policy setting. "
+  resolution: "\nTo establish the recommended configuration via configuration profiles, set the following\nSettings Catalog path to Disabled.\nAdministrative Templates\\Windows Components\\Event Log\nService\\Application\\Control Event Log behavior when the log file reaches its maximum size "
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\Application\Retention' AND data = '0';

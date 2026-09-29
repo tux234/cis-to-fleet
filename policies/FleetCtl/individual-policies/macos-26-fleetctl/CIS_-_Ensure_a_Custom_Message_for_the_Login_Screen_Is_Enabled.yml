@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure a Custom Message for the Login Screen Is Enabled
+  query: SELECT 1 FROM plist WHERE path = '/Library/Preferences/com.apple.loginwindow.plist' AND key = 'LoginwindowText' AND LENGTH(value) > 0;
+  critical: false
+  description: An access warning informs the user that the system is reserved for authorized use only, and that the use of the system may be monitored. An access warning may reduce a casual attacker's tendency to target the system and may aid in the prosecution of an attacker by evincing the attacker's knowledge of the system's private status, acceptable use policy, and authorization requirements.
+  resolution: |
+    Graphical Method:
+      1. Open System Settings
+      2. Select Lock Screen
+      3. Set Show message when locked to enabled
+      4. Select Set
+      5. Insert text matching your organization's required text
+      6. Select Done
+    
+    Terminal Method:
+      /usr/bin/sudo /usr/bin/defaults write /Library/Preferences/com.apple.loginwindow LoginwindowText "<custom message>"
+    
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.loginwindow
+      - Key: LoginwindowText
+      - Value: <string>Your organization's required text</string>
+  platform: darwin

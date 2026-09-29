@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Trigger a quick scan after X days without any scans' is set to 'Enabled: 7'
+  name: "CIS - Ensure 'Trigger a quick scan after X days without any scans' is set to 'Enabled: 7'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Scan\DaysUntilAggressiveCatchupQuickScan' AND data = 7);
   critical: false
   description: |

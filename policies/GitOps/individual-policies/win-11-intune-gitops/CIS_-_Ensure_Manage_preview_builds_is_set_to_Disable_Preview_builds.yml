@@ -1,0 +1,26 @@
+- name: CIS - Ensure 'Manage preview builds' is set to 'Disable Preview builds'
+  platform: windows
+  description: |-
+    This policy setting manages which updates that are received prior to the update being
+    released.
+    Dev Channel: Ideal for highly technical users. Insiders in the Dev Channel will receive
+    builds from our active development branch that is earliest in a development cycle.
+    These builds are not matched to a specific Windows 10 release.
+    Beta Channel: Ideal for feature explorers who want to see upcoming Windows 10
+    features. Your feedback will be especially important here as it will help our engineers
+    ensure key issues are fixed before a major release.
+    Release Preview Channel (default): Insiders in the Release Preview Channel will
+    have access to the upcoming release of Windows 10 prior to it being released to the
+    world. These builds are supported by Microsoft. The Release Preview Channel is where
+    we recommend companies preview and validate upcoming Windows 10 releases before
+    broad deployment within their organization.
+    The recommended state for this setting is: Disable Preview builds.
+    Note: Preview Build enrollment requires a telemetry level setting of 2 or higher and your
+    domain registered on insider.windows.com. For additional information on Preview
+    Builds, see: Managing preview builds across your organization - Windows Insider
+    Program | Microsoft Learn.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Disable Preview builds.
+    Windows Update For Business\Manage preview builds
+  query: SELECT 1 WHERE EXISTS (SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Update/ManagePreviewBuilds</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output IN ('1', '3')) OR EXISTS (SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\ManagePreviewBuilds' AND data = '1');

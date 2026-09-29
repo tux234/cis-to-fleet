@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure the behavior of the sudo command' is set to 'Enabled: Disabled'
+  name: "CIS - Ensure 'Configure the behavior of the sudo command' is set to 'Enabled: Disabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Sudo\Enabled' AND data = 0);
   critical: false
   description: |

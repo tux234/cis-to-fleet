@@ -7,4 +7,19 @@
   resolution: |
     Payload Method:
     Ask your administrator to deploy a profile which enableds WarnAboutFraudulentWebsites in Safari
-  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.Safari' AND \n        name='WarnAboutFraudulentWebsites' AND \n        (value = 1 OR value = 'true') AND \n        username = ''\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.loginwindow' AND \n        name='WarnAboutFraudulentWebsites' AND \n        (value != 1 AND value != 'true')\n    );  \n"
+  query: |
+    -- Safari profiles deliver at user scope; drop the username='' filter.
+    -- Also fix the NOT EXISTS domain (was com.apple.loginwindow, a typo).
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='WarnAboutFraudulentWebsites' AND
+            (value = 1 OR value = 'true')
+        )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='WarnAboutFraudulentWebsites' AND
+            (value != 1 AND value != 'true')
+        );

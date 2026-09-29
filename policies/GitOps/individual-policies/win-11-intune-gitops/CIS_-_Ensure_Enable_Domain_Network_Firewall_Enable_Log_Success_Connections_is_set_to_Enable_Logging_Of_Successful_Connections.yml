@@ -1,0 +1,13 @@
+- name: CIS - Ensure 'Enable Domain Network Firewall Enable Log Success Connections' is set to 'Enable Logging Of Successful Connections'
+  platform: windows
+  description: |-
+    Use this option to log when Windows Firewall with Advanced Security allows an
+    inbound connection. The log records why and when the connection was formed. Look
+    for entries with the word ALLOW in the action column of the log.
+    The recommended state for this setting is: Enable Logging Of Successful
+    Connections.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enable Logging Of Successful Connections:
+    Firewall\Enable Domain Network Firewall: Enable Log Success Connections
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\Mdm\DomainProfile\Logging\LogSuccessfulConnections' AND data = '1';

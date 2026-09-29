@@ -1,0 +1,13 @@
+- name: CIS - Ensure 'Turn off background refresh of Group Policy' is set to 'Disabled'
+  platform: windows
+  description: |-
+    This policy setting prevents Group Policy from being updated while the computer is in
+    use. This policy setting applies to Group Policy for computers, users and Domain
+    Controllers.
+    The recommended state for this setting is: Disabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Disabled.
+    Administrative Templates\System\Group Policy\Turn off background refresh of
+    Group
+  query: SELECT 1 WHERE NOT EXISTS (SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\DisableBkGndGroupPolicy' AND data = '1');

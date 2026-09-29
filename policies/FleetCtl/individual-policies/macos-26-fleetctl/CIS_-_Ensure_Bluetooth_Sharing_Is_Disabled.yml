@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Bluetooth Sharing Is Disabled
+  query: |
+    SELECT 1 WHERE NOT EXISTS (
+      SELECT 1 FROM sharing_preferences WHERE bluetooth_sharing = 1
+    );
+  critical: false
+  description: |
+    Bluetooth Sharing allows files to be exchanged with Bluetooth-enabled devices. This setting only disables the receiving of files and requires both devices to be paired through Bluetooth as well as accepted by the receiver. This setting does not disable the ability to send files from the device to another paired Bluetooth device.
+    
+    Users should only pair to known trusted Bluetooth devices. Disabling Bluetooth Sharing minimizes the risk of an attacker using Bluetooth to remotely attack the system.
+  resolution: |
+    Graphical Method:
+      1. Open System Settings
+      2. Select General
+      3. Select Sharing
+      4. Set Bluetooth Sharing to disabled
+    
+    Terminal Method (per user):
+      /usr/bin/sudo -u <username> /usr/bin/defaults -currentHost write com.apple.Bluetooth PrefKeyServicesEnabled -bool false
+  platform: darwin

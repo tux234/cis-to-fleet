@@ -1,0 +1,14 @@
+- name: |
+    CIS - Ensure 'Enable / disable CLFS logfile authentication' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting configures Common Log File System (CLFS) logfile authentication.
+    Logfile authentication provides the ability for the CLFS driver to detect malicious
+    modifications made to logfiles.
+    The recommended state for this setting is: Enabled.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to 'Enabled':
+    'Computer Configuration\Policies\Administrative Templates\System\Filesystem\Enable / disable CLFS logfile authentication'
+  query: |
+    SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Policies\ClfsAuthenticationChecking' AND CAST(data AS INTEGER) = 1;

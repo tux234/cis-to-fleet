@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Home Folders Are Secure
+  query: |
+    SELECT 1 WHERE NOT EXISTS (
+      SELECT 1 FROM file WHERE
+        path LIKE '/Users/%'
+        AND path != '/Users/Shared/'
+        AND mode NOT IN ('0700', '0701', '0710', '0711')
+    );
+  critical: false
+  description: By default, macOS allows all valid users into the top level of every other user's home folder and restricts access to the Apple default folders within. Home folders should be restricted to access only by the user. Either no access or execute-only for group or others is acceptable.
+  resolution: |
+    Terminal Method:
+      /usr/bin/sudo /bin/chmod -R og-rwx /Users/<username>
+      (or `og-rw` if execute rights are required)
+  platform: darwin

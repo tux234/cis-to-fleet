@@ -23,9 +23,9 @@ spec:
             (value = 0 OR value = 'false')
         )
       AND EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.applicationaccess' AND 
-            name='Siri Data Sharing Opt-In Status' AND 
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.assistant.support' AND
+            name='Siri Data Sharing Opt-In Status' AND
             value = 2
         )
       AND NOT EXISTS (

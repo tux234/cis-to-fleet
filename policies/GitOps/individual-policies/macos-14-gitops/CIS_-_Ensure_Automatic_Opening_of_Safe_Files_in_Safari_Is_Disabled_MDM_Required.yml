@@ -13,4 +13,20 @@
   resolution: |
     Payload Method:
     Ask your administrator to deploy a profile which disables AutoOpenSafeDownloads in Safari
-  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.Safari' AND \n        name='AutoOpenSafeDownloads' AND \n        (value = 0 OR value = 'false') AND \n        username = ''\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.Safari' AND \n        name='AutoOpenSafeDownloads' AND \n        (value != 0 AND value != 'false')\n    );  \n"
+  query: |
+    -- Safari profiles deliver at user scope (not system/username='')
+    -- so we accept any scope; the NOT EXISTS still guards against
+    -- a conflicting value anywhere.
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='AutoOpenSafeDownloads' AND
+            (value = 0 OR value = 'false')
+        )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='AutoOpenSafeDownloads' AND
+            (value != 0 AND value != 'false')
+        );

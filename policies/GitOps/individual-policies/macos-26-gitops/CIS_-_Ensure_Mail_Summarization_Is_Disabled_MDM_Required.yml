@@ -1,0 +1,26 @@
+- name: CIS - Ensure Mail Summarization Is Disabled (MDM Required)
+  platform: darwin
+  description: |
+    Apple Intelligence's Mail summarization feature uses AI to quickly condense long emails or entire email threads into a few key sentences or bullet points. It automatically appears as a short summary under emails in your inbox, or you can manually tap a "Summarize" button within an open email.
+
+    If there's any concern that sensitive email content, even if for summarization, might potentially be routed to this third-party service (even with consent prompts), or if you want to avoid any possibility of Apple's servers processing data from highly confidential communications (even within PCC's strong safeguards), disabling the feature ensures your mail content is processed via approved organizational services and on managed devices.
+  resolution: |
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.applicationaccess
+      - Key: allowMailSummary, Value: <false/>
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.applicationaccess' AND
+          name='allowMailSummary' AND
+          (value = 0 OR value = 'false') AND
+          username = ''
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.applicationaccess' AND
+          name='allowMailSummary' AND
+          (value != 0 AND value != 'false')
+      );

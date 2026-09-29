@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'User Account Control: Virtualize file and registry write failures to per-user locations' is set to 'Enabled'
+  name: "CIS - Ensure 'User Account Control: Virtualize file and registry write failures to per-user locations' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\EnableVirtualization' and data == 1);
   critical: false
   description: |

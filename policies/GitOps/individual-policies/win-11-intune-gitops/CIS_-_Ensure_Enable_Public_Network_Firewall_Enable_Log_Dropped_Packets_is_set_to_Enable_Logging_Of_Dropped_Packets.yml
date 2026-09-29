@@ -1,0 +1,12 @@
+- name: CIS - Ensure 'Enable Public Network Firewall Enable Log Dropped Packets' is set to 'Enable Logging Of Dropped Packets'
+  platform: windows
+  description: |-
+    Use this option to log when Windows Firewall with Advanced Security discards an
+    inbound packet for any reason. The log records why and when the packet was dropped.
+    Look for entries with the word DROP in the action column of the log.
+    The recommended state for this setting is: Enable Logging Of Dropped Packets.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enable Logging Of Dropped Packets:
+    Firewall\Enable Public Network Firewall: Enable Log Dropped Packets
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Firewall/MdmStore/PublicProfile/EnableLogDroppedPackets</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = 'true';

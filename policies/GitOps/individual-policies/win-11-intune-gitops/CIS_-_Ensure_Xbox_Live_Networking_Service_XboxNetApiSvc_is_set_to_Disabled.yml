@@ -1,0 +1,11 @@
+- name: CIS - Ensure 'Xbox Live Networking Service (XboxNetApiSvc)' is set to 'Disabled'
+  platform: windows
+  description: |-
+    This service supports the Windows.Networking.XboxLive application programming
+    interface.
+    The recommended state for this setting is: Disabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Disabled.
+    System Services\Xbox Live Networking Service
+  query: SELECT 1 WHERE COALESCE((SELECT UPPER(start_type) FROM services WHERE name = 'XboxNetApiSvc'), 'DISABLED') = 'DISABLED';

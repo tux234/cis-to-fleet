@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'Remote Encryption Protection Configured State' is set to 'Audit: Generate EDR detections without blocking' or higher"
+  query: SELECT 1 WHERE EXISTS (SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Defender/Configuration/RemoteEncryptionProtectionConfiguredState</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '2') OR EXISTS (SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows Defender\\Configuration\\BehavioralNetworkBlocks\\RemoteEncryptionProtection\\RemoteEncryptionProtectionConfiguredState' AND data = '2');
+  critical: false
+  description: |
+    This policy setting configures the Brute-Force Protection feature in Microsoft Defender
+    Antivirus. Brute-Force Protection can detect and block attempts to forcibly initiate signins and sessions.
+    The recommended state for this setting is: Audit: Generate EDR detections
+    without blocking. Configuring this setting to Block: Prevent suspicious and
+    malicious behaviors also conforms to the benchmark.
+    Note: Configuring the value to either Default or Off does not conform to this
+    benchmark.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Audit: Generate EDR detections without blocking or
+    Block: Prevent suspicious and malicious behaviors.
+    Defender\Remote Encryption Protection Configured State
+  platform: windows

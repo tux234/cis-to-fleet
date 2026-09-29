@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Turn off Data Execution Prevention for Explorer' is set to 'Disabled'
+  query: SELECT 1 WHERE NOT EXISTS (SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer\NoDataExecutionPrevention' AND data = '1');
+  critical: false
+  description: |
+    Disabling Data Execution Prevention can allow certain legacy plug-in applications to
+    function without terminating Explorer.
+    The recommended state for this setting is: Disabled.
+    Note: Some legacy plug-in applications and other software may not function with Data
+    Execution Prevention and will require an exception to be defined for that specific plugin/software.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Disabled.
+    Administrative Templates\Windows Components\File Explorer\Turn off Data
+    Execution Prevention for Explorer
+  platform: windows

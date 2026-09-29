@@ -1,0 +1,17 @@
+- name: CIS - Ensure 'Do not allow drive redirection' is set to 'Enabled'
+  platform: windows
+  description: |-
+    This policy setting prevents users from sharing the local drives on their client computers
+    to Remote Desktop Servers that they access. Mapped drives appear in the session
+    folder tree in Windows Explorer in the following format:
+    \\TSClient\<driveletter>$
+    If local drives are shared they are left vulnerable to intruders who want to exploit the
+    data that is stored on them.
+    The recommended state for this setting is: Enabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled.
+    Administrative Templates\Windows Components\Remote Desktop Services\Remote
+    Desktop Session Host\Device and Resource Redirection\Do not allow drive
+    redirection
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services\fDisableCdm' AND data = '1';

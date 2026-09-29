@@ -1,0 +1,24 @@
+- name: CIS - Ensure Warn When Visiting A Fraudulent Website in Safari Is Enabled (MDM Required)
+  platform: darwin
+  description: |
+    Apple uses the Google Safe Browsing API to check for fraudulent websites and report them to the user attempting to visit one. Attackers use crafted web pages to social engineer users to load unwanted content — warning users prior to loading the content enables better security.
+  resolution: |
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.Safari
+      - Key: WarnAboutFraudulentWebsites
+      - Value: <true/>
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.Safari' AND
+          name = 'WarnAboutFraudulentWebsites' AND
+          (value = 1 OR value = 'true')
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.Safari' AND
+          name = 'WarnAboutFraudulentWebsites' AND
+          (value != 1 AND value != 'true')
+      );

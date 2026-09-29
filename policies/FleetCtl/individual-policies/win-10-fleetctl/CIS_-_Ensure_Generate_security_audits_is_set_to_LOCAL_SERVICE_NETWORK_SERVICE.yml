@@ -7,6 +7,6 @@ spec:
   description: This policy setting determines which users or processes can generate audit records in the Security log.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'LOCAL SERVICE, NETWORK SERVICE'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Generate security audits'
   platform: windows

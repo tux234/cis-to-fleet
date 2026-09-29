@@ -1,0 +1,18 @@
+- name: CIS - Ensure 'Prohibit use of Internet Connection Sharing on your DNS domain network' is set to 'Enabled'
+  platform: windows
+  description: |-
+    Although this "legacy" setting traditionally applied to the use of Internet Connection
+    Sharing (ICS) in Windows 2000, Windows XP & Server 2003, this setting now freshly
+    applies to the Mobile Hotspot feature in Windows 10 & Server 2016.
+    The recommended state for this setting is: Enabled.
+    Warning: In order for Application Guard to function correctly, ICS must be enabled. If
+    Application Guard is used in the environment, then an exception to this
+    recommendation might be needed. To learn more on how to disable portions of ICS
+    without breaking Application Guard, please visit: FAQ - Microsoft Defender Application
+    Guard | Microsoft Learn.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled.
+    Administrative Templates\Network\Network Connections\Prohibit use of Internet
+    Connection Sharing on your DNS domain network
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/ADMX_NetworkConnections/NC_ShowSharedAccessUI</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%<enabled%';

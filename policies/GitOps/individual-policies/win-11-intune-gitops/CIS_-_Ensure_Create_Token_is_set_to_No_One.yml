@@ -1,0 +1,17 @@
+- name: CIS - Ensure 'Create Token' is set to 'No One'
+  platform: windows
+  description: |-
+    This policy setting allows a process to create an access token, which may provide
+    elevated rights to access sensitive data.
+    The recommended state for this setting is: No One.
+    Note: This user right is considered a "sensitive privilege" for the purposes of auditing.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to (<![CDATA[]]>) which equals No One.
+    User Rights\Create Token
+
+    Note: Using (<![CDATA[]]>) to represent a blank value or No One is recommended
+    by Microsoft. However, there is a known issue where an error occurs in Endpoint
+    Manger (Intune) but does not affect the policy setting from being applied to the system
+    properly.
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/CreateToken</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '';

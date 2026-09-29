@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Improve Assistive Voice Features Is Disabled (MDM Required)
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.Accessibility' AND
+          name = 'AXSAudioDonationSiriImprovementEnabled' AND
+          (value = 0 OR value = 'false') AND
+          username = ''
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.Accessibility' AND
+          name = 'AXSAudioDonationSiriImprovementEnabled' AND
+          (value != 0 AND value != 'false')
+      );
+  critical: false
+  description: Improve Assistive Voice shares audio recordings and transcripts of Vocal Shortcuts and Voice Control interactions anonymously to Apple. These are recordings and transcripts from the user that are being submitted which may include PII or restricted organizational information. Sharing this kind of information with any 3rd party, including the platform vendor, needs to be risk evaluated and only allowed after review and approval based on your organization's policies.
+  resolution: |
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.Accessibility
+      - Key: AXSAudioDonationSiriImprovementEnabled
+      - Value: <false/>
+  platform: darwin

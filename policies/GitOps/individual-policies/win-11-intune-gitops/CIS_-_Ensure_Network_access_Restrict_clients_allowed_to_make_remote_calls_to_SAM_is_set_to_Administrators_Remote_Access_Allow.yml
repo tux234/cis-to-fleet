@@ -1,0 +1,22 @@
+- name: 'CIS - Ensure ''Network access: Restrict clients allowed to make remote calls to SAM'' is set to ''Administrators: Remote Access: Allow'''
+  platform: windows
+  description: |-
+    This policy setting allows you to restrict remote RPC connections to SAM.
+    The recommended state for this setting is: Administrators: Remote Access: Allow.
+    Note: A Windows 10 R1607, Server 2016 or newer OS is required to access and set
+    this value in Group Policy.
+    Note #2: This setting was originally only supported on Windows 10 R1607 or newer,
+    then support for it was added to Windows 7 or newer via the March 2017 security
+    patches.
+    Note #3: If your organization is using Microsoft Defender for Identity (formerly Azure
+    Advanced Threat Protection (Azure ATP)), the (organization-named) Defender for
+    Identity Directory Service Account (DSA), will also need to be granted the same Remote
+    Access: Allow permission. For more information on adding the service account please
+    see Configure SAM-R to enable lateral movement path detection in Microsoft Defender
+    for Identity | Microsoft Docs.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Administrators: Remote Access: Allow:
+    Local Policies Security Options\Network access: Restrict clients allowed to
+    make remote calls to SAM
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/LocalPoliciesSecurityOptions/NetworkAccess_RestrictClientsAllowedToMakeRemoteCallsToSAM</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%BA%';
