@@ -58,7 +58,7 @@ jobs:
             else
               echo "✅ Valid YAML: $yaml_file"
             fi
-          done < <(find "$policies_path" -name "*.yml" -o -name "*.yaml" -print0)
+          done < <(find "$policies_path" \( -name "*.yml" -o -name "*.yaml" \) -print0)
           
           if [[ ${#failed_files[@]} -gt 0 ]]; then
             echo ""
@@ -123,42 +123,16 @@ jobs:
             for file in $fleetctl_files; do
               echo "Checking Fleetctl file: $file"
               
-              # Extract all documents
-              doc_count=$(yq eval-all 'length' "$file")
+              # Count documents, and documents missing the required policy fields
+              doc_count=$(yq eval-all '[.] | length' "$file")
               echo "  Found $doc_count documents"
+              invalid_docs=$(yq eval-all '[select(.apiVersion != "v1" or .kind != "policy" or (.spec.name // "") == "" or (.spec.query // "") == "")] | length' "$file")
               
-              # Validate each document
-              yq eval-all '. as $doc | $doc' "$file" | while IFS= read -r line; do
-                if [[ "$line" == "---" ]] || [[ -z "$line" ]]; then
-                  continue
-                fi
-                
-                # Check for required Kubernetes fields
-                api_version=$(echo "$line" | yq eval '.apiVersion // ""' - 2>/dev/null)
-                kind=$(echo "$line" | yq eval '.kind // ""' - 2>/dev/null)
-                spec_name=$(echo "$line" | yq eval '.spec.name // ""' - 2>/dev/null)
-                spec_query=$(echo "$line" | yq eval '.spec.query // ""' - 2>/dev/null)
-                
-                if [[ "$api_version" != "v1" ]]; then
-                  echo "❌ Invalid or missing apiVersion in $file"
-                  ((validation_errors++))
-                fi
-                
-                if [[ "$kind" != "policy" ]]; then
-                  echo "❌ Invalid or missing kind in $file"
-                  ((validation_errors++))
-                fi
-                
-                if [[ -z "$spec_name" ]]; then
-                  echo "❌ Missing spec.name in $file"
-                  ((validation_errors++))
-                fi
-                
-                if [[ -z "$spec_query" ]]; then
-                  echo "❌ Missing spec.query in $file"
-                  ((validation_errors++))
-                fi
-              done
+              if [[ "$invalid_docs" -gt 0 ]]; then
+                echo "❌ $invalid_docs documents missing apiVersion: v1, kind: policy, spec.name or spec.query in $file"
+                validation_errors=$((validation_errors + invalid_docs))
+                continue
+              fi
               
               echo "✅ Fleetctl file validation passed: $file"
             done
@@ -194,12 +168,12 @@ jobs:
           
           while IFS= read -r -d '' yaml_file; do
             for pattern in "${suspicious_patterns[@]}"; do
-              if grep -qi "$pattern" "$yaml_file"; then
+              if grep -qiF -e "$pattern" "$yaml_file"; then
                 echo "⚠️ Suspicious SQL pattern '$pattern' found in: $yaml_file"
-                ((security_issues++))
+                security_issues=$((security_issues + 1))
               fi
             done
-          done < <(find "$policies_path" -name "*.yml" -o -name "*.yaml" -print0)
+          done < <(find "$policies_path" \( -name "*.yml" -o -name "*.yaml" \) -print0)
           
           if [[ $security_issues -gt 0 ]]; then
             echo ""

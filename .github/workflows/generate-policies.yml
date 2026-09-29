@@ -39,6 +39,7 @@ on:
         default: true
         type: boolean
   push:
+    branches: [ main ]
     paths:
       - 'cis-to-fleet.sh'
       - '.github/workflows/generate-policies.yml'
@@ -190,6 +191,8 @@ jobs:
           if [[ -d temp_gitops_split ]]; then
             for dir in temp_gitops_split/*-gitops; do
               if [[ -d "$dir" ]]; then
+                # Replace the platform's existing directory so policies removed upstream are dropped too
+                rm -rf "${{ env.OUTPUT_DIR }}/GitOps/individual-policies/$(basename "$dir")"
                 mv "$dir" ${{ env.OUTPUT_DIR }}/GitOps/individual-policies/
                 echo "Moved $(basename "$dir") to GitOps/individual-policies/"
               fi
@@ -230,6 +233,8 @@ jobs:
           if [[ -d temp_fleetctl_split ]]; then
             for dir in temp_fleetctl_split/*-fleetctl; do
               if [[ -d "$dir" ]]; then
+                # Replace the platform's existing directory so policies removed upstream are dropped too
+                rm -rf "${{ env.OUTPUT_DIR }}/FleetCtl/individual-policies/$(basename "$dir")"
                 mv "$dir" ${{ env.OUTPUT_DIR }}/FleetCtl/individual-policies/
                 echo "Moved $(basename "$dir") to FleetCtl/individual-policies/"
               fi
@@ -257,6 +262,11 @@ jobs:
           echo "- FleetCtl combined files: $fleetctl_combined"
           echo "- GitOps individual files: $gitops_individual"
           echo "- FleetCtl individual files: $fleetctl_individual"
+
+          echo ""
+          echo "🔍 Validating YAML syntax of all generated files"
+          find ${{ env.OUTPUT_DIR }} -name "*.yml" -exec yq eval 'true' {} + > /dev/null
+          echo "✅ All generated YAML files parse"
 
       - name: Upload policy artifacts
         uses: actions/upload-artifact@v4
@@ -428,10 +438,6 @@ jobs:
             - Platforms: ${{ needs.detect-changes.outputs.platforms-changed == 'true' && 'Platform changes detected' || 'Manual/Scheduled update' }}
             - Generated: ${{ steps.params.outputs.platforms_desc || 'all platforms' }}
             - CIS Level: ${{ github.event.inputs.cis_level || 'all' }}
-            
-            🤖 Generated with [Claude Code](https://claude.ai/code)
-            
-            Co-Authored-By: Claude <noreply@anthropic.com>
           branch: ${{ env.POLICIES_BRANCH }}
           delete-branch: true
           title: "🤖 Automated CIS Fleet Policy Update"

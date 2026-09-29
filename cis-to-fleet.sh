@@ -35,12 +35,20 @@ set -euo pipefail
 # CONFIGURATION CONSTANTS
 # =============================================================================
 
-readonly SCRIPT_NAME="$(basename "$0")"
+SCRIPT_NAME="$(basename "$0")"
+readonly SCRIPT_NAME
 readonly SCRIPT_VERSION="2.0.0"
 
 # GitHub API endpoints for Fleet CIS benchmark repository
 readonly FLEET_GITHUB_API_BASE="https://api.github.com/repos/fleetdm/fleet/contents/ee/cis"
 readonly FLEET_GITHUB_RAW_BASE="https://raw.githubusercontent.com/fleetdm/fleet/main/ee/cis"
+
+# jq filter mapping a policy to a Kubernetes-style document for 'fleetctl apply'
+readonly FLEETCTL_DOCUMENT_JQ_FILTER='{
+  apiVersion: "v1",
+  kind: "policy",
+  spec: ({name, query, critical: false, description, resolution, platform} | with_entries(select(.value != null)))
+}'
 
 # Default configuration
 readonly DEFAULT_OUTPUT_DIRECTORY="./output"
@@ -465,9 +473,29 @@ fetch_platform_policy_yaml() {
 
   # Download YAML content with error handling
   if ! curl -s -f "$raw_content_url" >"$cached_yaml_file"; then
-    log_error "Failed to fetch YAML for platform: $target_platform"
-    log_error "Platform may not exist or policy file may be missing"
-    return 1
+    # Some platforms (e.g. win-11-intune) split policies across several YAML files
+    # instead of a single cis-policy-queries.yml, so combine every YAML file in the directory
+    log_debug "No cis-policy-queries.yml for $target_platform, combining its YAML files"
+    local yaml_file_urls
+    yaml_file_urls=$(curl -s -f "$FLEET_GITHUB_API_BASE/$target_platform" |
+      jq -r '.[] | select(.type == "file" and (.name | test("\\.ya?ml$"))) | .download_url' 2>/dev/null) || yaml_file_urls=""
+
+    if [[ -z "$yaml_file_urls" ]]; then
+      log_error "Failed to fetch YAML for platform: $target_platform"
+      log_error "Platform may not exist or policy file may be missing"
+      return 1
+    fi
+
+    : >"$cached_yaml_file"
+    local yaml_file_url
+    while IFS= read -r yaml_file_url; do
+      log_debug "Fetching $yaml_file_url"
+      printf '\n---\n' >>"$cached_yaml_file"
+      if ! curl -s -f "$yaml_file_url" >>"$cached_yaml_file"; then
+        log_error "Failed to fetch YAML file: $yaml_file_url"
+        return 1
+      fi
+    done <<<"$yaml_file_urls"
   fi
 
   log_debug "Successfully cached YAML file: $cached_yaml_file"
@@ -478,7 +506,8 @@ fetch_platform_policy_yaml() {
 # Handles multiple YAML document formats: Kubernetes-style, arrays, and simple objects
 parse_policy_yaml_to_json() {
   local source_yaml_file="$1"
-  local parsed_policies_json="$TEMP_PROCESSING_DIR/parsed_policies_$(basename "$source_yaml_file" .yml).json"
+  local parsed_policies_json
+  parsed_policies_json="$TEMP_PROCESSING_DIR/parsed_policies_$(basename "$source_yaml_file" .yml).json"
 
   log_debug "Parsing YAML policies from: $source_yaml_file"
 
@@ -539,7 +568,8 @@ parse_policy_yaml_to_json() {
 # Parse YAML and extract policy data
 parse_yaml_policies() {
   local yaml_file="$1"
-  local policies_json="$TEMP_DIR/policies_$(basename "$yaml_file" .yml).json"
+  local policies_json
+  policies_json="$TEMP_DIR/policies_$(basename "$yaml_file" .yml).json"
 
   log_debug "Parsing YAML policies from: $yaml_file"
 
@@ -589,7 +619,8 @@ parse_yaml_policies() {
 filter_policies_by_cis_level() {
   local source_policies_json="$1"
   local target_cis_level="$2"
-  local filtered_policies_json="$TEMP_PROCESSING_DIR/filtered_$(basename "$source_policies_json")"
+  local filtered_policies_json
+  filtered_policies_json="$TEMP_PROCESSING_DIR/filtered_$(basename "$source_policies_json")"
 
   # Handle 'all' level by simply copying all policies
   if [[ "$target_cis_level" == "all" ]]; then
@@ -599,16 +630,18 @@ filter_policies_by_cis_level() {
     # Define CIS level tags to search for in policy metadata
     local primary_level_tag="CIS_Level$target_cis_level"
     local alternate_level_tag="CIS_LEVEL$target_cis_level"
+    local key_value_level_tag="level:$target_cis_level"
 
     log_debug "Filtering policies for CIS level: $target_cis_level"
 
     # Use jq to filter policies based on tags field containing level indicators
-    # Handles both "CIS_Level1" and "CIS_LEVEL1" tag formats for compatibility
-    jq --arg level_tag "$primary_level_tag" --arg level_tag_alt "$alternate_level_tag" '[
+    # Handles "CIS_Level1", "CIS_LEVEL1" and "level:1" (win-11-intune) tag formats
+    jq --arg level_tag "$primary_level_tag" --arg level_tag_alt "$alternate_level_tag" \
+      --arg level_tag_kv "$key_value_level_tag" '[
             .[] | select(
-                .tags != null and 
-                (.tags | split(",") | map(gsub("^\\s+|\\s+$"; "")) | 
-                 contains([$level_tag]) or contains([$level_tag_alt]))
+                .tags != null and
+                (.tags | split(",") | map(gsub("^\\s+|\\s+$"; "")) |
+                 contains([$level_tag]) or contains([$level_tag_alt]) or index($level_tag_kv) != null)
             )
         ]' "$source_policies_json" >"$filtered_policies_json"
 
@@ -625,7 +658,8 @@ filter_policies_by_cis_level() {
 # Ensures consistent output format containing only essential policy information
 sanitize_policy_data() {
   local source_policies_json="$1"
-  local sanitized_policies_json="$TEMP_PROCESSING_DIR/sanitized_$(basename "$source_policies_json")"
+  local sanitized_policies_json
+  sanitized_policies_json="$TEMP_PROCESSING_DIR/sanitized_$(basename "$source_policies_json")"
 
   log_debug "Sanitizing and normalizing policy data"
 
@@ -657,63 +691,9 @@ generate_gitops_format_yaml() {
 
   log_debug "Generating GitOps YAML format with literal block scalars"
 
-  # Generate YAML array with proper field ordering and multiline handling
-  # Uses literal block scalars (|) for multiline content to preserve formatting
-  {
-    local total_policy_count
-    total_policy_count=$(jq length "$source_policies_json")
-
-    log_debug "Processing $total_policy_count policies for GitOps format"
-
-    # Process each policy individually to maintain proper YAML formatting
-    for ((policy_index = 0; policy_index < total_policy_count; policy_index++)); do
-      local current_policy
-      current_policy=$(jq ".[$policy_index]" "$source_policies_json")
-
-      # Extract policy fields with null fallbacks
-      local policy_name policy_platform policy_description policy_resolution policy_query
-      policy_name=$(echo "$current_policy" | jq -r '.name // ""')
-      policy_platform=$(echo "$current_policy" | jq -r '.platform // ""')
-      policy_description=$(echo "$current_policy" | jq -r '.description // ""')
-      policy_resolution=$(echo "$current_policy" | jq -r '.resolution // ""')
-      policy_query=$(echo "$current_policy" | jq -r '.query // ""')
-
-      # Output YAML array item with proper field ordering
-      echo "- name: $policy_name"
-      [[ -n "$policy_platform" ]] && echo "  platform: $policy_platform"
-
-      # Handle multiline description with literal block scalar
-      if [[ -n "$policy_description" ]]; then
-        if [[ "$policy_description" =~ $'\n' ]]; then
-          echo "  description: |"
-          echo "$policy_description" | sed 's/^/    /'
-        else
-          echo "  description: $policy_description"
-        fi
-      fi
-
-      # Handle multiline resolution with literal block scalar
-      if [[ -n "$policy_resolution" ]]; then
-        if [[ "$policy_resolution" =~ $'\n' ]]; then
-          echo "  resolution: |"
-          echo "$policy_resolution" | sed 's/^/    /'
-        else
-          echo "  resolution: $policy_resolution"
-        fi
-      fi
-
-      # Handle multiline query with literal block scalar
-      if [[ -n "$policy_query" ]]; then
-        if [[ "$policy_query" =~ $'\n' ]]; then
-          echo "  query: |"
-          echo "$policy_query" | sed 's/^/    /'
-        else
-          echo "  query: $policy_query"
-        fi
-      fi
-
-    done
-  } >"$target_output_file"
+  # Render the policy array with yq so values are quoted where YAML requires it
+  # (e.g. text containing ': ') and multiline content uses literal block scalars (|)
+  yq -p=json -o=yaml -P '.' "$source_policies_json" >"$target_output_file"
 
   log_debug "GitOps YAML generated successfully: $target_output_file"
 }
@@ -726,77 +706,10 @@ generate_fleetctl_format_yaml() {
 
   log_debug "Generating Fleetctl YAML format with Kubernetes document structure"
 
-  # Create multi-document YAML with proper Kubernetes structure:
-  # - apiVersion: v1
-  # - kind: policy
-  # - spec: (containing policy fields)
-  # - Document separators (---) between policies
-  {
-    local total_policy_count
-    total_policy_count=$(jq length "$source_policies_json")
-
-    log_debug "Processing $total_policy_count policies for Fleetctl format"
-
-    # Generate each policy as a separate Kubernetes document
-    for ((policy_index = 0; policy_index < total_policy_count; policy_index++)); do
-      local current_policy
-      current_policy=$(jq ".[$policy_index]" "$source_policies_json")
-
-      # Extract policy fields with safe null handling
-      local policy_name policy_platform policy_description policy_resolution policy_query
-      policy_name=$(echo "$current_policy" | jq -r '.name // ""')
-      policy_platform=$(echo "$current_policy" | jq -r '.platform // ""')
-      policy_description=$(echo "$current_policy" | jq -r '.description // ""')
-      policy_resolution=$(echo "$current_policy" | jq -r '.resolution // ""')
-      policy_query=$(echo "$current_policy" | jq -r '.query // ""')
-
-      # Add YAML document separator between policies (skip for first policy)
-      [[ $policy_index -gt 0 ]] && echo "---"
-
-      # Generate Kubernetes-style policy document header
-      echo "apiVersion: v1"
-      echo "kind: policy"
-      echo "spec:"
-      echo "  name: $policy_name"
-
-      # Add SQL query with proper multiline formatting
-      if [[ -n "$policy_query" ]]; then
-        if [[ "$policy_query" =~ $'\n' ]]; then
-          echo "  query: |"
-          echo "$policy_query" | sed 's/^/    /'
-        else
-          echo "  query: $policy_query"
-        fi
-      fi
-
-      # Set default criticality level for CIS policies
-      echo "  critical: false"
-
-      # Add description with multiline support
-      if [[ -n "$policy_description" ]]; then
-        if [[ "$policy_description" =~ $'\n' ]]; then
-          echo "  description: |"
-          echo "$policy_description" | sed 's/^/    /'
-        else
-          echo "  description: $policy_description"
-        fi
-      fi
-
-      # Add resolution steps with multiline support
-      if [[ -n "$policy_resolution" ]]; then
-        if [[ "$policy_resolution" =~ $'\n' ]]; then
-          echo "  resolution: |"
-          echo "$policy_resolution" | sed 's/^/    /'
-        else
-          echo "  resolution: $policy_resolution"
-        fi
-      fi
-
-      # Add platform specification if available
-      [[ -n "$policy_platform" ]] && echo "  platform: $policy_platform"
-
-    done
-  } >"$target_output_file"
+  # One Kubernetes-style document per policy, separated by ---, rendered with yq
+  # so values are quoted where YAML requires it
+  jq "[.[] | $FLEETCTL_DOCUMENT_JQ_FILTER]" "$source_policies_json" |
+    yq -p=json -o=yaml -P '.[] | split_doc' >"$target_output_file"
 
   log_debug "Fleetctl YAML generated successfully: $target_output_file"
 }
@@ -806,7 +719,6 @@ generate_split_files() {
   local policies_json="$1"
   local format="$2"
   local output_dir="$3"
-  local platform="$4"
 
   log_debug "Generating individual policy files"
 
@@ -843,50 +755,7 @@ generate_split_files() {
             } | with_entries(select(.value != null))]' | yq eval -P - >"$output_file"
     else
       # Fleetctl format: Kubernetes-style single document
-      local name platform description resolution query
-      name=$(echo "$policy" | jq -r '.name // ""')
-      platform=$(echo "$policy" | jq -r '.platform // ""')
-      description=$(echo "$policy" | jq -r '.description // ""')
-      resolution=$(echo "$policy" | jq -r '.resolution // ""')
-      query=$(echo "$policy" | jq -r '.query // ""')
-
-      {
-        echo "apiVersion: v1"
-        echo "kind: policy"
-        echo "spec:"
-        echo "  name: $name"
-
-        if [[ -n "$query" ]]; then
-          if [[ "$query" =~ $'\n' ]]; then
-            echo "  query: |"
-            echo "$query" | sed 's/^/    /'
-          else
-            echo "  query: $query"
-          fi
-        fi
-
-        echo "  critical: false"
-
-        if [[ -n "$description" ]]; then
-          if [[ "$description" =~ $'\n' ]]; then
-            echo "  description: |"
-            echo "$description" | sed 's/^/    /'
-          else
-            echo "  description: $description"
-          fi
-        fi
-
-        if [[ -n "$resolution" ]]; then
-          if [[ "$resolution" =~ $'\n' ]]; then
-            echo "  resolution: |"
-            echo "$resolution" | sed 's/^/    /'
-          else
-            echo "  resolution: $resolution"
-          fi
-        fi
-
-        [[ -n "$platform" ]] && echo "  platform: $platform"
-      } >"$output_file"
+      echo "$policy" | jq "$FLEETCTL_DOCUMENT_JQ_FILTER" | yq -p=json -o=yaml -P '.' >"$output_file"
     fi
   done
 
@@ -980,7 +849,7 @@ generate_policy_files() {
       # Generate individual files (one per policy)
       local individual_files_directory="$user_output_directory/${current_platform}-${output_format}"
       local generated_file_count
-      if generated_file_count=$(generate_split_files "$sanitized_policies_json" "$output_format" "$individual_files_directory" "$current_platform"); then
+      if generated_file_count=$(generate_split_files "$sanitized_policies_json" "$output_format" "$individual_files_directory"); then
         log_success "Generated $generated_file_count individual $output_format files in: $individual_files_directory"
       else
         log_error "Failed to generate individual files for $current_platform"
