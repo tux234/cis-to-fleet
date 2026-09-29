@@ -43,12 +43,10 @@ readonly SCRIPT_VERSION="2.0.0"
 readonly FLEET_GITHUB_API_BASE="https://api.github.com/repos/fleetdm/fleet/contents/ee/cis"
 readonly FLEET_GITHUB_RAW_BASE="https://raw.githubusercontent.com/fleetdm/fleet/main/ee/cis"
 
-# jq filter mapping a policy to a Kubernetes-style document for 'fleetctl apply'
-readonly FLEETCTL_DOCUMENT_JQ_FILTER='{
-  apiVersion: "v1",
-  kind: "policy",
-  spec: ({name, query, critical: false, description, resolution, platform} | with_entries(select(.value != null)))
-}'
+# Single-line values matching this are emitted as quoted strings instead of plain
+# YAML scalars: leading indicator characters, ': ' or ' #', leading/trailing
+# whitespace, control characters, and values YAML would read as booleans/null/numbers
+readonly YAML_PLAIN_UNSAFE_REGEX="(^[][{}#&*!|>'\"%@\`,?:-]|^[[:space:]]|[[:space:]]\$|: |:\$| #|[[:cntrl:]]|^(true|True|TRUE|false|False|FALSE|yes|Yes|YES|no|No|NO|on|On|ON|off|Off|OFF|y|Y|n|N|null|Null|NULL|~)\$|^[-+.]?[0-9])"
 
 # Default configuration
 readonly DEFAULT_OUTPUT_DIRECTORY="./output"
@@ -683,6 +681,29 @@ sanitize_policy_data() {
   echo "$sanitized_policies_json"
 }
 
+# Format a single-line value as a YAML scalar: plain when that is safe, otherwise
+# a JSON string (which is also a valid YAML double-quoted scalar)
+yaml_scalar() {
+  if [[ -z "$1" || "$1" == *$'\n'* || "$1" =~ $YAML_PLAIN_UNSAFE_REGEX ]]; then
+    jq -n --arg value "$1" '$value'
+  else
+    printf '%s\n' "$1"
+  fi
+}
+
+# Print "<indent><key>: <value>" with multiline values as literal block scalars (|)
+emit_yaml_field() {
+  local indent="$1" key="$2" value="$3"
+
+  # A literal block can't start with whitespace (it would be read as indentation)
+  if [[ "$value" == *$'\n'* && ! "$value" =~ ^[[:space:]] && "$value" != *$'\r'* ]]; then
+    echo "${indent}${key}: |"
+    printf '%s\n' "$value" | sed "s/^/${indent}  /"
+  else
+    echo "${indent}${key}: $(yaml_scalar "$value")"
+  fi
+}
+
 # Generate GitOps-optimized YAML format with proper multiline field formatting
 # Creates YAML array structure suitable for GitOps workflows and Fleet deployment
 generate_gitops_format_yaml() {
@@ -691,9 +712,35 @@ generate_gitops_format_yaml() {
 
   log_debug "Generating GitOps YAML format with literal block scalars"
 
-  # Render the policy array with yq so values are quoted where YAML requires it
-  # (e.g. text containing ': ') and multiline content uses literal block scalars (|)
-  yq -p=json -o=yaml -P '.' "$source_policies_json" >"$target_output_file"
+  # Generate YAML array with proper field ordering and multiline handling
+  # Uses literal block scalars (|) for multiline content to preserve formatting
+  {
+    local total_policy_count
+    total_policy_count=$(jq length "$source_policies_json")
+
+    log_debug "Processing $total_policy_count policies for GitOps format"
+
+    # Process each policy individually to maintain proper YAML formatting
+    for ((policy_index = 0; policy_index < total_policy_count; policy_index++)); do
+      local current_policy
+      current_policy=$(jq ".[$policy_index]" "$source_policies_json")
+
+      # Extract policy fields with null fallbacks
+      local policy_name policy_platform policy_description policy_resolution policy_query
+      policy_name=$(echo "$current_policy" | jq -r '.name // ""')
+      policy_platform=$(echo "$current_policy" | jq -r '.platform // ""')
+      policy_description=$(echo "$current_policy" | jq -r '.description // ""')
+      policy_resolution=$(echo "$current_policy" | jq -r '.resolution // ""')
+      policy_query=$(echo "$current_policy" | jq -r '.query // ""')
+
+      # Output YAML array item with proper field ordering
+      echo "- name: $(yaml_scalar "$policy_name")"
+      [[ -n "$policy_platform" ]] && emit_yaml_field "  " "platform" "$policy_platform"
+      [[ -n "$policy_description" ]] && emit_yaml_field "  " "description" "$policy_description"
+      [[ -n "$policy_resolution" ]] && emit_yaml_field "  " "resolution" "$policy_resolution"
+      [[ -n "$policy_query" ]] && emit_yaml_field "  " "query" "$policy_query"
+    done
+  } >"$target_output_file"
 
   log_debug "GitOps YAML generated successfully: $target_output_file"
 }
@@ -706,12 +753,52 @@ generate_fleetctl_format_yaml() {
 
   log_debug "Generating Fleetctl YAML format with Kubernetes document structure"
 
-  # One Kubernetes-style document per policy, separated by ---, rendered with yq
-  # so values are quoted where YAML requires it
-  jq "[.[] | $FLEETCTL_DOCUMENT_JQ_FILTER]" "$source_policies_json" |
-    yq -p=json -o=yaml -P '.[] | split_doc' >"$target_output_file"
+  # Create multi-document YAML with proper Kubernetes structure:
+  # - apiVersion: v1
+  # - kind: policy
+  # - spec: (containing policy fields)
+  # - Document separators (---) between policies
+  {
+    local total_policy_count
+    total_policy_count=$(jq length "$source_policies_json")
+
+    log_debug "Processing $total_policy_count policies for Fleetctl format"
+
+    # Generate each policy as a separate Kubernetes document
+    for ((policy_index = 0; policy_index < total_policy_count; policy_index++)); do
+      # Add YAML document separator between policies (skip for first policy)
+      [[ $policy_index -gt 0 ]] && echo "---"
+
+      emit_fleetctl_policy_document "$(jq ".[$policy_index]" "$source_policies_json")"
+    done
+  } >"$target_output_file"
 
   log_debug "Fleetctl YAML generated successfully: $target_output_file"
+}
+
+# Print one policy (JSON) as a Kubernetes-style document ready for 'fleetctl apply'
+emit_fleetctl_policy_document() {
+  local current_policy="$1"
+
+  # Extract policy fields with safe null handling
+  local policy_name policy_platform policy_description policy_resolution policy_query
+  policy_name=$(echo "$current_policy" | jq -r '.name // ""')
+  policy_platform=$(echo "$current_policy" | jq -r '.platform // ""')
+  policy_description=$(echo "$current_policy" | jq -r '.description // ""')
+  policy_resolution=$(echo "$current_policy" | jq -r '.resolution // ""')
+  policy_query=$(echo "$current_policy" | jq -r '.query // ""')
+
+  echo "apiVersion: v1"
+  echo "kind: policy"
+  echo "spec:"
+  echo "  name: $(yaml_scalar "$policy_name")"
+  [[ -n "$policy_query" ]] && emit_yaml_field "  " "query" "$policy_query"
+  # Set default criticality level for CIS policies
+  echo "  critical: false"
+  [[ -n "$policy_description" ]] && emit_yaml_field "  " "description" "$policy_description"
+  [[ -n "$policy_resolution" ]] && emit_yaml_field "  " "resolution" "$policy_resolution"
+  [[ -n "$policy_platform" ]] && emit_yaml_field "  " "platform" "$policy_platform"
+  return 0
 }
 
 # Generate individual policy files (simplified approach)
@@ -727,6 +814,7 @@ generate_split_files() {
   local policy_count
   policy_count=$(jq length "$policies_json")
 
+  local used_file_names=$'\n'
   for ((i = 0; i < policy_count; i++)); do
     local policy
     policy=$(jq ".[$i]" "$policies_json")
@@ -742,7 +830,16 @@ generate_split_files() {
       safe_name="unknown_policy_$i"
     fi
 
-    local output_file="$output_dir/${safe_name}.yml"
+    # Names that differ only in punctuation map to the same filename; suffix
+    # later ones so no policy overwrites another
+    local unique_name="$safe_name" suffix=2
+    while [[ "$used_file_names" == *$'\n'"$unique_name"$'\n'* ]]; do
+      unique_name="${safe_name}_$suffix"
+      suffix=$((suffix + 1))
+    done
+    used_file_names+="$unique_name"$'\n'
+
+    local output_file="$output_dir/${unique_name}.yml"
 
     if [[ "$format" == "gitops" ]]; then
       # GitOps format: wrap in array
@@ -755,7 +852,7 @@ generate_split_files() {
             } | with_entries(select(.value != null))]' | yq eval -P - >"$output_file"
     else
       # Fleetctl format: Kubernetes-style single document
-      echo "$policy" | jq "$FLEETCTL_DOCUMENT_JQ_FILTER" | yq -p=json -o=yaml -P '.' >"$output_file"
+      emit_fleetctl_policy_document "$policy" >"$output_file"
     fi
   done
 
