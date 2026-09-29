@@ -2,7 +2,8 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'Log on as a batch job' is set to 'Administrators'
-  query: SELECT 1 FROM cis_audit where item = "2.2.28" AND (regex_match(value,".*(?=.*Administrators).*",0) is not null);
+  query: |
+    SELECT 1 FROM cis_audit where item = "2.2.28" AND (regex_match(value,".*(?=.*Administrators).*",0) is not null);
   critical: false
   description: |
     This policy setting allows accounts to log on using the task scheduler service. Because the task
@@ -12,6 +13,6 @@ spec:
     after gaining user level access to a computer.
   resolution: |
     Automatic method:
-    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to an empty list
+    Ask your system administrator to establish the recommended configuration via GP, ensure that the following UI path is set to 'Administrators'
     'Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\User Rights Assignment\Log on as a batch job'
   platform: windows

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: 'CIS - Ensure ''Configure SMB v1 client driver'' is set to ''Enabled: Disable driver (recommended)'''
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\mrxsmb10\Start' AND data = '4';
+  critical: false
+  description: |-
+    This setting configures the start type for the Server Message Block version 1 (SMBv1)
+    client driver service (MRxSmb10), which is recommended to be disabled.
+    The recommended state for this setting is: Enabled: Disable driver
+    (recommended).
+    Note: Do not, under any circumstances, configure this overall setting as Disabled, as
+    doing so will delete the underlying registry entry altogether, which will cause serious
+    problems.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled: Disable driver (recommended).
+    Administrative Templates\MS Security Guide\Configure SMB v1 client driver
+  platform: windows

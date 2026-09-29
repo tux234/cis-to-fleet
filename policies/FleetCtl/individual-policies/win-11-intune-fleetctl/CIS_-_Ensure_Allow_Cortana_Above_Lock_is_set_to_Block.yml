@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Allow Cortana Above Lock' is set to 'Block'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/AboveLock/AllowCortanaAboveLock</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '0';
+  critical: false
+  description: |-
+    This policy setting determines whether or not the user can interact with Cortana using
+    speech while the system is locked.
+    The recommended state for this setting is: Block.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Block.
+    Above Lock\Allow Cortana Above Lock
+  platform: windows

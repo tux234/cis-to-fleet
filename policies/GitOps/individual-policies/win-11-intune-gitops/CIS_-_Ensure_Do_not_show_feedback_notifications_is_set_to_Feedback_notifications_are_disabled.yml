@@ -1,0 +1,11 @@
+- name: CIS - Ensure 'Do not show feedback notifications' is set to 'Feedback notifications are disabled'
+  platform: windows
+  description: |-
+    This policy setting allows an organization to prevent its devices from showing feedback
+    questions from Microsoft.
+    The recommended state for this setting is: Feedback notifications are disabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Feedback notifications are disabled:
+    Experience\Do not show feedback notifications
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PolicyManager\current\device\Experience\DoNotShowFeedbackNotifications' AND data = '1';

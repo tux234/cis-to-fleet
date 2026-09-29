@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Deny write access to removable drives not protected by BitLocker' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Policies\\Microsoft\\FVE\RDVDenyWriteAccess' AND data = 1);
+  name: |
+    CIS - Ensure 'Deny write access to removable drives not protected by BitLocker' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Policies\\Microsoft\\FVE\RDVDenyWriteAccess' AND data = 1);
   critical: false
   description: |
     This policy setting configures whether BitLocker protection is required for a computer to be able to write data to a removable data drive.

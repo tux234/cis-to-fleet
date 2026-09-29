@@ -1,0 +1,14 @@
+- name: CIS - Ensure 'Notify antivirus programs when opening attachments (User)' is set to 'Enabled'
+  platform: windows
+  description: |-
+    This policy setting manages the behavior for notifying registered antivirus programs. If
+    multiple programs are registered, they will all be notified.
+    The recommended state for this setting is: Enabled.
+    Note: An updated antivirus program must be installed for this policy setting to function
+    properly.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled.
+    Administrative Templates\Windows Components\Attachment Manager\Notify
+    antivirus programs when opening attachments (User)
+  query: SELECT 1 WHERE NOT EXISTS (SELECT 1 FROM registry WHERE path LIKE 'HKEY_USERS\S-1-%\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Attachments\ScanWithAntiVirus' AND data != '3');

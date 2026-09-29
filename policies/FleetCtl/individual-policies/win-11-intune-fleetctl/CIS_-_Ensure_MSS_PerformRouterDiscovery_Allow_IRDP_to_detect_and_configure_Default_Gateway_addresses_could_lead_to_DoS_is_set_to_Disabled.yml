@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: 'CIS - Ensure ''MSS: (PerformRouterDiscovery) Allow IRDP to detect and configure Default Gateway addresses (could lead to DoS)'' is set to ''Disabled'''
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\PerformRouterDiscovery' AND data = '0';
+  critical: false
+  description: 'This setting is used to enable or disable the Internet Router Discovery Protocol (IRDP), which allows the system to detect and configure default gateway addresses automatically as described in RFC 1256 on a per-interface basis. The recommended state for this setting is: Disabled.'
+  resolution: 'To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Disabled. Administrative Templates\MSS (Legacy)\MSS: (PerformRouterDiscovery) Allow IRDP to detect and configure Default Gateway addresses (could lead to DoS)'
+  platform: windows

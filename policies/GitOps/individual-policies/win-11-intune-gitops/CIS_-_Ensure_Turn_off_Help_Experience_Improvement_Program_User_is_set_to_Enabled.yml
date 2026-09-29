@@ -1,0 +1,5 @@
+- name: CIS - Ensure 'Turn off Help Experience Improvement Program (User)' is set to 'Enabled'
+  platform: windows
+  description: 'This policy setting specifies whether users can participate in the Help Experience Improvement program. The Help Experience Improvement program collects information about how customers use Windows Help so that Microsoft can improve it. The recommended state for this setting is: Enabled.'
+  resolution: To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Enabled. Administrative Templates\System\Internet Communication Management\Internet Communication Settings\Turn off Help Experience Improvement Program
+  query: SELECT 1 FROM registry WHERE path LIKE 'HKEY_USERS\%\SOFTWARE\Policies\Microsoft\Assistance\Client\1.0\NoImplicitFeedback' AND data = '1';

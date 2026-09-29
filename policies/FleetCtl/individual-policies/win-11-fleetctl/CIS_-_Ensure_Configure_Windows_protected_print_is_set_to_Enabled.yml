@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure Windows protected print' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\WPP\WindowsProtectedPrintGroupPolicyState' AND data = 1);
+  name: |
+    CIS - Ensure 'Configure Windows protected print' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\WPP\WindowsProtectedPrintGroupPolicyState' AND data = 1);
   critical: false
   description: |
     This policy setting controls whether Windows protected print is enabled on the system.
@@ -10,9 +12,9 @@ spec:
     mode. Modern print is designed to work only with Mopria-certified printers. Mopria is a
     collection of printer manufacturers and software vendors that define standards for IPP
     printing and eSCL scanning.
-    
+
     The recommended state for this setting is: Enabled.
-    
+
     Note: Windows protected print will not prohibit administrators or users from installing
     third-party print drivers through an installation package provided by the print device
     manufacturer.

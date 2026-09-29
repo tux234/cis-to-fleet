@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Gatekeeper Is Enabled
+  query: SELECT 1 FROM gatekeeper WHERE assessments_enabled = 1 AND dev_id_enabled = 1;
+  critical: false
+  description: |
+    Gatekeeper is Apple's application that utilizes allowlisting to restrict downloaded applications from launching. It functions as a control to limit applications from unverified sources from running without authorization. In an update to Gatekeeper in macOS 13 Ventura, Gatekeeper checks every application on every launch, not just quarantined apps.
+  resolution: |
+    Graphical Method:
+      1. Open System Settings
+      2. Select Privacy & Security
+      3. Set 'Allow apps downloaded from' to 'App Store and identified developers'
+
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.systempolicy.control
+      - Key: AllowIdentifiedDevelopers, Value: <true/>
+      - Key: EnableAssessment, Value: <true/>
+
+    Note: In previous versions of macOS, Gatekeeper could be set using the spctl binary. That method has been removed in macOS 15 Sequoia. Both keys must be set in the same configuration profile.
+  platform: darwin

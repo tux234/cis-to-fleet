@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Days Until Aggressive Catchup Quick Scan' is set to '7 days' or fewer
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Scan\DaysUntilAggressiveCatchupQuickScan' AND data = '7';
+  critical: false
+  description: |-
+    This policy setting configures the number of days after the last scan (of any type) before
+    an aggressive Quick Scan is automatically triggered.
+    The recommended state for this setting is: 7 days or fewer.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to 7 days or fewer.
+    Defender\Days Until Aggressive Catchup Quick Scan
+  platform: windows

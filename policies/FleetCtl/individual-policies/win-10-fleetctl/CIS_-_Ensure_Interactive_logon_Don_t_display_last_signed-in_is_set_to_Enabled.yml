@@ -2,7 +2,8 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'Interactive logon Don't display last signed-in' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\dontdisplaylastusername' AND data == 1);
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\dontdisplaylastusername' AND data == 1);
   critical: false
   description: |
     This policy setting determines whether the account name of the last user to log on to the client

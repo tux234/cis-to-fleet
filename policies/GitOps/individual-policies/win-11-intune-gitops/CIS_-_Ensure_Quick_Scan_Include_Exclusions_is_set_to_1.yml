@@ -1,0 +1,18 @@
+- name: CIS - Ensure 'Quick Scan Include Exclusions' is set to '1'
+  platform: windows
+  description: |-
+    This policy setting manages whether or not Microsoft Defender Antivirus scans
+    excluded files and directories when running a Quick Scan.
+    The recommended state for this setting is: If you set this setting to 1, all
+    files and directories that are excluded from real-time protection
+    using contextual exclusions are scanned during a quick scan.
+    Note: As of the publication of this Benchmark, the setting configuration state in Intune is
+    the sentence above after The recommended state for this setting is: and not 1 as the
+    title states. This was done to keep title length to a minimum.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to If you set this setting to 1, all files and
+    directories that are excluded from real-time protection using
+    contextual exclusions are scanned during a quick scan.
+    Defender\Quick Scan Include Exclusions
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Defender/Configuration/QuickScanIncludeExclusions</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '1';

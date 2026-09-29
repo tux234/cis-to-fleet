@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Disable One Drive File Sync' is set to 'Sync Disabled'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\OneDrive\DisableFileSyncNGSC' AND data = '1';
+  critical: false
+  description: 'This policy setting lets you prevent apps and features from working with files on OneDrive using the Next Generation Sync Client. The recommended state for this setting is: Sync Disabled.'
+  resolution: 'To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Sync Disabled: System\Disable One Drive File Sync'
+  platform: windows

@@ -1,0 +1,25 @@
+- name: CIS - Ensure 'Audit Security System Extension' is set to include 'Success'
+  platform: windows
+  description: |-
+    This subcategory reports the loading of extension code such as authentication
+    packages by the security subsystem. Events for this subcategory include:
+    •
+    •
+    •
+    •
+    •
+
+    4610: An authentication package has been loaded by the Local Security
+    Authority.
+    4611: A trusted logon process has been registered with the Local Security
+    Authority.
+    4614: A notification package has been loaded by the Security Account Manager.
+    4622: A security package has been loaded by the Local Security Authority.
+    4697: A service was installed in the system.
+
+    The recommended state for this setting is to include: Success.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Success.
+    Auditing\Audit Security System Extension
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Audit/System_AuditSecuritySystemExtension</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output = '1' OR mdm_command_output = '3');

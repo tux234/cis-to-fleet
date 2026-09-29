@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: 'CIS - Ensure ''Choose drive encryption method and cipher strength (Windows 10 [Version 1511] and later): Select the encryption method for fixed data drives'' is set to ''XTS-AES 128-bit (default)'' or ''XTS-AES 256-bit'''
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE\EncryptionMethodWithXtsFdv' AND data = '7';
+  critical: false
+  description: 'This policy setting determines which encryption method should be used for fixed data drives. The recommended state for this setting is: XTS-AES 128-bit (default) or XTS-AES 256-bit'
+  resolution: To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to XTS-AES 128-bit (default) or XTS-AES 256-bit. Administrative Templates\Windows Components\BitLocker Drive Encryption\Choose drive encryption method and cipher strength (Windows 10 [Version 1511] and later)\Select the encryption method for fixed data drives
+  platform: windows

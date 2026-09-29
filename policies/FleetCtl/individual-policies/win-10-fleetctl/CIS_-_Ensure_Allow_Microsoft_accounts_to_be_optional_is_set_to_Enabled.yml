@@ -2,7 +2,8 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'Allow Microsoft accounts to be optional' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\MSAOptional' AND data != 0);
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\MSAOptional' AND data != 0);
   critical: false
   description: |
     This policy setting lets you control whether Microsoft accounts are optional for Windows Store

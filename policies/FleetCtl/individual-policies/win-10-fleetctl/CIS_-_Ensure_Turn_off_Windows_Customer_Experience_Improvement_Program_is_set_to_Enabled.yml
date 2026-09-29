@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Turn off Windows Customer Experience Improvement Program' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\SQMClient\\Windows\CEIPEnable' AND data = 0);
+  name: |
+    CIS - Ensure 'Turn off Windows Customer Experience Improvement Program' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\SQMClient\\Windows\CEIPEnable' AND data = 0);
   critical: false
   description: |
     This policy setting specifies whether Windows Messenger can collect anonymous information about how the Windows Messenger software and service is used.

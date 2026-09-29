@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure AirDrop Is Disabled When Not Actively Transferring Files (MDM Required)
+  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.applicationaccess' AND \n        name='allowAirDrop' AND \n        (value = 0 OR value = 'false') AND \n        username = ''\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.applicationaccess' AND \n        name='allowAirDrop' AND \n        (value != 0 AND value != 'false')\n    );  \n"
+  critical: false
+  description: |
+    AirDrop is Apple's built-in, on-demand, ad hoc file exchange system that is compatible
+    with both macOS and iOS. It uses Bluetooth LE for discovery that limits connectivity to
+    Mac or iOS users that are in close proximity. Depending on the setting, it allows
+    everyone or only Contacts to share files when they are near each other. While there are
+    positives to AirDrop, there are privacy concerns that could expose personal information.
+    AirDrop should be disabled, and should only be enabled when needed and disabled
+    afterwards.
+  resolution: |
+    Ask your system administrator to deploy an MDM profile that disables AirDrop.
+    Create or edit a configuration profile with the following information:
+      1. The PayloadType string is com.apple.applicationaccess
+      2. The key to include is allowAirDrop
+      3. The key must be set to <false/>
+    Note: AirDrop can only be enabled or disabled through configuration profiles.
+  platform: darwin

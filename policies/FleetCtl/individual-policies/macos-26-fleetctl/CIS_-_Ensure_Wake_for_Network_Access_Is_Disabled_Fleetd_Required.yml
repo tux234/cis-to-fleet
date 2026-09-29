@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Wake for Network Access Is Disabled (Fleetd Required)
+  query: |
+    SELECT 1 FROM (
+      SELECT
+        COALESCE(JSON_EXTRACT(JSON_EXTRACT(json_result, '$.AC Power:'), '$.womp'), '') AS womp_ac,
+        COALESCE(JSON_EXTRACT(JSON_EXTRACT(json_result, '$.Battery Power:'), '$.womp'), '') AS womp_battery
+      FROM pmset
+      WHERE getting = 'custom'
+        AND womp_battery != '1'
+        AND womp_ac != '1'
+    );
+  critical: false
+  description: |
+    This feature allows the computer to take action when the user is not present and the computer is in energy saving mode. Disabling Wake for Network Access mitigates the risk of an attacker remotely waking the system and gaining access. Note that disabling this also prevents Find My from working while the Mac is asleep.
+  resolution: |
+    Terminal Method:
+      /usr/bin/sudo /usr/bin/pmset -a womp 0
+  platform: darwin

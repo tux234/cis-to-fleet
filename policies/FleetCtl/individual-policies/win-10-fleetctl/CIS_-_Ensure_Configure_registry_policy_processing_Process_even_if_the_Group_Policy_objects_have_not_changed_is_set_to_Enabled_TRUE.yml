@@ -1,10 +1,13 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure registry policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\NoGPOListChanges' AND data = 0);
+  name: |
+    CIS - Ensure 'Configure registry policy processing: Process even if the Group Policy objects have not changed' is set to 'Enabled: TRUE'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\NoGPOListChanges' AND data = 0);
   critical: false
-  description: The "Process even if the Group Policy objects have not changed" option updates and reapplies policies even if the policies have not changed.
+  description: |
+    The "Process even if the Group Policy objects have not changed" option updates and reapplies policies even if the policies have not changed.
   resolution: |
     To establish the recommended configuration via GP, set the following UI path to Enabled, then set the Process even if the Group Policy objects have not changed option to TRUE (checked):
     'Computer Configuration\Policies\Administrative Templates\System\Group Policy\Configure registry policy processing'

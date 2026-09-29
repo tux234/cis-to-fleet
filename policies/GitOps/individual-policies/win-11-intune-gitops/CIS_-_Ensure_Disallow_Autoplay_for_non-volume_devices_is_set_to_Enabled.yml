@@ -1,0 +1,11 @@
+- name: CIS - Ensure 'Disallow Autoplay for non-volume devices' is set to 'Enabled'
+  platform: windows
+  description: |-
+    This policy setting disallows AutoPlay for MTP devices like cameras or phones.
+    The recommended state for this setting is: Enabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled.
+    Administrative Templates\Windows Components\AutoPlay Policies\Disallow
+    Autoplay for non-volume devices
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Autoplay/DisallowAutoplayForNonVolumeDevices</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%<enabled%';

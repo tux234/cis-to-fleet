@@ -2,21 +2,7 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure Show Wi-Fi status in Menu Bar Is Enabled (MDM Required)
-  query: |
-    SELECT 1 WHERE 
-      EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.controlcenter' AND 
-            name='WiFi' AND 
-            value = 18 AND 
-            username = ''
-        )
-      AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.controlcenter' AND 
-            name='WiFi' AND 
-            value != 18
-        );  
+  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.controlcenter' AND \n        name='WiFi' AND \n        value = 18 AND \n        username = ''\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.controlcenter' AND \n        name='WiFi' AND \n        value != 18\n    );  \n"
   critical: false
   description: |
     The Wi-Fi status in the menu bar indicates if the system's wireless internet capabilities are enabled.

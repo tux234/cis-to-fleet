@@ -1,0 +1,11 @@
+- name: CIS - Ensure System Integrity Protection Status (SIP) Is Enabled
+  platform: darwin
+  description: |
+    System Integrity Protection (SIP) restricts access to System domain locations and restricts runtime attachment to system processes. Any attempt to inspect or attach to a system process will fail. Running without SIP on a production system runs the risk of modification of system binaries or code injection of system processes that would otherwise be protected.
+  resolution: |
+    Terminal Method (from Recovery):
+      1. Reboot into the Recovery Partition
+      2. Open Utilities > Terminal
+      3. /usr/bin/csrutil enable
+      4. Reboot
+  query: SELECT 1 FROM sip_config WHERE config_flag = 'sip' AND enabled = 1;

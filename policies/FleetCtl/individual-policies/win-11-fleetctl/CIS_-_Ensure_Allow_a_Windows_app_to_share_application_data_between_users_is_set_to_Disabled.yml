@@ -2,7 +2,8 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'Allow a Windows app to share application data between users' is set to 'Disabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\CurrentVersion\\AppModel\\StateManager\\AllowSharedLocalAppData' AND data == 0);
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\CurrentVersion\\AppModel\\StateManager\\AllowSharedLocalAppData' AND data == 0);
   critical: false
   description: |
     This policy manages a Windows app's ability to share data between users who have installed the

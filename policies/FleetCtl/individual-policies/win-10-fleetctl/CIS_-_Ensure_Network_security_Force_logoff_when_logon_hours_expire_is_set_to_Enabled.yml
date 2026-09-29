@@ -2,7 +2,8 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'Network security Force logoff when logon hours expire' is set to 'Enabled'
-  query: SELECT 1 FROM cis_audit where item = "2.3.11.6" AND value = "1";
+  query: |
+    SELECT 1 FROM cis_audit where item = "2.3.11.6" AND value = "1";
   critical: false
   description: |
     This policy setting determines whether to disconnect users who are connected to the local

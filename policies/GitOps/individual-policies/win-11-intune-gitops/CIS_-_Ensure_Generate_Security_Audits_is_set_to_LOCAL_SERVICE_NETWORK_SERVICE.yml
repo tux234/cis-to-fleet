@@ -1,0 +1,17 @@
+- name: CIS - Ensure 'Generate Security Audits' is set to 'LOCAL SERVICE, NETWORK SERVICE'
+  platform: windows
+  description: |-
+    This policy setting determines which users or processes can generate audit records in
+    the Security log.
+    The recommended state for this setting is: *S-1-5-19 and *S-1-5-20 (LOCAL
+    SERVICE, NETWORK SERVICE).
+    Note: This user right is considered a "sensitive privilege" for the purposes of auditing.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to *S-1-5-19 and *S-1-5-20 (LOCAL SERVICE, NETWORK
+    SERVICE).
+    User Rights\Generate security audits
+
+    Note: Include only one User or Group per line in the Settings Catalog configuration
+    screen.
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/GenerateSecurityAudits</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output LIKE '%LOCAL SERVICE%' AND mdm_command_output LIKE '%NETWORK SERVICE%');

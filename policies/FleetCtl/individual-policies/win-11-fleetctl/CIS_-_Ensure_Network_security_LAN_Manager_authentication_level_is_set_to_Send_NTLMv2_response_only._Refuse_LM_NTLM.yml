@@ -2,7 +2,8 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'Network security LAN Manager authentication level' is set to 'Send NTLMv2 response only. Refuse LM & NTLM'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\LmCompatibilityLevel' COLLATE NOCASE AND data == 5);
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\LmCompatibilityLevel' COLLATE NOCASE AND data == 5);
   critical: false
   description: |
     LAN Manager (LM) was a family of early Microsoft client/server software (predating Windows NT)

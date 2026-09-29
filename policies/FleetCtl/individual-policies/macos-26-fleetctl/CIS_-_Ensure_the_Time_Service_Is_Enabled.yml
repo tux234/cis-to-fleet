@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure the Time Service Is Enabled
+  query: |
+    SELECT 1 FROM launchd WHERE label = 'com.apple.timed';
+  critical: false
+  description: |
+    In macOS 10.14, Apple replaced ntp with timed for time services. Correct date and time settings are required for authentication protocols, file creation, modification dates, and log entries.
+
+    Kerberos may not operate correctly if the time on the Mac is off by more than 5 minutes. This in turn can affect Apple's single sign-on feature, Active Directory logons, and other features.
+  resolution: |
+    If the timed service has been disabled, CIS recommends backing up any files and doing a clean install of a known good operating system. For recovery in test environments:
+      /usr/bin/sudo /bin/launchctl enable system/com.apple.timed
+      /usr/bin/sudo /bin/launchctl bootstrap system /System/Library/LaunchDaemons/com.apple.timed.plist
+  platform: darwin

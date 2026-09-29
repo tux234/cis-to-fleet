@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure Brute-Force Protection aggressiveness' is set to 'Enabled: Medium' or higher
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Remediation\Behavioral Network Blocks\Brute Force Protection\BruteForceProtectionAggressiveness' AND data IN (1, 2));
+  name: |
+    CIS - Ensure 'Configure Brute-Force Protection aggressiveness' is set to 'Enabled: Medium' or higher
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Remediation\Behavioral Network Blocks\Brute Force Protection\BruteForceProtectionAggressiveness' AND data IN (1, 2));
   critical: false
   description: |
     This policy setting configures whether Brute-Force Protection in Microsoft Defender Antivirus is enabled.

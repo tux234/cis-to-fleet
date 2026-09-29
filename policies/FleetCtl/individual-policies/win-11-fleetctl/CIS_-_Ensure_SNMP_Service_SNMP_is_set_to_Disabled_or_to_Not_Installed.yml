@@ -3,13 +3,13 @@ kind: policy
 spec:
   name: CIS - Ensure 'SNMP Service (SNMP)' is set to 'Disabled' or to 'Not Installed'
   query: |
-    SELECT CASE 
-        WHEN NOT EXISTS (SELECT * FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\SNMP\\Start') THEN 1 
-        WHEN (SELECT data FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\SNMP\\Start') == '4' THEN 1 
-        ELSE 0 
-    END AS result;
+    SELECT 1 WHERE
+        NOT EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\SNMP\\Start' )
+        OR
+        EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\SNMP\\Start' AND data == 4 );
   critical: false
-  description: The service enables Simple Network Management Protocol (SNMP) requests to be processed by this computer.
+  description: |
+    The service enables Simple Network Management Protocol (SNMP) requests to be processed by this computer.
   resolution: |
     Automatic method:
     Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to 'Disabled' or to 'Not Installed':

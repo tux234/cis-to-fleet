@@ -2,7 +2,8 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'Shut down the system' is set to 'Administrators, Users'
-  query: SELECT 1 FROM cis_audit where item = "2.2.38" AND (regex_match(value,".*(?=.*Administrators)(?=.*Users).*",0) is not null);
+  query: |
+    SELECT 1 FROM cis_audit where item = "2.2.38" AND (regex_match(value,".*(?=.*Administrators)(?=.*Users).*",0) is not null);
   critical: false
   description: |
     This policy setting determines which users who are logged on locally to the computers in your

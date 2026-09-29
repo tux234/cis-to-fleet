@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Allow Cortana' is set to 'Block'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Experience/AllowCortana</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '0';
+  critical: false
+  description: |-
+    This policy setting specifies whether Cortana is allowed on the device.
+    The recommended state for this setting is: Block.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Block:
+    Experience\Allow Cortana
+  platform: windows

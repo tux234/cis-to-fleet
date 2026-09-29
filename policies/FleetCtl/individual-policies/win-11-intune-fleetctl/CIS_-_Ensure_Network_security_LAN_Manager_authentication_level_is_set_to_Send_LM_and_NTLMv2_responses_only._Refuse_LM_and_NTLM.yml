@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: 'CIS - Ensure ''Network security: LAN Manager authentication level'' is set to ''Send LM and NTLMv2 responses only. Refuse LM and NTLM'''
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/LocalPoliciesSecurityOptions/NetworkSecurity_LANManagerAuthenticationLevel</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '5';
+  critical: false
+  description: |-
+    LAN Manager (LM) was a family of early Microsoft client/server software (predating
+    Windows NT) that allowed users to link personal computers together on a single
+    network. LM network capabilities included transparent file and print sharing, user
+    security features, and network administration tools. In Active Directory domains, the
+    Kerberos protocol is the default authentication protocol. However, if the Kerberos
+    protocol is not negotiated for some reason, Active Directory will use LM, NTLM, or
+    NTLMv2. LAN Manager authentication includes the LM, NTLM, and NTLM version 2
+    (NTLMv2) variants, and is the protocol that is used to authenticate all Windows clients
+    when they perform the following operations:
+    •
+    •
+    •
+    •
+    •
+
+    Join a domain
+    Authenticate between Active Directory forests
+    Authenticate to down-level domains
+    Authenticate to computers that do not run Windows 2000, Windows Server 2003,
+    or Windows XP
+    Authenticate to computers that are not in the domain
+
+    The Network security: LAN Manager authentication level setting determines which
+    challenge/response authentication protocol is used for network logons. This choice
+    affects the level of authentication protocol used by clients, the level of session security
+    negotiated, and the level of authentication accepted by servers.
+    The recommended state for this setting is: Send LM and NTLMv2 responses only.
+    Refuse LM and NTLM.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to: Send LM and NTLMv2 responses only. Refuse LM and
+    NTLM:
+    Local Policies Security Options\Network security: LAN Manager authentication
+    level
+  platform: windows

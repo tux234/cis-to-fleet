@@ -1,0 +1,10 @@
+- name: CIS - Ensure Apple Mobile File Integrity (AMFI) Is Enabled (Fleetd Required)
+  platform: darwin
+  description: |
+    Apple Mobile File Integrity (AMFI) blocks attempts to run unsigned code. AMFI uses launchd, code signatures, certificates, entitlements, and provisioning profiles to enforce code-signing and library validation.
+
+    Note: AMFI cannot be disabled with SIP enabled, but a change attempt can be made that will appear successful and report incorrectly as successful. If AMFI audit fails while SIP passes, this is still an issue to research.
+  resolution: |
+    Terminal Method:
+      /usr/bin/sudo /usr/sbin/nvram boot-args=""
+  query: SELECT 1 FROM nvram_info WHERE amfi_enabled = '1';

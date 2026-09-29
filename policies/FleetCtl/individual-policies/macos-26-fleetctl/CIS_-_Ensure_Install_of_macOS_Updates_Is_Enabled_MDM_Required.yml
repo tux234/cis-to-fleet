@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Install of macOS Updates Is Enabled (MDM Required)
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.SoftwareUpdate' AND
+          name='AutomaticallyInstallMacOSUpdates' AND
+          (value = 1 OR value = 'true') AND
+          username = ''
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.SoftwareUpdate' AND
+          name='AutomaticallyInstallMacOSUpdates' AND
+          (value != 1 AND value != 'true')
+      );
+  critical: false
+  description: |
+    Ensure that macOS updates are installed after they are available from Apple. This setting enables macOS updates to be automatically installed. Some environments will want to approve and test updates before they are delivered. It is best practice to test first where updates can and have caused disruptions to operations. Automatic updates should be turned off where changes are tightly controlled and there are mature testing and approval processes. Automatic updates should not be turned off simply to allow the administrator to contact users in order to verify installation. A dependable, repeatable process involving a patch agent or remote management tool should be in place before auto-updates are turned off.
+  resolution: |
+    Graphical Method:
+      1. Open System Settings
+      2. Select General
+      3. Select Software Update
+      4. Select the i
+      5. Set Install macOS updates to enabled
+      6. Select Done
+
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.SoftwareUpdate
+      - Key: AutomaticallyInstallMacOSUpdates
+      - Value: <true/>
+  platform: darwin

@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Time Machine Volumes Are Encrypted If Time Machine Is Enabled
+  query: |
+    SELECT 1 WHERE
+      NOT EXISTS (
+        SELECT 1 FROM preferences
+        WHERE domain = 'com.apple.TimeMachine'
+          AND key = 'AutoBackup'
+          AND value = 'true'
+      )
+      OR EXISTS (
+        SELECT 1 FROM disk_encryption de
+        JOIN mounts m ON m.device = de.name
+        WHERE de.encrypted = 1
+          AND m.path LIKE '/Volumes/%'
+      );
+  critical: false
+  description: |
+    One of the most important security tools for data protection on macOS is FileVault. With encryption in place, it makes it difficult for an outside party to access your data if they get physical possession of the computer. One very large weakness in data protection with FileVault is the level of protection on backup volumes. If the internal drive is encrypted but the external backup volume that goes home in the same laptop bag is not, it is self-defeating.
+
+    Note: This recommendation needs to be set on devices where Time Machine is enabled. If Time Machine is disabled, the audit is passed by default.
+
+    Note: Remediation is GUI-only — encrypted backup must be configured when setting up the Time Machine destination drive.
+  resolution: |
+    Graphical Method:
+      1. Open System Settings
+      2. Select General
+      3. Select Time Machine
+      4. Select the unencrypted drive
+      5. Select - to forget that drive as a destination
+      6. Select + to add a different drive as the destination
+      7. Select Set Up Disk...
+      8. Set Encrypt Backup to enabled
+      9. Enter a password in the New Password and the same password in the Re-enter Password fields
+  platform: darwin

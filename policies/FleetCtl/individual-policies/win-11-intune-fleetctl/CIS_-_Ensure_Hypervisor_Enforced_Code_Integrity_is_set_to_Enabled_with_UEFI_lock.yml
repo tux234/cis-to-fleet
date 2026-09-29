@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Hypervisor Enforced Code Integrity' is set to 'Enabled with UEFI lock'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/VirtualizationBasedTechnology/HypervisorEnforcedCodeIntegrity</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '1';
+  critical: false
+  description: |-
+    This setting enables virtualization based protection of Kernel Mode Code Integrity.
+    When this is enabled, kernel mode memory protections are enforced and the Code
+    Integrity validation path is protected by the Virtualization Based Security feature.
+    The recommended state for this setting is: Enabled with UEFI lock.
+    Note: Virtualization Based Security requires a 64-bit version of Windows with Secure
+    Boot enabled, which in turn requires that Windows was installed with a UEFI BIOS
+    configuration, not a Legacy BIOS configuration. In addition, if running Windows on a
+    virtual machine, the hardware-assisted CPU virtualization feature (Intel VT-x or AMD-V)
+    must be exposed by the host to the guest VM.
+    More information on system requirements for this feature can be found at Windows
+    Defender Credential Guard Requirements (Windows 10) | Microsoft Docs
+    Note #2: Credential Guard and Device Guard are not currently supported when using
+    Azure IaaS VMs.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled with UEFI lock.
+    Virtualization Based Technology\Hypervisor Enforced Code Integrity
+  platform: windows

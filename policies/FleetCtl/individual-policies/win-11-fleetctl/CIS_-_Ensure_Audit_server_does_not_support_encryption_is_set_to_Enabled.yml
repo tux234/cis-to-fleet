@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Audit server does not support encryption' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\AuditServerDoesNotSupportEncryption' AND data = 1);
+  name: |
+    CIS - Ensure 'Audit server does not support encryption' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\AuditServerDoesNotSupportEncryption' AND data = 1);
   critical: false
   description: |
     This policy setting determines whether the Server Message Block (SMB) client will log events when the SMB server doesn't support encryption.

@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Help Apple Improve Search Is Disabled (MDM Required)
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.assistant.support' AND
+          name = 'Search Queries Data Sharing Status' AND
+          CAST(value AS INTEGER) = 2 AND
+          username = ''
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.assistant.support' AND
+          name = 'Search Queries Data Sharing Status' AND
+          CAST(value AS INTEGER) != 2
+      );
+  critical: false
+  description: |
+    Apple provides a mechanism to send diagnostic and analytics data back to Apple to help them improve the platform. Information sent to Apple may contain internal organizational information that should be controlled and not available for processing by Apple. Organizations should have knowledge of what is shared with the vendor.
+  resolution: |
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.assistant.support
+      - Key: Search Queries Data Sharing Status
+      - Value: <integer>2</integer>
+  platform: darwin

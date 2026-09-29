@@ -1,10 +1,13 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Turn off Registration if URL connection is referring to Microsoft.com' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Registration Wizard Control\NoRegistration' AND data = 1);
+  name: |
+    CIS - Ensure 'Turn off Registration if URL connection is referring to Microsoft.com' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Registration Wizard Control\NoRegistration' AND data = 1);
   critical: false
-  description: This policy setting specifies whether the Windows Registration Wizard connects to Microsoft.com for online registration.
+  description: |
+    This policy setting specifies whether the Windows Registration Wizard connects to Microsoft.com for online registration.
   resolution: |
     To establish the recommended configuration via GP, set the following UI path to Enabled:
     'Computer Configuration\Policies\Administrative Templates\System\Internet Communication Management\Internet Communication settings\Turn off Registration if URL connection is referring to Microsoft.com'

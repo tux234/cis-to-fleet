@@ -2,11 +2,7 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'Microsoft FTP Service (FTPSVC)' is set to 'Disabled' or 'Not Installed'
-  query: |
-    SELECT 1 WHERE 
-    NOT EXISTS ( SELECT 1 FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\FTPSVC\\Start' )
-    OR 
-    EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\FTPSVC\\Start' AND data == 4 );
+  query: "SELECT 1 WHERE \nNOT EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Services\\\\FTPSVC\\\\Start' )\nOR \nEXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Services\\\\FTPSVC\\\\Start' AND data == 4 );\n"
   critical: false
   description: |
     Enables the server to be a File Transfer Protocol (FTP) server.

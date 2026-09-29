@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Turn off the "Order Prints" picture task' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\NoOnlinePrintsWizard' AND data = 1);
+  name: |
+    CIS - Ensure 'Turn off the "Order Prints" picture task' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\NoOnlinePrintsWizard' AND data = 1);
   critical: false
   description: |
     This policy setting specifies whether the "Order Prints Online" task is available from Picture Tasks in Windows folders.

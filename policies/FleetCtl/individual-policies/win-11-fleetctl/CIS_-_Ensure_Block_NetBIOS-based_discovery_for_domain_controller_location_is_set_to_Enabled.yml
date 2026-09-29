@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Block NetBIOS-based discovery for domain controller location' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Netlogon\Parameters\BlockNetbiosDiscovery' AND data = 1);
+  name: |
+    CIS - Ensure 'Block NetBIOS-based discovery for domain controller location' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Netlogon\Parameters\BlockNetbiosDiscovery' AND data = 1);
   critical: false
   description: |
     This policy setting determines whether the Domain Controller (DC) location algorithm uses NetBIOS-based discovery for the Domain Controller's location.

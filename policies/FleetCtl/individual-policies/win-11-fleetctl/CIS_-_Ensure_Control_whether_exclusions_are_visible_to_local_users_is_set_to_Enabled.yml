@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Control whether exclusions are visible to local users' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\HideExclusionsFromLocalUsers' AND data = 1);
+  name: |
+    CIS - Ensure 'Control whether exclusions are visible to local users' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\HideExclusionsFromLocalUsers' AND data = 1);
   critical: false
   description: |
     This policy setting controls whether Microsoft Defender Antivirus exclusions are visible to local users on the system.

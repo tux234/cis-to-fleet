@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Sleep and Display Sleep Is Enabled on Apple Silicon Devices (Fleetd Required)
+  query: |
+    SELECT 1 AS result
+    WHERE
+      NOT EXISTS (
+        SELECT 1 FROM system_info WHERE cpu_type LIKE 'arm64%'
+      )
+      OR
+      EXISTS (
+        SELECT 1
+        FROM (
+          SELECT
+            CASE
+              WHEN JSON_EXTRACT(json_result, '$.Battery Power:') IS NOT NULL
+              THEN JSON_EXTRACT(json_result, '$.Battery Power:')
+              ELSE JSON_EXTRACT(json_result, '$.AC Power:')
+            END AS power_settings
+          FROM pmset
+          WHERE getting = 'custom'
+        )
+        WHERE
+          CAST(JSON_EXTRACT(power_settings, '$.sleep') AS INTEGER) <= 15
+          AND
+          CAST(JSON_EXTRACT(power_settings, '$.displaysleep') AS INTEGER) <= 10
+          AND
+          CAST(JSON_EXTRACT(power_settings, '$.displaysleep') AS INTEGER) <= CAST(JSON_EXTRACT(power_settings, '$.sleep') AS INTEGER)
+      );
+  critical: false
+  description: |
+    MacBooks should be set so that the sleep is 15 minutes or less and the display should sleep at 10 minutes or less. This setting should allow laptop users in most cases to stay within physically secured areas while going to a conference room, auditorium, or other internal location without having to unlock the encryption.
+
+    Note: If the screen saver is properly configured to the benchmark (15 minutes or less), then this recommendation will also pass no matter the sleep and displaysleep setting.
+  resolution: |
+    Terminal Method:
+      /usr/bin/sudo /usr/bin/pmset -a sleep 15
+      /usr/bin/sudo /usr/bin/pmset -a displaysleep 10
+  platform: darwin

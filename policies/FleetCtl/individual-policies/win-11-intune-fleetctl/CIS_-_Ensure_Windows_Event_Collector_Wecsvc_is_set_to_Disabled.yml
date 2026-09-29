@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Windows Event Collector (Wecsvc)' is set to 'Disabled'
+  query: SELECT 1 WHERE COALESCE((SELECT UPPER(start_type) FROM services WHERE name = 'Wecsvc'), 'DISABLED') = 'DISABLED';
+  critical: false
+  description: 'This service manages persistent subscriptions to events from remote sources that support WS-Management protocol. This includes Windows Vista event logs, hardware and IPMI-enabled event sources. The service stores forwarded events in a local Event Log. The recommended state for this setting is: Disabled.'
+  resolution: 'Remediation of this service is currently not possible through Settings Catalog or a custom profile OMA-URI. Instead, it can be scripted and deployed through the Intune Scripts or Remediations blade or by other means. To establish the recommended configuration via PowerShell, run the following cmdlet: Set-Service -Name Wecsvc -StartupType Disabled'
+  platform: windows

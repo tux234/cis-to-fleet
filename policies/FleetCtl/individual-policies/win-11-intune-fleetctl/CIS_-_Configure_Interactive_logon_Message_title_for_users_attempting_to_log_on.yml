@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: 'CIS - Configure ''Interactive logon: Message title for users attempting to log on'''
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/LocalPoliciesSecurityOptions/InteractiveLogon_MessageTitleForUsersAttemptingToLogOn</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output != '' AND mdm_command_output NOT LIKE '%<Status>404</Status>%';
+  critical: false
+  description: This policy setting specifies the text displayed in the title bar of the window that users see when they log on to the system. Configure this setting in a manner that is consistent with the security and operational requirements of your organization.
+  resolution: 'To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to a value that is consistent with the security and operational requirements of your organization: Local Policies Security Options\Interactive logon: Message title for users attempting to log on'
+  platform: windows

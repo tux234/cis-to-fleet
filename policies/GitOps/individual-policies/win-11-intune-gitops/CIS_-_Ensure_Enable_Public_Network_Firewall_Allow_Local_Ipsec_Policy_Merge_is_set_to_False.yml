@@ -1,0 +1,12 @@
+- name: 'CIS - Ensure ''Enable Public Network Firewall: Allow Local Ipsec Policy Merge'' is set to ''False'''
+  platform: windows
+  description: |-
+    This setting controls whether local administrators are allowed to create connection
+    security rules that apply together with connection security rules configured by Group
+    Policy.
+    The recommended state for this setting is: False.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to False:
+    Firewall\Enable Public Network Firewall: Allow Local Ipsec Policy Merge
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Firewall/MdmStore/PublicProfile/AllowLocalIpsecPolicyMerge</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = 'false';

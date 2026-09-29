@@ -1,0 +1,14 @@
+- name: 'CIS - Ensure ''Microsoft network client: Digitally sign communications (if server agrees)'' is set to ''Enabled'''
+  platform: windows
+  description: |-
+    This policy setting determines whether the SMB client will attempt to negotiate SMB
+    packet signing.
+    Note: Enabling this policy setting on SMB clients on your network makes them fully
+    effective for packet signing with all clients and servers in your environment.
+    The recommended state for this setting is: Enabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled:
+    Local Policies Security Options\Microsoft network client: Digitally sign
+    communications (if server agrees)
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/LocalPoliciesSecurityOptions/MicrosoftNetworkClient_DigitallySignCommunicationsIfServerAgrees</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '1';

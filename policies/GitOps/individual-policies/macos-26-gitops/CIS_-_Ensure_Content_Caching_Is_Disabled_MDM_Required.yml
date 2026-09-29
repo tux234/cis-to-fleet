@@ -1,0 +1,26 @@
+- name: CIS - Ensure Content Caching Is Disabled (MDM Required)
+  platform: darwin
+  description: |
+    Starting with macOS 10.13, Apple introduced a service to make it easier to deploy data from Apple, including software updates, where there are bandwidth constraints to the Internet and fewer constraints or greater bandwidth exist on the local subnet.
+
+    The main use case for Mac computers is as mobile user endpoints. P2P sharing services should not be enabled on laptops that are using untrusted networks. Content Caching can allow a computer to be a server for local nodes on an untrusted network. Unless there is a business requirement to manage operational Internet connectivity and bandwidth, user endpoints should not store content and act as a cluster to provision data.
+  resolution: |
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.applicationaccess
+      - Key: allowContentCaching, Value: <false/>
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.applicationaccess' AND
+          name='allowContentCaching' AND
+          (value = 0 OR value = 'false') AND
+          username = ''
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.applicationaccess' AND
+          name='allowContentCaching' AND
+          (value != 0 AND value != 'false')
+      );

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Security Auditing Is Enabled
+  query: |
+    SELECT 1 WHERE EXISTS (
+      SELECT 1
+      FROM launchd AS l
+      INNER JOIN processes AS p ON l.program = p.path
+      WHERE l.label = 'com.apple.auditd'
+        AND l.program_arguments = p.cmdline
+    );
+  critical: false
+  description: |
+    macOS's audit facility, auditd, receives notifications from the kernel when certain system calls, such as open, fork, and exit, are made. These notifications are captured and written to an audit log. Apple has deprecated auditd as of macOS 11.0 Big Sur. In macOS 14.0 Sonoma it is no longer enabled by default, but until auditd is removed from macOS completely, running the binary is the best way to collect native OS logging.
+  resolution: |
+    Terminal Method:
+      /usr/bin/sudo /bin/launchctl load -w /System/Library/LaunchDaemons/com.apple.auditd.plist
+      /usr/bin/sudo /bin/cp /etc/security/audit_control.example /etc/security/audit_control
+  platform: darwin

@@ -1,10 +1,13 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Do not allow WebAuthn redirection' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services\\fDisableWebAuthn' AND (data = 1));
+  name: |
+    CIS - Ensure 'Do not allow WebAuthn redirection' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Terminal Services\\fDisableWebAuthn' AND (data = 1));
   critical: false
-  description: This policy setting controls the redirection of web authentication (WebAuthn) requests from a Remote Desktop session to the local device. This redirection enables users to authenticate to resources inside the Remote Desktop session using their local authenticator (e.g. Windows Hello for Business, security key, or other).
+  description: |
+    This policy setting controls the redirection of web authentication (WebAuthn) requests from a Remote Desktop session to the local device. This redirection enables users to authenticate to resources inside the Remote Desktop session using their local authenticator (e.g. Windows Hello for Business, security key, or other).
   resolution: |
     To establish the recommended configuration via GP, set the following UI path to 'Enabled':
     Computer Configuration\Policies\Administrative Templates\Windows Components\Remote Desktop Services\Remote Desktop Session Host\Device and Resource Redirection\Do not allow WebAuthn redirection

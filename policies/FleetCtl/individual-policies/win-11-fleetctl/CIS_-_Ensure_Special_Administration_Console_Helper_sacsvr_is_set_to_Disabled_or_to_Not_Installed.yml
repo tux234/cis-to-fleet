@@ -3,13 +3,13 @@ kind: policy
 spec:
   name: CIS - Ensure 'Special Administration Console Helper (sacsvr)' is set to 'Disabled' or to 'Not Installed'
   query: |
-    SELECT CASE 
-        WHEN NOT EXISTS (SELECT * FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\sacsvr\\Start') THEN 1 
-        WHEN (SELECT data FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\sacsvr\\Start') == '4' THEN 1 
-        ELSE 0 
-    END AS result;
+    SELECT 1 WHERE
+        NOT EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\sacsvr\\Start' )
+        OR
+        EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\sacsvr\\Start' AND data == 4 );
   critical: false
-  description: The service allows administrators to remotely access a command prompt using Emergency Management Services.
+  description: |
+    The service allows administrators to remotely access a command prompt using Emergency Management Services.
   resolution: |
     Automatic method:
     Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to 'Disabled' or to 'Not Installed':

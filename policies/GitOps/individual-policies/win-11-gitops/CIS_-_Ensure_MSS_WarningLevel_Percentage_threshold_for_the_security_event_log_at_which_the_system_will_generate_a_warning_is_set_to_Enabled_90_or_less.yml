@@ -8,4 +8,4 @@
     'Computer Configuration\Policies\Administrative Templates\MSS (Legacy)\MSS: (WarningLevel) Percentage threshold for the security event log at which the system will generate a warning'
     Note: This Group Policy path does not exist by default. An additional Group Policy template (MSS-legacy.admx/adml) is required - it is available from the Security Compliance Toolkit 1.0 (https://www.microsoft.com/en-us/download/details.aspx?id=55319)
   query: |
-    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Eventlog\\Security\WarningLevel' AND data <= 90);
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Eventlog\\Security\WarningLevel' AND CAST(data AS INTEGER) <= 90);

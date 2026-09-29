@@ -2,7 +2,8 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'Allow log on through Remote Desktop Services' is set to 'Administrators, Remote Desktop Users'
-  query: SELECT 1 FROM cis_audit where item = "2.2.6" AND (regex_match(value,".*(?=.*Administrators)(?=.*Remote Desktop Users).*",0) is not null);
+  query: |
+    SELECT 1 FROM cis_audit where item = "2.2.6" AND (regex_match(value,".*(?=.*Administrators)(?=.*Remote Desktop Users).*",0) is not null);
   critical: false
   description: |
     This policy setting determines which users or groups have the right to log on as a Remote Desktop Services client. If your organization uses Remote Assistance as part of its help desk strategy, create a group and assign it this user right through Group Policy. If the help desk in your organization does not use Remote Assistance, assign this user right only to the Administrators group or use the Restricted Groups feature to ensure that no user accounts are part of the Remote Desktop Users group.

@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Install Application Updates from the App Store Is Enabled (MDM Required)
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.SoftwareUpdate' AND
+          name='AutomaticallyInstallAppUpdates' AND
+          (value = 1 OR value = 'true') AND
+          username = ''
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.SoftwareUpdate' AND
+          name='AutomaticallyInstallAppUpdates' AND
+          (value != 1 AND value != 'true')
+      );
+  critical: false
+  description: |
+    Ensure that application updates are installed after they are available from Apple. These updates do not require reboots or administrator privileges for end users.
+  resolution: |
+    Graphical Method:
+      1. Open System Settings
+      2. Select General
+      3. Select Software Update
+      4. Select the i
+      5. Set Install application updates from the App Store to enabled
+      6. Select Done
+
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.SoftwareUpdate
+      - Key: AutomaticallyInstallAppUpdates
+      - Value: <true/>
+  platform: darwin

@@ -8,4 +8,4 @@
     To establish the recommended configuration via GP, set the following UI path to '%SystemRoot%\System32\logfiles\firewall\privatefw.log':
     'Computer Configuration\Policies\Windows Settings\Security Settings\Windows Defender Firewall with Advanced Security\Windows Defender Firewall with Advanced Security - Local Group Policy Object\Windows Defender Firewall Properties\Private Profile\Logging Customize\Name'
   query: |
-    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile\\Logging\LogFilePath' AND data ='%systemroot%\system32\logfiles\firewall\pfirewall.log');
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PrivateProfile\\Logging\LogFilePath' AND data = '%SystemRoot%\System32\logfiles\firewall\privatefw.log');

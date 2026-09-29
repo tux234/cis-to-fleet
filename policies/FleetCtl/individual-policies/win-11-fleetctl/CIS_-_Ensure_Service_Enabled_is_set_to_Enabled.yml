@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Service Enabled' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\WTDS\\Components\\ServiceEnabled' AND data = 1);
+  name: |
+    CIS - Ensure 'Service Enabled' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\WTDS\\Components\\ServiceEnabled' AND data = 1);
   critical: false
   description: |
     This policy setting determines whether Enhanced Phishing Protection is in audit mode. This allows notifications to be sent to users regarding unsafe password events. Additionally, Enhanced Phishing Protection captures unsafe password entry events and sends diagnostic data through Microsoft Defender.

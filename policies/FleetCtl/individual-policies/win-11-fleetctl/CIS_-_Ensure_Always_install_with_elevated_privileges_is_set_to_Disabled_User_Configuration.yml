@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Always install with elevated privileges' is set to 'Disabled' (User Configuration)
-  query: SELECT 1 FROM registry WHERE (path LIKE 'HKEY_USERS\%\Software\Policies\Microsoft\Windows\Installer\AlwaysInstallElevated' AND data = 0);
+  name: |
+    CIS - Ensure 'Always install with elevated privileges' is set to 'Disabled' (User Configuration)
+  query: |
+    SELECT 1 FROM registry WHERE (path LIKE 'HKEY_USERS\%\Software\Policies\Microsoft\Windows\Installer\AlwaysInstallElevated' AND data = 0);
   critical: false
   description: |
     This setting controls whether or not Windows Installer should use system permissions when it installs any program on the system.

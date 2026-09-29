@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Prevent the usage of OneDrive for file storage' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\OneDrive\\DisableFileSyncNGSC' AND data = 1);
+  name: |
+    CIS - Ensure 'Prevent the usage of OneDrive for file storage' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\OneDrive\\DisableFileSyncNGSC' AND data = 1);
   critical: false
   description: |
     This policy setting lets you prevent apps and features from working with files on OneDrive using the Next Generation Sync Client.

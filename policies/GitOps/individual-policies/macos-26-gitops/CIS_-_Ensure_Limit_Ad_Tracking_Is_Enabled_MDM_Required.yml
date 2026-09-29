@@ -1,0 +1,27 @@
+- name: CIS - Ensure Limit Ad Tracking Is Enabled (MDM Required)
+  platform: darwin
+  description: |
+    Apple provides a framework that allows advertisers to target Apple users and end-users with advertisements. While many people prefer to see advertising that is relevant to them and their interests, the detailed information that is collected, correlated, and available to advertisers in repositories via data mining is often disconcerting. This information is valuable to both advertisers and attackers, and has been used with other metadata to reveal users' identities.
+
+    Organizations should manage advertising settings on computers rather than allow users to configure the settings.
+  resolution: |
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.applicationaccess
+      - Key: allowApplePersonalizedAdvertising
+      - Value: <false/>
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.applicationaccess' AND
+          name = 'allowApplePersonalizedAdvertising' AND
+          (value = 0 OR value = 'false') AND
+          username = ''
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.applicationaccess' AND
+          name = 'allowApplePersonalizedAdvertising' AND
+          (value != 0 AND value != 'false')
+      );

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure HTTP Server Is Disabled
+  query: SELECT 1 WHERE NOT EXISTS (SELECT 1 FROM processes WHERE path = '/usr/sbin/httpd');
+  critical: false
+  description: |
+    Apache is still part of the Operating System and can be easily turned on to share files and provide remote connectivity to an end-user computer. Web serving should not be done from a user desktop — dedicated web servers or appropriate cloud storage should be used. Open ports make it easier to exploit the computer.
+  resolution: |
+    Terminal Method:
+      /usr/bin/sudo /usr/sbin/apachectl stop
+      /usr/bin/sudo /bin/launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist
+  platform: darwin

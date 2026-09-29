@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Remote Access Auto Connection Manager (RasAuto)' is set to 'Disabled'
+  query: SELECT 1 WHERE COALESCE((SELECT UPPER(start_type) FROM services WHERE name = 'RasAuto'), 'DISABLED') = 'DISABLED';
+  critical: false
+  description: 'Creates a connection to a remote network whenever a program references a remote DNS or NetBIOS name or address. The recommended state for this setting is: Disabled.'
+  resolution: 'Remediation of this service is currently not possible through Settings Catalog or a custom profile OMA-URI. Instead, it can be scripted and deployed through the Intune Scripts or Remediations blade or by other means. To establish the recommended configuration via PowerShell, run the following cmdlet: Set-Service -Name RasAuto -StartupType Disabled'
+  platform: windows

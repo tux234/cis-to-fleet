@@ -1,0 +1,12 @@
+- name: 'CIS - Ensure ''Interactive logon: Do not require CTRL+ALT+DEL'' is set to ''Disabled'''
+  platform: windows
+  description: |-
+    This policy setting determines whether users must press CTRL+ALT+DEL before they
+    log on.
+    The recommended state for this setting is: Disabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Disabled:
+    Local Policies Security Options\Interactive logon: Do not require
+    CTRL+ALT+DEL
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/LocalPoliciesSecurityOptions/InteractiveLogon_DoNotRequireCTRLALTDEL</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '0';

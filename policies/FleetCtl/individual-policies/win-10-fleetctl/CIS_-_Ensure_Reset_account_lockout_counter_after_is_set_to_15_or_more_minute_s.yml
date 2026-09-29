@@ -2,7 +2,8 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'Reset account lockout counter after' is set to '15 or more minute(s)'
-  query: SELECT 1 FROM cis_audit where item = "1.2.3" and CAST(value as integer) >= 15;
+  query: |
+    SELECT 1 FROM cis_audit where item = "1.2.3" and CAST(value as integer) >= 15;
   critical: false
   description: |
     This policy setting determines the length of time before the Account lockout threshold resets to zero. The default value for this policy setting is Not Defined. If the Account lockout threshold is defined, this reset time must be less than or equal to the value for the Account lockout duration setting.

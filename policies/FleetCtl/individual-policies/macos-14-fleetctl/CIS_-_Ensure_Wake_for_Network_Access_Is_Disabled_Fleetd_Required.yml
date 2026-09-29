@@ -17,7 +17,7 @@ spec:
   description: |
     Wake for Network Access allows the computer to take action when the user is not present and the computer
     is in energy saving mode. These tools require FileVault to remain unlocked and fully rejoin known networks.
-    
+
     Disabling this feature mitigates the risk of an attacker remotely waking the system and gaining access.
   resolution: |
     Automated method:

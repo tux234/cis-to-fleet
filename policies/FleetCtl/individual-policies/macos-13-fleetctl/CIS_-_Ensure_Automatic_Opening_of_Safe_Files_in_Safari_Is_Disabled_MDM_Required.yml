@@ -2,21 +2,7 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure Automatic Opening of Safe Files in Safari Is Disabled (MDM Required)
-  query: |
-    SELECT 1 WHERE 
-      EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='AutoOpenSafeDownloads' AND 
-            (value = 0 OR value = 'false') AND 
-            username = ''
-        )
-      AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='AutoOpenSafeDownloads' AND 
-            (value != 0 AND value != 'false')
-        );  
+  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.Safari' AND \n        name='AutoOpenSafeDownloads' AND \n        (value = 0 OR value = 'false') AND \n        username = ''\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.Safari' AND \n        name='AutoOpenSafeDownloads' AND \n        (value != 0 AND value != 'false')\n    );  \n"
   critical: false
   description: |
     Safari will automatically run or execute what it considers safe files. This can include

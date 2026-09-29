@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Disable Advertising ID' is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo\DisabledByGroupPolicy' AND data = '1';
+  critical: false
+  description: 'This policy setting turns off the advertising ID, preventing apps from using the ID for experiences across apps. The recommended state for this setting is: Enabled.'
+  resolution: 'To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Enabled: Privacy\Disable Advertising ID'
+  platform: windows

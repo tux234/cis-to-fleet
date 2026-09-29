@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Require secure RPC communication' is set to 'Enabled'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/RemoteDesktopServices/RequireSecureRPCCommunication</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%<enabled%';
+  critical: false
+  description: |-
+    This policy setting allows you to specify whether Remote Desktop Services requires
+    secure Remote Procedure Call (RPC) communication with all clients or allows
+    unsecured communication.
+    You can use this policy setting to strengthen the security of RPC communication with
+    clients by allowing only authenticated and encrypted requests.
+    The recommended state for this setting is: Enabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled.
+    Administrative Templates\Windows Components\Remote Desktop Services\Remote
+    Desktop Session Host\Security\Require secure RPC communication
+  platform: windows

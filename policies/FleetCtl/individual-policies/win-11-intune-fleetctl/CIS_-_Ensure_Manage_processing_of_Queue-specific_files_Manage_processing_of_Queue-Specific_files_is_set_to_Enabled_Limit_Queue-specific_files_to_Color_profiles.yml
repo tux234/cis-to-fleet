@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: 'CIS - Ensure ''Manage processing of Queue-specific files: Manage processing of Queue-Specific files'' is set to ''Enabled: Limit Queue-specific files to Color profiles'''
+  query: SELECT 1 WHERE EXISTS (SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/ADMX_Printing/ManageProcessingOfQueueSpecificFiles</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%<enabled%') OR EXISTS (SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\CopyFilesPolicy' AND data = '1');
+  critical: false
+  description: |-
+    This policy setting manages how queue-specific files are processed during printer
+    installation. At printer installation time, a vendor-supplied installation application can
+    specify a set of files, of any type, to be associated with a particular print queue. The files
+    are downloaded to each client that connects to the print server.
+    The recommended state for this setting is: Enabled: Limit Queue-specific files
+    to Color profiles.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to
+    Enabled: Limit Queue-specific files to Color profiles:
+    Administrative Templates\Printers\Manage processing of Queue-specific files:
+    Manage processing of Queue-specific files
+  platform: windows

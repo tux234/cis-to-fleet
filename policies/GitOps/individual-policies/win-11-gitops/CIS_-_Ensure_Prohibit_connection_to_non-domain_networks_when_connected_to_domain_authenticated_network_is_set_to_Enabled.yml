@@ -1,0 +1,10 @@
+- name: CIS - Ensure 'Prohibit connection to non-domain networks when connected to domain authenticated network' is set to 'Enabled'
+  platform: windows
+  description: |
+    This policy setting prevents computers from connecting to both a domain based network and a non-domain based network at the same time.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Enabled:
+    'Computer Configuration\Policies\Administrative Templates\Network\Windows Connection Manager\Prohibit connection to non-domain networks when connected to domain authenticated network'
+  query: |
+    SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WcmSvc\GroupPolicy\fBlockNonDomain' AND data = 1;

@@ -17,7 +17,8 @@ spec:
       (l.program_arguments = p.cmdline)
     );
   critical: false
-  description: macOS's audit facility, auditd, receives notifications from the kernel when certain system calls, such as open, fork, and exit, are made. These notifications are captured and written to an audit log. Apple has deprecated auditd as of macOS 11.0 Big Sur. In macOS 14.0 Sonoma it is no longer enabled by default.
+  description: |
+    macOS's audit facility, auditd, receives notifications from the kernel when certain system calls, such as open, fork, and exit, are made. These notifications are captured and written to an audit log. Apple has deprecated auditd as of macOS 11.0 Big Sur. In macOS 14.0 Sonoma it is no longer enabled by default.
   resolution: |
     Automated method:
     Ask your system administrator to deploy the following script which will load auditd and create the audit_control file:

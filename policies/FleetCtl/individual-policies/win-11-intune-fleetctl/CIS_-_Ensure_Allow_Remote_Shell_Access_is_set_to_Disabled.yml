@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Allow Remote Shell Access' is set to 'Disabled'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/RemoteShell/AllowRemoteShellAccess</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%Disabled%';
+  critical: false
+  description: 'This policy setting allows you to manage configuration of remote access to all supported shells to execute scripts and commands. The recommended state for this setting is: Disabled. Note: The GPME help text for this setting is incorrectly worded, implying that configuring it to Enabled will reject new Remote Shell connections, and setting it to Disabled will allow Remote Shell connections. The opposite is true (and is consistent with the title of the setting). This is a wording mistake by Microsoft in the Administrative Template.'
+  resolution: To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Disabled. Administrative Templates\Windows Components\Windows Remote Shell\Allow Remote Shell Access
+  platform: windows

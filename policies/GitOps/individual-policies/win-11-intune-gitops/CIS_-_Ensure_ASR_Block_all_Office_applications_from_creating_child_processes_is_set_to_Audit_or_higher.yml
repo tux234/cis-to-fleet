@@ -1,0 +1,17 @@
+- name: 'CIS - Ensure ''ASR: Block all Office applications from creating child processes'' is set to ''Audit'' or higher'
+  platform: windows
+  description: |-
+    This rule blocks Office apps from creating child processes. Office apps include Word,
+    Excel, PowerPoint, OneNote, and Access.
+    Creating malicious child processes is a common malware strategy. Malware that
+    abuses Office as a vector often runs VBA macros and exploit code to download and
+    attempt to run more payloads. However, some legitimate line-of-business applications
+    might also generate child processes for benign purposes; such as spawning a
+    command prompt or using PowerShell to configure registry settings.
+    The recommended state for this setting is: Audit. Configuring this setting to Block also
+    conforms to the benchmark.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Audit or Block.
+    Defender\Block all Office applications from creating child processes
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Defender/AttackSurfaceReductionRules</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output LIKE '%D4F940AB-401B-4EFC-AADC-AD5F3C50688A=1%' OR mdm_command_output LIKE '%D4F940AB-401B-4EFC-AADC-AD5F3C50688A=2%');

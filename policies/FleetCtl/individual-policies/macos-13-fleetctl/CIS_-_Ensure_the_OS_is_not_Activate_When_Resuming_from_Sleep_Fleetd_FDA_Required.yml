@@ -43,18 +43,7 @@ spec:
         )
     );
   critical: false
-  description: |
-    In order to use a computer with Full Disk Encryption (FDE), macOS must keep encryption keys in memory to allow
-    the use of the disk that has been FileVault protected. When the system is not in use, the volume is protected
-    through encryption. When the system is sleeping and available to quickly resume, the encryption keys remain in memory.
-    If an unauthorized party has possession of the computer and the computer is only slept, there are known attack vectors
-    that can be attempted against the RAM that has the encryption keys or the running operating system protected
-    by a login screen.
-    
-    MacBooks should be set so that the `standbydelay` is 15 minutes (900 seconds) or less.
-    Mac systems should be set to hibernate after sleeping for a risk-acceptable time period.
-    Organizations may still decide to use hibernate after sleeping if there is a security need 
-    (ex. international travel), but it can cause kernel panics in Apple Silicon Macs.
+  description: "In order to use a computer with Full Disk Encryption (FDE), macOS must keep encryption keys in memory to allow\nthe use of the disk that has been FileVault protected. When the system is not in use, the volume is protected\nthrough encryption. When the system is sleeping and available to quickly resume, the encryption keys remain in memory.\nIf an unauthorized party has possession of the computer and the computer is only slept, there are known attack vectors\nthat can be attempted against the RAM that has the encryption keys or the running operating system protected\nby a login screen.\n\nMacBooks should be set so that the `standbydelay` is 15 minutes (900 seconds) or less.\nMac systems should be set to hibernate after sleeping for a risk-acceptable time period.\nOrganizations may still decide to use hibernate after sleeping if there is a security need \n(ex. international travel), but it can cause kernel panics in Apple Silicon Macs.\n"
   resolution: |
     Ask your system administrator to deploy the following script to Macbook devices:
     if [[ $(uname -m) == 'arm64' ]]; then

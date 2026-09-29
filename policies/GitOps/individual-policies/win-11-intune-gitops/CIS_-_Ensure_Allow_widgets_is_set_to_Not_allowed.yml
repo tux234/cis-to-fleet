@@ -1,0 +1,12 @@
+- name: CIS - Ensure 'Allow widgets' is set to 'Not allowed'
+  platform: windows
+  description: |-
+    This policy setting specifies whether the Widgets feature is allowed on the device. The
+    Widgets feature provides information such as, weather, news, sports, stocks, traffic, and
+    entertainment (not an inclusive list).
+    The recommended state for this setting is: Not allowed.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Not Allowed.
+    Widgets\Allow widgets
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/NewsAndInterests/AllowNewsAndInterests</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '0';

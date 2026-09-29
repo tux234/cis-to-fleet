@@ -1,0 +1,40 @@
+- name: CIS - Ensure Notes Summarization Is Disabled (MDM Required)
+  platform: darwin
+  description: |
+    Apple Intelligence's Notes summarization feature quickly condenses content within the Notes app. This includes summarizing written text you've highlighted or, notably, automatically generating summaries from audio recordings taken directly within Notes, like lectures or meetings.
+
+    Disabling Notes summarization is wise for security if your audio recordings or notes contain very private or sensitive information. Turning this off ensures none of that sensitive content, especially from transcribed audio, ever leaves your device for any AI processing.
+  resolution: |
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.applicationaccess
+      - Key: allowNotesTranscription, Value: <false/>
+      - Key: allowNotesTranscriptionSummary, Value: <false/>
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.applicationaccess' AND
+          name='allowNotesTranscription' AND
+          (value = 0 OR value = 'false') AND
+          username = ''
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.applicationaccess' AND
+          name='allowNotesTranscription' AND
+          (value != 0 AND value != 'false')
+      )
+      AND EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.applicationaccess' AND
+          name='allowNotesTranscriptionSummary' AND
+          (value = 0 OR value = 'false') AND
+          username = ''
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.applicationaccess' AND
+          name='allowNotesTranscriptionSummary' AND
+          (value != 0 AND value != 'false')
+      );

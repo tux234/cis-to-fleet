@@ -2,7 +2,8 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure the "root" Account Is Disabled (Fleetd Required)
-  query: SELECT 1 from dscl WHERE command = 'read' AND path = '/Users/root' AND key = 'AuthenticationAuthority' AND value = '';
+  query: |
+    SELECT 1 from dscl WHERE command = 'read' AND path = '/Users/root' AND key = 'AuthenticationAuthority' AND value = '';
   critical: false
   description: |
     Enabling and using the root account puts the system at risk since any successful exploit or mistake

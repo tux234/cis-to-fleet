@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Turn off API Sampling' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat\DisableAPISamping' AND data = 1);
+  name: |
+    CIS - Ensure 'Turn off API Sampling' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat\DisableAPISamping' AND data = 1);
   critical: false
   description: |
     This policy setting determines if API data sampling is sent to Microsoft. API sampling

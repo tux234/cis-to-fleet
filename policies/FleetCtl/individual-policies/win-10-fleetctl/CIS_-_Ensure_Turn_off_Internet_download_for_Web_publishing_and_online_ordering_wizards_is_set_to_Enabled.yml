@@ -1,10 +1,13 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Turn off Internet download for Web publishing and online ordering wizards' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\NoWebServices' AND data = 1);
+  name: |
+    CIS - Ensure 'Turn off Internet download for Web publishing and online ordering wizards' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\NoWebServices' AND data = 1);
   critical: false
-  description: This policy setting controls whether Windows will download a list of providers for the Web publishing and online ordering wizards.
+  description: |
+    This policy setting controls whether Windows will download a list of providers for the Web publishing and online ordering wizards.
   resolution: |
     To establish the recommended configuration via GP, set the following UI path to Enabled:
     'Computer Configuration\Policies\Administrative Templates\System\Internet Communication Management\Internet Communication settings\Turn off Internet download for Web publishing and online ordering wizards'

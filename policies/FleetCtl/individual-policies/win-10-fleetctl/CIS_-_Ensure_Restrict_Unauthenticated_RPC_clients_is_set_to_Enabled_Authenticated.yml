@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Restrict Unauthenticated RPC clients' is set to 'Enabled: Authenticated'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Rpc\RestrictRemoteClients' AND data = 1);
+  name: |
+    CIS - Ensure 'Restrict Unauthenticated RPC clients' is set to 'Enabled: Authenticated'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Rpc\RestrictRemoteClients' AND data = 1);
   critical: false
   description: |
     This policy setting controls how the RPC server runtime handles unauthenticated RPC clients connecting to RPC servers.

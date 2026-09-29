@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: |
+    CIS - Ensure 'Disable HTTP proxy features: Disable proxy authentication' is set to 'Enabled: Disable authentication over loopback interfaces' or higher
+  query: |
+    SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\DisableProxyAuthenticationSchemes' AND (data = 256 OR data = 287);
+  critical: false
+  description: |
+    This policy setting determines whether Windows can authenticate over a loopback interface. It is best to limit the sign-in interface to only known and trusted services, so malicious actors can't impersonate them. Configuring this setting to 'Disable all authentication protocols and loopback authentication' also conforms to the benchmark.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Enabled: Disable authentication over loopback interfaces or Disable all authentication protocols and loopback authentication:
+    'Computer Configuration\Policies\Administrative Templates\Center for Internet Security (CIS)\Additional Benchmark Settings\Disable HTTP proxy features: Disable proxy authentication'
+  platform: windows

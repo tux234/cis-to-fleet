@@ -1,0 +1,5 @@
+- name: CIS - Ensure 'Turn off the "Order Prints" picture task' is set to 'Enabled'
+  platform: windows
+  description: 'This policy setting specifies whether the "Order Prints Online" task is available from Picture Tasks in Windows folders. The Order Prints Online Wizard is used to download a list of providers and allow users to order prints online. The recommended state for this setting is: Enabled.'
+  resolution: To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Enabled. Administrative Templates\System\Internet Communication Management\Internet Communication settings\Turn off the "Order Prints" picture task
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/ADMX_ICM/ShellRemoveOrderPrints_2</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%<enabled/>%';

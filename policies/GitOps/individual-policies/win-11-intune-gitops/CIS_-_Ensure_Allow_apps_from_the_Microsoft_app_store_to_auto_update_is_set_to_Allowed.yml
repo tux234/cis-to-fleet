@@ -1,0 +1,11 @@
+- name: CIS - Ensure 'Allow apps from the Microsoft app store to auto update' is set to 'Allowed'
+  platform: windows
+  description: |-
+    This setting enables or disables the automatic download and installation of Microsoft
+    Store app updates.
+    The recommended state for this setting is: Allowed.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Allowed:
+    Microsoft App Store\Allow apps from the Microsoft app store to auto update
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/ApplicationManagement/AllowAppStoreAutoUpdate</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '1';

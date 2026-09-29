@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Signed System Volume (SSV) Is Enabled (Fleetd Required)
+  query: SELECT 1 FROM csrutil_info WHERE ssv_enabled = '1';
+  critical: false
+  description: |
+    Signed System Volume (SSV) computes a SHA-256 hash for every immutable system file and stores it in a Merkle tree whose root is signed and verified at boot. macOS will not boot if system files have been tampered with. If SSV is disabled, assume the operating system has been compromised and reinstall.
+  resolution: |
+    If SSV has been disabled, back up any files and do a clean install to a known good operating system.
+  platform: darwin

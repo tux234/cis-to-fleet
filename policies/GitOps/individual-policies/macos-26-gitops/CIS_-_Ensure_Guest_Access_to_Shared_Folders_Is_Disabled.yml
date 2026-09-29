@@ -1,0 +1,20 @@
+- name: CIS - Ensure Guest Access to Shared Folders Is Disabled
+  platform: darwin
+  description: |
+    Allowing guests to connect to shared folders enables users to access selected shared folders and their contents from different computers on a network. Not allowing guests to connect to shared folders mitigates the risk of an untrusted user doing basic reconnaissance and possibly using privilege escalation attacks to take control of the system.
+  resolution: |
+    Graphical Method:
+      1. Open System Settings
+      2. Select Users & Groups
+      3. Select the i next to the Guest User
+      4. Set Allow guests to connect to shared folders to disabled
+
+    Terminal Method:
+      /usr/bin/sudo /usr/sbin/sysadminctl -smbGuestAccess off
+  query: |
+    SELECT 1 WHERE NOT EXISTS (
+      SELECT 1 FROM plist WHERE
+        path = '/Library/Preferences/SystemConfiguration/com.apple.smb.server.plist' AND
+        key = 'AllowGuestAccess' AND
+        value = 1
+    );

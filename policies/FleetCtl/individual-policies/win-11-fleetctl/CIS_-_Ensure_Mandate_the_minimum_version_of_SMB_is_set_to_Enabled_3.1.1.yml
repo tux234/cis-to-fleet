@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Mandate the minimum version of SMB' is set to 'Enabled: 3.1.1'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\MinSmb2Dialect' AND data = 785);
+  name: |
+    CIS - Ensure 'Mandate the minimum version of SMB' is set to 'Enabled: 3.1.1'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\MinSmb2Dialect' AND data = 785);
   critical: false
   description: |
     This policy settings controls the minimum version of Server Message Block (SMB) protocol that can be used on the system.

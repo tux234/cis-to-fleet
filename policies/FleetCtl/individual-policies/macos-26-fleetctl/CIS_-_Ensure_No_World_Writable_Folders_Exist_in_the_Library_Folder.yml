@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure No World Writable Folders Exist in the Library Folder
+  query: |
+    SELECT 1 WHERE NOT EXISTS (
+      SELECT 1 FROM file f
+      WHERE f.path LIKE '/Library/%'
+        -- Exclude the non-accessible /Library/AppStore folder (per CIS audit)
+        AND NOT (f.path = '/Library/AppStore' OR f.path LIKE '/Library/AppStore/%')
+        AND f.type = 'directory'
+        AND (CAST(SUBSTR(f.mode, -1) AS INTEGER) & 2) = 2
+        AND CAST(SUBSTR(f.mode, 1, 1) AS INTEGER) NOT IN (1, 3, 5, 7)
+        AND NOT EXISTS (
+          SELECT 1 FROM extended_attributes ea
+          WHERE ea.path = f.path
+            AND ea.key = 'com.apple.rootless'
+        )
+    );
+  critical: false
+  description: |
+    Software sometimes installs into /System/Volumes/Data/Library with inappropriate world-writable permissions. The audit check excludes folders where the sticky bit is set by Apple (required by the OS) and folders with the `com.apple.rootless` extended attribute (security vendor controls).
+  resolution: |
+    Terminal Method:
+      for libPermissions in $(/usr/bin/find /Library -type d -perm -002 ! -perm -1000 ! -xattrname com.apple.rootless 2>/dev/null); do
+        /usr/bin/sudo /bin/chmod -R o-w "$libPermissions"
+      done
+  platform: darwin

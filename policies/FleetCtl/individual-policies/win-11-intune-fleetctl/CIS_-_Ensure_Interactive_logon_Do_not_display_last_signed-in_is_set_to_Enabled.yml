@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: 'CIS - Ensure ''Interactive logon: Do not display last signed-in'' is set to ''Enabled'''
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/LocalPoliciesSecurityOptions/InteractiveLogon_DoNotDisplayLastSignedIn</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '1';
+  critical: false
+  description: |-
+    This policy setting determines whether the account name of the last user to log on to the
+    client computers in your organization will be displayed in each computer's respective
+    Windows logon screen. Enable this policy setting to prevent intruders from collecting
+    account names visually from the screens of desktop or laptop computers in your
+    organization.
+    The recommended state for this setting is: Enabled.
+    Warning: If the Self Service Password Reset (SSPR) feature is used in Microsoft Entra
+    ID, an exception to this recommendation is needed as it's known to interfere with SSPR.
+    Warning #2: If the Windows passwordless experience feature is used, an exception to
+    this recommendation is needed as it prevents this feature from working.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled:
+    Local Policies Security Options\Interactive logon: Don't display last signedin
+
+    Note: In older versions of Microsoft Windows, this setting was named Interactive logon:
+    Do not display last user name, but it was renamed starting with Windows 10 Release
+    1703.
+  platform: windows

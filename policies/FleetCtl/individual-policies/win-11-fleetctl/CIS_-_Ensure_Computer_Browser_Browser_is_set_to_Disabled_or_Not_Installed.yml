@@ -2,11 +2,7 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'Computer Browser (Browser)' is set to 'Disabled' or 'Not Installed'
-  query: |
-    SELECT 1 WHERE 
-        NOT EXISTS ( SELECT 1 FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Browser\\Start' )
-        OR 
-        EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Browser\\Start' AND data == 4 );
+  query: "SELECT 1 WHERE \n    NOT EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Services\\\\Browser\\\\Start' )\n    OR \n    EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Services\\\\Browser\\\\Start' AND data == 4 );\n"
   critical: false
   description: |
     Maintains an updated list of computers on the network and supplies this list to computers designated as browsers.

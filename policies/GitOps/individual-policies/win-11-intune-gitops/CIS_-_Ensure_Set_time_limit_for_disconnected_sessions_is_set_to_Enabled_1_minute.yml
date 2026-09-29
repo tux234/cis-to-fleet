@@ -1,0 +1,5 @@
+- name: 'CIS - Ensure ''Set time limit for disconnected sessions'' is set to ''Enabled: 1 minute'''
+  platform: windows
+  description: 'This policy setting allows you to configure a time limit for disconnected Remote Desktop Services sessions. The recommended state for this setting is: Enabled: 1 minute.'
+  resolution: 'To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Enabled: 1 minute. Administrative Templates\Windows Components\Remote Desktop Services\Remote Desktop Session Host\Session Time Limits\Set time limit for disconnected sessions'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/ADMX_TerminalServer/TS_SESSIONS_Disconnected_Timeout_2</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%<enabled%' AND mdm_command_output LIKE '%value="60000"%';

@@ -1,0 +1,36 @@
+- name: CIS - Ensure 'Allow Auto Update' is set to 'Enabled'
+  platform: windows
+  description: |-
+    This policy setting specifies whether computers in your environment will receive security
+    updates from Windows Update or WSUS. If you configure this policy setting to Enabled,
+    the operating system will recognize when a network connection is available and then
+    use the network connection to search Windows Update or your designated intranet site
+    for updates that apply to them.
+    After this this policy setting is set to Enabled, select one of the following options in the
+    Configure Automatic Updates Properties dialog box to specify how the service will work:
+    •
+    •
+    •
+
+    2 - Auto install and restart.
+    3 - Auto install and restart at a specified time. (Default)
+    4 - Auto install and restart without end-user control.
+
+    The recommended state for this setting is: Enabled and never "Turn off automatic
+    updates"
+    Note: The sub-setting "Allow Auto Update:" has 6 possible values – not all of them are
+    valid depending on specific organizational needs, however if feasible we suggest using
+    a value of 2, 3, or 4. The only scored requirement is to not turn off automatic
+    updates (5).
+    Note #2: Organizations that utilize a third--party solution for patching may choose to
+    exempt themselves from this recommendation, and instead configure it to Disabled so
+    that the native Windows Update mechanism does not interfere with the third--party
+    patching process.
+    Warning: If option 3 or 4 is not selected, then the ScheduledInstallDay
+    recommendation will not take effect and an exception to that recommendation will be
+    needed.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to anything other than "Turn off automatic updates".
+    Windows Update For Business\Allow Auto Update
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PolicyManager\current\device\Update\AllowAutoUpdate' AND data IN ('1', '2', '3', '4');

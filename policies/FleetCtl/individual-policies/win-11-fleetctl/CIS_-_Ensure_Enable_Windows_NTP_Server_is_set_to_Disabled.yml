@@ -1,10 +1,13 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Enable Windows NTP Server' is set to 'Disabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\Software\\Policies\\Microsoft\\W32Time\\TimeProviders\\NtpServer' AND data = 0);
+  name: |
+    CIS - Ensure 'Enable Windows NTP Server' is set to 'Disabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\Software\\Policies\\Microsoft\\W32Time\\TimeProviders\\NtpServer\Enabled' AND data = 0);
   critical: false
-  description: This policy setting allows you to specify whether the Windows NTP Server is enabled.
+  description: |
+    This policy setting allows you to specify whether the Windows NTP Server is enabled.
   resolution: |
     To establish the recommended configuration via GP, set the following UI path to Disabled:
     'Computer Configuration\Policies\Administrative Templates\System\Windows Time Service\Time Providers\Enable Windows NTP Server'

@@ -1,0 +1,12 @@
+- name: 'CIS - Ensure ''ASR: Block untrusted and unsigned processes that run from USB'' is set to ''Block'''
+  platform: windows
+  description: |-
+    With this rule, admins can prevent unsigned or untrusted executable files from running
+    from USB removable drives, including SD cards. Blocked file types include executable
+    files (such as .exe, .dll, or .scr)
+    The recommended state for this setting is: Block.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Block.
+    Defender\Block untrusted and unsigned processes that run from USB
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Defender/AttackSurfaceReductionRules</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output LIKE '%B2B3F03D-6A65-4F7B-A9C7-1C7EF74A9BA4=1%' OR mdm_command_output LIKE '%B2B3F03D-6A65-4F7B-A9C7-1C7EF74A9BA4=2%');

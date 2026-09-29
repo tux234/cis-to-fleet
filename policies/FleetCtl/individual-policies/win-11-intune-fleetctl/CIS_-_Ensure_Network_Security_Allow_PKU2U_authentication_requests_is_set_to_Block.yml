@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: 'CIS - Ensure ''Network Security: Allow PKU2U authentication requests'' is set to ''Block'''
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/LocalPoliciesSecurityOptions/NetworkSecurity_AllowPKU2UAuthenticationRequests</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '0';
+  critical: false
+  description: |-
+    This setting determines if online identities are able to authenticate to this computer.
+    The Public Key Cryptography Based User-to-User (PKU2U) protocol introduced in
+    Windows 7 and Windows Server 2008 R2 is implemented as a security support provider
+    (SSP). The SSP enables peer-to-peer authentication, particularly through the Windows
+    7 media and file sharing feature called HomeGroup, which permits sharing between
+    computers that are not members of a domain.
+    With PKU2U, a new extension was introduced to the Negotiate authentication package,
+    Spnego.dll. In previous versions of Windows, Negotiate decided whether to use
+    Kerberos or NTLM for authentication. The extension SSP for Negotiate, Negoexts.dll,
+    which is treated as an authentication protocol by Windows, supports Microsoft SSPs
+    including PKU2U.
+    When computers are configured to accept authentication requests by using online IDs,
+    Negoexts.dll calls the PKU2U SSP on the computer that is used to log on. The
+    PKU2U SSP obtains a local certificate and exchanges the policy between the peer
+    computers. When validated on the peer computer, the certificate within the metadata is
+    sent to the logon peer for validation and associates the user's certificate to a security
+    token and the logon process completes.
+    The recommended state for this setting is: Block.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Block:
+    Local Policies Security Options\Network Security: Allow PKU2U authentication
+    requests to this computer
+  platform: windows

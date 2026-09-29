@@ -1,0 +1,13 @@
+- name: 'CIS - Ensure ''ASR: Block persistence through WMI event subscription'' is set to ''Block'''
+  platform: windows
+  description: |-
+    This rule prevents malware from abusing WMI to attain persistence on a device.
+    Note: If CcmExec.exe (SCCM Agent) is detected on the device, the ASR rule is
+    classified as "not applicable" in Defender for Endpoint settings in the Microsoft Defender
+    portal.
+    The recommended state for this setting is: Block.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Block.
+    Defender\Block persistence through WMI event subscription
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Defender/AttackSurfaceReductionRules</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output LIKE '%E6DB77E5-3DF2-4CF1-B95A-636979351E5B=1%' OR mdm_command_output LIKE '%E6DB77E5-3DF2-4CF1-B95A-636979351E5B=2%');

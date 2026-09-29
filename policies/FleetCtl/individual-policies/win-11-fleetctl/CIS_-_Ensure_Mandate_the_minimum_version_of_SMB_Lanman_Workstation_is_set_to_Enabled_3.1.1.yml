@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: |
+    CIS - Ensure 'Mandate the minimum version of SMB' (Lanman Workstation) is set to 'Enabled: 3.1.1'
+  query: |
+    SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanWorkstation\MinSmb2Dialect' AND CAST(data AS INTEGER) = 785;
+  critical: false
+  description: |
+    This policy settings controls the minimum version of Server Message Block (SMB) protocol that can be used on the system. The newer SMB v3 is supported on all currently supported Microsoft Windows OSes.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Enabled: 3.1.1:
+    'Computer Configuration\Policies\Administrative Templates\Network\Lanman Workstation\Mandate the minimum version of SMB'
+  platform: windows

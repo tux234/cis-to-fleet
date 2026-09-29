@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Choose how BitLocker-protected operating system drives can be recovered' is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\FVE\OSRecovery' AND data = '1';
+  critical: false
+  description: 'This policy setting allows you to control how BitLocker-protected operating system drives are recovered in the absence of the required startup key information. This policy setting is applied when you turn on BitLocker. The recommended state for this setting is: Enabled.'
+  resolution: To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Enabled. Administrative Templates\Windows Components\BitLocker Drive Encryption\Operating System Drives\Choose how BitLocker-protected operating system drives can be recovered
+  platform: windows

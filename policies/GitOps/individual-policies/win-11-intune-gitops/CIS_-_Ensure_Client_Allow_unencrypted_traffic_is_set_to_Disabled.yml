@@ -1,0 +1,14 @@
+- name: CIS - Ensure Client 'Allow unencrypted traffic' is set to 'Disabled'
+  platform: windows
+  description: |-
+
+    This policy setting allows you to manage whether the Windows Remote Management
+    (WinRM) client sends and receives unencrypted messages over the network.
+    The recommended state for this setting is: Disabled.
+  resolution: |-
+
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Disabled.
+    Administrative Templates\Windows Components\Windows Remote Management
+    (WinRM)\WinRM Client\Allow unencrypted traffic
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WinRM\Client\AllowUnencryptedTraffic' AND data = '0';

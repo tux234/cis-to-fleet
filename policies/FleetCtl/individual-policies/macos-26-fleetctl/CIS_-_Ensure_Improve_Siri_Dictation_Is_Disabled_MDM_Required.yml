@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Improve Siri & Dictation Is Disabled (MDM Required)
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.assistant.support' AND
+          name = 'Siri Data Sharing Opt-In Status' AND
+          CAST(value AS INTEGER) = 2 AND
+          username = ''
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.assistant.support' AND
+          name = 'Siri Data Sharing Opt-In Status' AND
+          CAST(value AS INTEGER) != 2
+      );
+  critical: false
+  description: |
+    Improve Siri & Dictation allows Apple to store and review audio of your Siri and dictation interactions from the device. Turn off all Analytics and Improvements sharing. Organizations should have knowledge of what is shared with the vendor and that this setting automatically forwards information to Apple.
+  resolution: |
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.assistant.support
+      - Key: Siri Data Sharing Opt-In Status
+      - Value: <integer>2</integer>
+  platform: darwin

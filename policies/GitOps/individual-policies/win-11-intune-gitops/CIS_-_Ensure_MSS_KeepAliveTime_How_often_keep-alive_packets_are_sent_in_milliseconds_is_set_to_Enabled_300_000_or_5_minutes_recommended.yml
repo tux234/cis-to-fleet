@@ -1,0 +1,5 @@
+- name: 'CIS - Ensure ''MSS: (KeepAliveTime) How often keep-alive packets are sent in milliseconds'' is set to ''Enabled: 300,000 or 5 minutes (recommended)'''
+  platform: windows
+  description: 'This value controls how often TCP attempts to verify that an idle connection is still intact by sending a keep-alive packet. If the remote computer is still reachable, it acknowledges the keep-alive packet. The recommended state for this setting is: Enabled: 300,000 or 5 minutes (recommended).'
+  resolution: 'To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Enabled: 300,000 or 5 minutes (recommended). Administrative Templates\MSS (Legacy)\MSS: (KeepAliveTime) How often keepalive packets are sent in milliseconds'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\KeepAliveTime' AND CAST(data AS INTEGER) <= 300000;

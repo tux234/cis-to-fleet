@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: 'CIS - Ensure ''MSS: (ScreenSaverGracePeriod) The time in seconds before the screen saver grace period expires (0 recommended)'' is set to ''Enabled: 5 or fewer seconds'''
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\ScreenSaverGracePeriod' AND CAST(data AS INTEGER) <= 5;
+  critical: false
+  description: |-
+    Windows includes a grace period between when the screen saver is launched and
+    when the console is actually locked automatically when screen saver locking is enabled.
+    The recommended state for this setting is: Enabled: 5 or fewer seconds.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled: 5 or fewer seconds.
+    Administrative Templates\MSS (Legacy)\MSS: (ScreenSaverGracePeriod) The time
+    in seconds before the screen saver grace period expires (0 recommended)
+  platform: windows

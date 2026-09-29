@@ -1,10 +1,13 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Allow widgets' is set to 'Disabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Dsh\AllowNewsAndInterests' AND data = 0);
+  name: |
+    CIS - Ensure 'Allow widgets' is set to 'Disabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Dsh\AllowNewsAndInterests' AND data = 0);
   critical: false
-  description: This policy setting specifies whether the widgets feature is allowed on the device. The widgets feature provides information such as, weather, news, sports, stocks, traffic, and entertainment (not an inclusive list).
+  description: |
+    This policy setting specifies whether the widgets feature is allowed on the device. The widgets feature provides information such as, weather, news, sports, stocks, traffic, and entertainment (not an inclusive list).
   resolution: |
     To establish the recommended configuration via GP, set the following UI path to Disabled:
     'Computer Configuration\Policies\Administrative Templates\Windows Components\Widgets\Allow Widgets'

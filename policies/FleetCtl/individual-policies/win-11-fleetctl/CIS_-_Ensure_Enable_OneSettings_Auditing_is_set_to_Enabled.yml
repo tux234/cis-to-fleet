@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Enable OneSettings Auditing' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection\\EnableOneSettingsAuditing' AND data = 1);
+  name: |
+    CIS - Ensure 'Enable OneSettings Auditing' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection\\EnableOneSettingsAuditing' AND data = 1);
   critical: false
   description: |
     This policy is meant for Windows 11.

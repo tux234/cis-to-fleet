@@ -2,20 +2,7 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure No World Writable Folders Exist in the Library Folder (Fleetd required)
-  query: |
-    SELECT 1 WHERE NOT EXISTS (
-      SELECT 1 FROM file f
-      WHERE 
-        f.path LIKE '/Library/%'
-        AND f.type = 'directory'
-        AND (CAST(SUBSTR(f.mode,-1) AS INTEGER) & 2) = 2
-        AND NOT ((CAST(f.mode AS INTEGER) & 01000) = 01000)
-        AND NOT EXISTS (
-          SELECT 1 FROM extended_attributes ea
-          WHERE ea.path = f.path
-          AND ea.key = 'com.apple.rootless'
-        )
-    );
+  query: "SELECT 1 WHERE NOT EXISTS (\n  SELECT 1 FROM file f\n  WHERE \n    f.path LIKE '/Library/%'\n    AND f.type = 'directory'\n    AND (CAST(SUBSTR(f.mode,-1) AS INTEGER) & 2) = 2\n    -- Exclude sticky-bit dirs. osquery reports mode as a 4-char\n    -- octal string like \"1777\" (sticky) or \"0755\". The first digit\n    -- encodes setuid(4)/setgid(2)/sticky(1). SQLite has no native\n    -- octal literals, so we compare the first char's integer value\n    -- to the possible sticky combinations (1, 3, 5, 7).\n    AND CAST(SUBSTR(f.mode, 1, 1) AS INTEGER) NOT IN (1, 3, 5, 7)\n    AND NOT EXISTS (\n      SELECT 1 FROM extended_attributes ea\n      WHERE ea.path = f.path\n      AND ea.key = 'com.apple.rootless'\n    )\n);\n"
   critical: false
   description: |
     Software sometimes insists on being installed in the
@@ -31,14 +18,5 @@ spec:
     the standard practice on POSIX systems. It is considered compliant here
     because of additional security vendor controls that are controlled through
     industry standard mitigations.
-  resolution: |
-    Ask your system administrator to deploy a script that will ensure folders
-    are not world-writable in the /Library folder. 
-    /usr/bin/sudo IFS=$'\n'
-    for libPermissions in $(/usr/bin/find /Library -type d -perm -002 ! -perm -1000 ! -xattrname com.apple.rootless 2>/dev/null); do
-      /bin/chmod -R o-w "$libPermissions"
-    done
-    Note: Applications that are not following standard practices, and have
-    world-writable files in /System/Volumes/Data/Library may not launch or
-    operate correctly after the remediation has been run.
+  resolution: "Ask your system administrator to deploy a script that will ensure folders\nare not world-writable in the /Library folder. \n/usr/bin/sudo IFS=$'\\n'\nfor libPermissions in $(/usr/bin/find /Library -type d -perm -002 ! -perm -1000 ! -xattrname com.apple.rootless 2>/dev/null); do\n  /bin/chmod -R o-w \"$libPermissions\"\ndone\nNote: Applications that are not following standard practices, and have\nworld-writable files in /System/Volumes/Data/Library may not launch or\noperate correctly after the remediation has been run.\n"
   platform: darwin

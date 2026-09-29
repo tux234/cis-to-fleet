@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: |
+    CIS - Ensure 'Configure RPC over TCP port' is set to 'Enabled: 0'
+  query: |
+    SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC\RpcTcpPort' AND data = 0;
+  critical: false
+  description: |
+    This policy setting controls which port is used for RPC over TCP for incoming connections to the print spooler and outgoing connections to remote print spoolers. Using dynamic ports makes it more difficult for a threat actor to know which port is being used.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Enabled: 0:
+    'Computer Configuration\Policies\Administrative Templates\Printers\Configure RPC over TCP port'
+  platform: windows

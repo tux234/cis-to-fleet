@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Allow enhanced PINs for startup' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\UseEnhancedPin' AND data = 1);
+  name: |
+    CIS - Ensure 'Allow enhanced PINs for startup' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\FVE\UseEnhancedPin' AND data = 1);
   critical: false
   description: |
     This policy setting allows you to configure whether or not enhanced startup PINs are used with BitLocker.

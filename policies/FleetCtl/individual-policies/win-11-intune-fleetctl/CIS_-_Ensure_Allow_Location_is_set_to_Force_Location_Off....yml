@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Allow Location' is set to 'Force Location Off...'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/System/AllowLocation</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '0';
+  critical: false
+  description: 'This policy setting turns off the location feature for the computer. The recommended state for this setting is: Force Location Off Force Location Off. All Location Privacy settings are toggled off and grayed out. Users can''t change the settings, and no apps are allowed access to the Location service, including Cortana and Search..'
+  resolution: To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Force Location Off.... System\Allow Location
+  platform: windows

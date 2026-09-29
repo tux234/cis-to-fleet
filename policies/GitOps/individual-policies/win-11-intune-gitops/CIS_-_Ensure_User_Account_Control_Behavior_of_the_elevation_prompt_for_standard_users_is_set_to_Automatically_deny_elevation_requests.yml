@@ -1,0 +1,12 @@
+- name: 'CIS - Ensure ''User Account Control: Behavior of the elevation prompt for standard users'' is set to ''Automatically deny elevation requests'''
+  platform: windows
+  description: |-
+    This policy setting controls the behavior of the elevation prompt for standard users.
+    The recommended state for this setting is: Automatically deny elevation
+    requests.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Automatically deny elevation requests:
+    Local Policies Security Options\User Account Control: Behavior of the
+    elevation prompt for standard users
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/LocalPoliciesSecurityOptions/UserAccountControl_BehaviorOfTheElevationPromptForStandardUsers</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '0';

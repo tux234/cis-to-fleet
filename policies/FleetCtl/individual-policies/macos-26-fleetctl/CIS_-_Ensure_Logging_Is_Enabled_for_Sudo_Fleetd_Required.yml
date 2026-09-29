@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Logging Is Enabled for Sudo (Fleetd Required)
+  query: |
+    SELECT 1 WHERE EXISTS (
+      SELECT 1 FROM sudo_info
+      WHERE json_type(json_result, '$.Log when a command is allowed by sudoers') IS NOT NULL
+    );
+  critical: false
+  description: |
+    In order to properly monitor the use of the sudo command, log events for any use of sudo should be captured in the unified log. Apple added sudo logging as part of the unified log in macOS 14.0 Sonoma; in macOS 15.0 Sequoia and later, it is disabled by default but should be enabled.
+  resolution: |
+    Terminal Method:
+      Edit (or create) /etc/sudoers.d/<config-file-no-dot> via `visudo -f` and add:
+        Defaults log_allowed
+  platform: darwin

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: 'CIS - Ensure ''MSS: (WarningLevel) Percentage threshold for the security event log at which the system will generate a warning'' is set to ''Enabled: 90% or less'''
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Eventlog\Security\WarningLevel' AND CAST(data AS INTEGER) <= 90;
+  critical: false
+  description: |-
+    This setting can generate a security audit in the Security event log when the log reaches
+    a user-defined threshold.
+    The recommended state for this setting is: Enabled: 90% or less.
+    Note: If log settings are configured to Overwrite events as needed or Overwrite events
+    older than x days, this event will not be generated.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled: 90% or less.
+    Administrative Templates\MSS (Legacy)\MSS: (WarningLevel) Percentage
+    threshold for the security event log at which the system will generate a
+    warning
+  platform: windows

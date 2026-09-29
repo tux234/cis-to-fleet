@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Share Mac Analytics Is Disabled (MDM Required)
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.SubmitDiagInfo' AND
+          name = 'AutoSubmit' AND
+          (value = 0 OR value = 'false') AND
+          username = ''
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.SubmitDiagInfo' AND
+          name = 'AutoSubmit' AND
+          (value != 0 AND value != 'false')
+      );
+  critical: false
+  description: |
+    Share Mac Analytics (Share with App Developers dependent on Mac Analytic sharing) includes diagnostics, usage, and location data. Turn off all Analytics and Improvements sharing. Organizations should have knowledge of what is shared with the vendor and that this setting automatically forwards information to Apple.
+  resolution: |
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.SubmitDiagInfo
+      - Key: AutoSubmit
+      - Value: <false/>
+  platform: darwin

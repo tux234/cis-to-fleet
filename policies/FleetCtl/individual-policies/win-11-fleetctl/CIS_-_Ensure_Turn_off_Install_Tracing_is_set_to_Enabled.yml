@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Turn off Install Tracing' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat\DisableInstallTracing' AND data = 1);
+  name: |
+    CIS - Ensure 'Turn off Install Tracing' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppCompat\DisableInstallTracing' AND data = 1);
   critical: false
   description: |
     This policy setting determines if Install Tracing data is sent to Microsoft. Install Tracing

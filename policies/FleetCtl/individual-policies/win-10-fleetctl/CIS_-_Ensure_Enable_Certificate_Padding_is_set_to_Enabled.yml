@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Enable Certificate Padding' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography\Wintrust\Config\EnableCertPaddingCheck' AND data = 1);
+  name: |
+    CIS - Ensure 'Enable Certificate Padding' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Cryptography\Wintrust\Config\EnableCertPaddingCheck' AND (data = 1 OR data = '1'));
   critical: false
   description: |
     This policy setting configures whether the WinVerifyTrust function performs strict

@@ -2,7 +2,8 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure Guest Account Is Disabled
-  query: SELECT 1 FROM plist WHERE path='/Library/Preferences/com.apple.loginwindow.plist' AND key='GuestEnabled' AND value = 0;
+  query: |
+    SELECT 1 FROM plist WHERE path='/Library/Preferences/com.apple.loginwindow.plist' AND key='GuestEnabled' AND value = 0;
   critical: false
   description: Checks that Guest Account Is Disabled.
   resolution: |

@@ -13,4 +13,42 @@
       5. The key must be set to: 1
       6. The key to also include is WebKitStorageBlockingPolicy
       7. The key must be set to: 1
-  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.Safari' AND \n        name='BlockStoragePolicy' AND \n        value = '2' AND \n        username = ''\n    )\n  AND EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.Safari' AND \n        name='WebKitPreferences.storageBlockingPolicy' AND \n        value = '1' AND \n        username = ''\n    )\n  AND EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.Safari' AND \n        name='WebKitStorageBlockingPolicy' AND \n        value = '1' AND \n        username = ''\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.Safari' AND \n        name='BlockStoragePolicy' AND \n        value != '2' \n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.Safari' AND \n        name='WebKitPreferences.storageBlockingPolicy' AND \n        value != '1' \n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.Safari' AND \n        name='WebKitStorageBlockingPolicy' AND \n        value != '1' \n    );  \n"
+  query: |
+    -- Safari profiles deliver at user scope; drop the username='' filter.
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='BlockStoragePolicy' AND
+            value = '2'
+        )
+      AND EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='WebKitPreferences.storageBlockingPolicy' AND
+            value = '1'
+        )
+      AND EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='WebKitStorageBlockingPolicy' AND
+            value = '1'
+        )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='BlockStoragePolicy' AND
+            value != '2'
+        )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='WebKitPreferences.storageBlockingPolicy' AND
+            value != '1'
+        )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='WebKitStorageBlockingPolicy' AND
+            value != '1'
+        );

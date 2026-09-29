@@ -2,7 +2,8 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'System objects Require case insensitivity for non Windows subsystems' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\kernel\\obcaseinsensitive' AND data != 0);
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\kernel\\obcaseinsensitive' AND data != 0);
   critical: false
   description: |
     This policy setting determines whether case insensitivity is enforced for all subsystems. The

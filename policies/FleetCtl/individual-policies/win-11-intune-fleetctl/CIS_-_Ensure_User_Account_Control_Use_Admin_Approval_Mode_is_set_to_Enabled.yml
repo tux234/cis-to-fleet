@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'User Account Control Use Admin Approval Mode' is set to 'Enabled'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\Microsoft\Windows\CurrentVersion\Policies\System\FilterAdministratorToken AND data = '1';
+  critical: false
+  description: |-
+    This policy setting controls the behavior of Admin Approval Mode for the built-in
+    Administrator account.
+    The recommended state for this setting is: Enabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled:
+    Local Policies Security Options\User Account Control: Use Admin Approval Mode
+  platform: windows

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: 'CIS - Ensure ''Enable Public Network Firewall: Default Inbound Action for Public Profile'' is set to ''Block'''
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Firewall/MdmStore/PublicProfile/DefaultInboundAction</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '1';
+  critical: false
+  description: |-
+    This setting determines the behavior for inbound connections that do not match an
+    inbound firewall rule.
+    The recommended state for this setting is: Block.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Block:
+    Firewall\Enable Public Network Firewall: Default Inbound Action for Public
+    Profile
+  platform: windows

@@ -2,21 +2,7 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure Siri is disabled (MDM required)
-  query: |
-    SELECT 1 WHERE 
-      EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.applicationaccess' AND 
-            name='allowAssistant' AND 
-            (value = 0 OR value = 'false') AND 
-            username = ''
-        )
-      AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.applicationaccess' AND 
-            name='allowAssistant' AND 
-            (value != 0 AND value != 'false')
-        );
+  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.applicationaccess' AND \n        name='allowAssistant' AND \n        (value = 0 OR value = 'false') AND \n        username = ''\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.applicationaccess' AND \n        name='allowAssistant' AND \n        (value != 0 AND value != 'false')\n    );\n"
   critical: false
   description: |
     With macOS 10.12 Sierra, Apple has introduced Siri from iOS to macOS. While there are data spillage concerns with the use of data-gathering personal assistant software, the risk here does not seem greater in sending queries to Apple through Siri than in sending search terms in a browser to Google or Microsoft. While it is possible that Siri will be used for local actions rather than Internet searches, Siri could, in theory, tell Apple about confidential Programs and Projects that should not be revealed. This appears to be a usage edge case.

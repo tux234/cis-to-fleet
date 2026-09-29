@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network access: Shares that can be accessed anonymously' is set to 'None'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\LanManServer\\Parameters\NullSessionShares' and data == '');
+  name: |
+    CIS - Ensure 'Network access: Shares that can be accessed anonymously' is set to 'None'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\LanManServer\\Parameters\NullSessionShares' and data == '');
   critical: false
   description: |
     This policy setting determines which network shares can be accessed by anonymous users.

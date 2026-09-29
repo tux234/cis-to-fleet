@@ -2,13 +2,7 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure an Administrator Account Cannot Login to Another User's Active and Locked Session (Fleetd Required)
-  query: |
-    SELECT 1 WHERE EXISTS (
-      SELECT JSON_EXTRACT(json_result, '$.rule') AS rule
-      FROM authdb
-      WHERE right_name = 'system.login.screensaver' AND 
-      rule LIKE '%authenticate-session-owner%'
-    );
+  query: "SELECT 1 WHERE EXISTS (\n  SELECT JSON_EXTRACT(json_result, '$.rule') AS rule\n  FROM authdb\n  WHERE right_name = 'system.login.screensaver' AND \n  rule LIKE '%authenticate-session-owner%'\n);\n"
   critical: false
   description: |
     macOS has a privilege that can be granted to any user that will allow that

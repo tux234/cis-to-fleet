@@ -1,0 +1,11 @@
+- name: CIS - Ensure 'Config refresh' is set to 'Enabled'
+  platform: windows
+  description: |-
+    This policy setting determines whether or not MDM policies are refreshed on the
+    system.
+    The recommended state for this setting is: Enabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled.
+    Config Refresh\Config refresh
+  query: SELECT 1 FROM registry WHERE path LIKE 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Enrollments\%\ConfigRefresh\Enabled' AND data = '1';

@@ -3,11 +3,12 @@ kind: policy
 spec:
   name: CIS - Audit Safari Web Browser History and Remove History Items (organization decision needed)(MDM Required)
   query: |
-    SELECT 1 WHERE 
+    -- Safari profiles deliver at user scope; drop the username='' filter.
+    SELECT 1 WHERE
       EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='HistoryAgeInDaysLimit' AND 
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='HistoryAgeInDaysLimit' AND
               /*
               Please replace the checked value bellow to match the one decided by your organization.
               1 - After one day
@@ -17,15 +18,14 @@ spec:
               365 - After one year
               36500 - Set Manually
               */
-            value = 1 AND 
-            username = ''
+            value = 1
         )
       AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='HistoryAgeInDaysLimit' AND 
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='HistoryAgeInDaysLimit' AND
             value != 1
-        );  
+        );
   critical: false
   description: |
     Organizational management of user web browsing history is a challenge effected by multiple facets. Organizations should decide whether to manage browser history and how much history should be maintained.

@@ -1,0 +1,12 @@
+- name: CIS - Ensure 'Enumerate administrator accounts on elevation' is set to 'Disabled'
+  platform: windows
+  description: |-
+    This policy setting controls whether administrator accounts are displayed when a user
+    attempts to elevate a running application.
+    The recommended state for this setting is: Disabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Disabled.
+    Administrative Templates\Windows Components\Credential User
+    Interface\Enumerate administrator accounts on elevation
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/CredentialsUI/EnumerateAdministrators</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%disabled%';

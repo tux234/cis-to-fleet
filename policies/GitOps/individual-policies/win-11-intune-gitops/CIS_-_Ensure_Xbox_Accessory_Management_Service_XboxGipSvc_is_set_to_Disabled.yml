@@ -1,0 +1,10 @@
+- name: CIS - Ensure 'Xbox Accessory Management Service (XboxGipSvc)' is set to 'Disabled'
+  platform: windows
+  description: |-
+    This service manages connected Xbox Accessories.
+    The recommended state for this setting is: Disabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Disabled.
+    System Services\Xbox Accessory Management Service
+  query: SELECT 1 WHERE COALESCE((SELECT UPPER(start_type) FROM services WHERE name = 'XboxGipSvc'), 'DISABLED') = 'DISABLED';

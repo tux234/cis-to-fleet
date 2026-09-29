@@ -3,19 +3,19 @@ kind: policy
 spec:
   name: CIS - Ensure AirDrop Is Disabled (MDM Required)
   query: |
-    SELECT 1 WHERE 
+    SELECT 1 WHERE
       EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.applicationaccess' AND 
-            name='allowAirDrop' AND 
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.applicationaccess' AND
+            name='allowAirDrop' AND
             (value = 0 OR value = 'false')
         )
       AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.applicationaccess' AND 
-            name='allowAirDrop' AND 
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.applicationaccess' AND
+            name='allowAirDrop' AND
             (value != 0 AND value != 'false')
-        );  
+        );
   critical: false
   description: |
     AirDrop can allow malicious files to be downloaded from unknown sources.
@@ -26,4 +26,7 @@ spec:
       1. The PayloadType string is com.apple.applicationaccess
       2. The key to include is allowAirDrop
       3. The key must be set to <false/>
+    Note: AirDrop can only be enabled or disabled through configuration profiles. If your
+    organization allows AirDrop, that policy must be set through MDM; users may then use
+    the GUI to transfer files if AirDrop is permitted.
   platform: darwin

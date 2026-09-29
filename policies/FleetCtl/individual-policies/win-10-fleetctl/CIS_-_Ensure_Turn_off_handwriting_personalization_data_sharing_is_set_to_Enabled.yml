@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Turn off handwriting personalization data sharing' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\TabletPC\PreventHandwritingDataSharing' AND data = 1);
+  name: |
+    CIS - Ensure 'Turn off handwriting personalization data sharing' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\TabletPC\PreventHandwritingDataSharing' AND data = 1);
   critical: false
   description: |
     This setting turns off data sharing from the handwriting recognition personalization tool.

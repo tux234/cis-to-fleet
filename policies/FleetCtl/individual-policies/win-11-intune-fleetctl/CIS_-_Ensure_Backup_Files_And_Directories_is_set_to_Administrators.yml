@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Backup Files And Directories' is set to 'Administrators'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/BackupFilesAndDirectories</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%Administrators%';
+  critical: false
+  description: |-
+    This policy setting allows users to circumvent file and directory permissions to back up
+    the system. This user right is enabled only when an application (such as NTBACKUP)
+    attempts to access a file or directory through the NTFS file system backup application
+    programming interface (API). Otherwise, the assigned file and directory permissions
+    apply.
+    The recommended state for this setting is: *S-1-5-32-544 (Administrators).
+    Note: This user right is considered a "sensitive privilege" for the purposes of auditing.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to *S-1-5-32-544 (Administrators).
+    User Rights\Backup Files And Directories
+
+    Note: Include only one User or Group per line in the Settings Catalog configuration
+    screen.
+  platform: windows

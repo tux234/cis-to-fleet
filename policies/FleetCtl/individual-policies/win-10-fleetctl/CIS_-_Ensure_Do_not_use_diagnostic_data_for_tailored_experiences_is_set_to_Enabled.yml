@@ -1,10 +1,13 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Do not use diagnostic data for tailored experiences' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path LIKE 'HKEY_USERS\%\SOFTWARE\Microsoft\Windows\CurrentVersion\Group Policy Objects\%\Software\Policies\Microsoft\Windows\CloudContent\DisableTailoredExperiencesWithDiagnosticData' AND data = 1);
+  name: |
+    CIS - Ensure 'Do not use diagnostic data for tailored experiences' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path LIKE 'HKEY_USERS\%\SOFTWARE\Microsoft\Windows\CurrentVersion\Group Policy Objects\%\Software\Policies\Microsoft\Windows\CloudContent\DisableTailoredExperiencesWithDiagnosticData' AND data = 1);
   critical: false
-  description: This setting determines if Windows can use diagnostic data to provide tailored experiences to the user.
+  description: |
+    This setting determines if Windows can use diagnostic data to provide tailored experiences to the user.
   resolution: |
     To establish the recommended configuration via GP, set the following UI path to Enabled:
     'User Configuration\Policies\Administrative Templates\Windows Components\Cloud Content\Do not use diagnostic data for tailored experiences'

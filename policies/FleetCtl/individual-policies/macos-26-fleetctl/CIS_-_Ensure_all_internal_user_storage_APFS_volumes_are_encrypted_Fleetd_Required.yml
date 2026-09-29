@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure all internal user storage APFS volumes are encrypted (Fleetd Required)
+  query: |
+    SELECT 1 WHERE NOT EXISTS (
+      SELECT 1 FROM apfs_volumes WHERE
+        role != "VM" AND
+        role != "Update" AND
+        role != "Recovery" AND
+        role != "Preboot" AND
+        role != "xART" AND
+        role != "Hardware" AND
+        -- Apple ships sealed, read-only asset cryptex volumes (Siri models,
+        -- PKI trust store) with no role and no encryption. They are not
+        -- user storage and cannot be encrypted, so they must not count.
+        NOT (role = '' AND name LIKE '%Cryptex') AND
+        filevault != 1
+    );
+  critical: false
+  description: |
+    Apple developed the APFS (Apple File System) structure primarily for flash and solid-state
+    drives. This file structure was first made available in 10.12 and then became the default in
+    10.13. macOS computers generally have several volumes created as part of APFS formatting,
+    including Preboot, Recovery and Virtual Memory (VM), as well as traditional user disks.
+    All APFS volumes that do not have specific roles and do not require encryption should be
+    encrypted. "Role" disks include Preboot, Recovery and VM. User disks are labelled with "(No
+    specific role)" by default.
+
+    Note: The fleetd `apfs_volumes` table does not distinguish internal from external disks, so
+    this query evaluates all non-role APFS volumes. External APFS/HFS+ volumes (CIS 5.3.2) are
+    not separately covered — see the README limitations.
+    Apple's sealed, read-only asset cryptex volumes (names ending in "Cryptex") have no role and
+    cannot be encrypted, so they are excluded.
+  resolution: |
+    Manual method:
+    Use Disk Utility to erase a user disk and format as APFS (Encrypted).
+    Note: APFS Encrypted disks will be described as "FileVault" whether they are the boot volume or not in the ap list.
+  platform: darwin

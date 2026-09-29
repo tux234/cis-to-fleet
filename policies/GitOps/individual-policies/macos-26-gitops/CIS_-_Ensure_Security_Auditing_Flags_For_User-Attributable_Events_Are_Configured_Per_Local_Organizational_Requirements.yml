@@ -1,0 +1,35 @@
+- name: CIS - Ensure Security Auditing Flags For User-Attributable Events Are Configured Per Local Organizational Requirements
+  platform: darwin
+  description: |
+    Auditing is the capture and maintenance of information about security-related events. Auditable events often depend on differing organizational requirements. Maintaining an audit trail of system activity logs can help identify configuration errors, troubleshoot service disruptions, and analyze compromises or attacks that have occurred.
+
+    The Benchmark requires the following flags: `aa` (authorization/authentication), `ad` (administrative), `-ex` (failed program execution), `-fm` (failed file attribute modification), `-fr` (failed reads), `-fw` (failed writes), `lo` (login/logout). `-all` may substitute for the failed-event flags.
+  resolution: |
+    Terminal Method:
+      Edit /etc/security/audit_control and ensure the `flags:` line includes aa, ad, -ex, -fm, -fr, -fw, lo (or substitute -all for -ex, -fm, -fr, -fw).
+  query: |
+    SELECT 1 WHERE EXISTS (
+      SELECT line
+      FROM file_lines
+      WHERE path = '/etc/security/audit_control'
+        AND (
+          (
+            line LIKE 'flags:%'
+            AND line LIKE '%aa%'
+            AND line LIKE '%ad%'
+            AND line LIKE '%-ex%'
+            AND line LIKE '%-fm%'
+            AND line LIKE '%-fr%'
+            AND line LIKE '%-fw%'
+            AND line LIKE '%lo%'
+          )
+          OR
+          (
+            line LIKE 'flags:%'
+            AND line LIKE '%-all%'
+            AND line LIKE '%aa%'
+            AND line LIKE '%ad%'
+            AND line LIKE '%lo%'
+          )
+        )
+    );

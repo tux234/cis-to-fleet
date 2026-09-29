@@ -1,0 +1,10 @@
+- name: CIS - Ensure 'Allow Windows to automatically connect to suggested open hotspots, to networks shared by contacts, and to hotspots offering paid services' is set to 'Disabled'
+  platform: windows
+  description: |
+    This policy setting determines whether users can enable WLAN settings including Connect to suggested open hotspots, Connect to networks shared by my contacts, and Enable paid services. Automatically connecting to an open hotspot or network can introduce the system to a rogue network with malicious intent.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Disabled:
+    'Computer Configuration\Policies\Administrative Templates\Network\WLAN Service\WLAN Settings\Allow Windows to automatically connect to suggested open hotspots, to networks shared by contacts, and to hotspots offering paid services'
+  query: |
+    SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\WcmSvc\wifinetworkmanager\config\AutoConnectAllowedOEM' AND data = 0;

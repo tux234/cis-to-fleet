@@ -1,0 +1,18 @@
+- name: CIS - Ensure 'Object Access Audit Removable Storage' is set to 'Success and Failure'
+  platform: windows
+  description: |-
+    This policy setting allows you to audit user attempts to access file system objects on a
+    removable storage device. A security audit event is generated only for all objects for all
+    types of access requested. If you configure this policy setting, an audit event is
+    generated each time an account accesses a file system object on a removable storage.
+    Success audits record successful attempts and Failure audits record unsuccessful
+    attempts. If you do not configure this policy setting, no audit event is generated when an
+    account accesses a file system object on a removable storage.
+    The recommended state for this setting is: Success and Failure.
+    Note: A Windows 8.0, Server 2012 (non-R2) or newer OS is required to access and set
+    this value in Group Policy.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Success and Failure.
+    Auditing\Object Access Audit Removable Storage
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Audit/ObjectAccess_AuditRemovableStorage</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '3';

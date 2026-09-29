@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Include command line in process creation events' is set to 'Enabled'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/ADMX_AuditSettings/IncludeCmdLine</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%<Enabled/>%';
+  critical: false
+  description: |-
+    This policy setting controls whether the process creation command line text is logged in
+    security audit events when a new process has been created.
+    The recommended state for this setting is: Enabled.
+    Note: This feature that this setting controls was not originally supported in workstation
+    OSes older than Windows 8.1. However, in February 2015 Microsoft added support for
+    the feature to Windows 7 and Windows 8.0 via an update - KB3004375. Therefore, this
+    setting is also important to set on those older OSes.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled.
+    Administrative Templates\System\Audit Process Creation\Include command line
+    in process creation events
+  platform: windows

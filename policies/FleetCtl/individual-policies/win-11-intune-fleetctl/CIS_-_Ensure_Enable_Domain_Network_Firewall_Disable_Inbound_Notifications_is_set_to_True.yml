@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Enable Domain Network Firewall Disable Inbound Notifications' is set to 'True'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\Mdm\DomainProfile\DisableNotifications' AND data = '1';
+  critical: false
+  description: |-
+    Select this option to have Windows Firewall with Advanced Security display notifications
+    to the user when a program is blocked from receiving inbound connections.
+    The recommended state for this setting is: True.
+    Note: When the Apply local firewall rules setting is configured to No, it's
+    recommended to also configure the Display a notification setting to No.
+    Otherwise, users will continue to receive messages that ask if they want to unblock a
+    restricted inbound connection, but the user's response will be ignored.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to True:
+    Firewall\Enable Domain Network Firewall: Disable Inbound Notifications
+  platform: windows

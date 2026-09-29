@@ -1,0 +1,25 @@
+- name: CIS - Ensure 'Change System Time' is set to 'Administrators, LOCAL SERVICE'
+  platform: windows
+  description: |-
+    This policy setting determines which users and groups can change the time and date on
+    the internal clock of the computers in your environment. Users who are assigned this
+    user right can affect the appearance of event logs. When a computer's time setting is
+    changed, logged events reflect the new time, not the actual time that the events
+    occurred.
+    The recommended state for this setting is: *S-1-5-32-544 and *S-1-5-19
+    (Administrators, LOCAL SERVICE).
+    Note: Discrepancies between the time on the local computer and on the Domain
+    Controllers in your environment may cause problems for the Kerberos authentication
+    protocol, which could make it impossible for users to log on to the domain or obtain
+    authorization to access domain resources after they are logged on. Also, problems will
+    occur when Group Policy is applied to client computers if the system time is not
+    synchronized with the Domain Controllers.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to *S-1-5-32-544 and *S-1-5-19 (Administrators, LOCAL
+    SERVICE).
+    User Rights\Change System Time
+
+    Note: Include only one User or Group per line in the Settings Catalog configuration
+    screen.
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/ChangeSystemTime</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output LIKE '%Administrators%' AND mdm_command_output LIKE '%LOCAL SERVICE%');

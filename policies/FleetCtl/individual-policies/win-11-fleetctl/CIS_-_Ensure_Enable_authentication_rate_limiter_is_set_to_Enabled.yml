@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Enable authentication rate limiter' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\EnableAuthRateLimiter' AND data = 1);
+  name: |
+    CIS - Ensure 'Enable authentication rate limiter' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\EnableAuthRateLimiter' AND data = 1);
   critical: false
   description: |
     This policy settings configures the Server Message Block (SMB) server authentication rate limiter.

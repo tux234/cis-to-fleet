@@ -2,7 +2,8 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'Profile system performance' is set to 'Administrators, NT SERVICE\WdiServiceHost'
-  query: SELECT 1 FROM cis_audit where item = "2.2.35" AND (regex_match(value,".*(?=.*Administrators)(?=.*WdiServiceHost).*",0) is not null);
+  query: |
+    SELECT 1 FROM cis_audit where item = "2.2.35" AND (regex_match(value,".*(?=.*Administrators)(?=.*WdiServiceHost).*",0) is not null);
   critical: false
   description: |
     This policy setting allows users to use tools to view the performance of different system

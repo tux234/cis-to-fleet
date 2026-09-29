@@ -2,7 +2,8 @@ apiVersion: v1
 kind: policy
 spec:
   name: CIS - Ensure 'Adjust memory quotas for a process' is set to 'Administrators, LOCAL SERVICE, NETWORK SERVICE'
-  query: SELECT 1 FROM cis_audit where item = "2.2.4" AND (regex_match(value,".*(?=.*Administrators)(?=.*LOCAL SERVICE)(?=.*NETWORK SERVICE).*",0) is not null);
+  query: |
+    SELECT 1 FROM cis_audit where item = "2.2.4" AND (regex_match(value,".*(?=.*Administrators)(?=.*LOCAL SERVICE)(?=.*NETWORK SERVICE).*",0) is not null);
   critical: false
   description: |
     This policy setting allows a user to adjust the maximum amount of memory that is available to a process. The ability to adjust memory quotas is useful for system tuning, but it can be abused. In the wrong hands, it could be used to launch a denial of service (DoS) attack.

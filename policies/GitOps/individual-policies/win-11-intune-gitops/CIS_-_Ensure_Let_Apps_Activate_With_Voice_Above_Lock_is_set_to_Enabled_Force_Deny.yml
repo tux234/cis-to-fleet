@@ -1,0 +1,11 @@
+- name: 'CIS - Ensure ''Let Apps Activate With Voice Above Lock'' is set to ''Enabled: Force Deny'''
+  platform: windows
+  description: |-
+    This policy setting specifies whether Windows apps can be activated by voice (apps and
+    Cortana) while the system is locked.
+    The recommended state for this setting is: Enabled: Force Deny.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled: Force Deny:
+    Privacy\Let Apps Activate With Voice Above Lock
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Privacy/LetAppsActivateWithVoiceAboveLock</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '2';

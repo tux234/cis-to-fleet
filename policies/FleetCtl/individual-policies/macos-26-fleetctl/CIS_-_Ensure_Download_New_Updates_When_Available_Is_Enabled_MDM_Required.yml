@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Download New Updates When Available Is Enabled (MDM Required)
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.SoftwareUpdate' AND
+          name='AutomaticDownload' AND
+          (value = 1 OR value = 'true') AND
+          username = ''
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.SoftwareUpdate' AND
+          name='AutomaticDownload' AND
+          (value != 1 AND value != 'true')
+      );
+  critical: false
+  description: |
+    In the GUI, both "Install macOS updates" and "Install app updates from the App Store" are dependent on whether "Download new updates when available" is selected.
+  resolution: |
+    Graphical Method:
+      1. Open System Settings
+      2. Select General
+      3. Select Software Update
+      4. Select the i
+      5. Set Download new updates when available to enabled
+      6. Select Done
+
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.SoftwareUpdate
+      - Key: AutomaticDownload
+      - Value: <true/>
+  platform: darwin

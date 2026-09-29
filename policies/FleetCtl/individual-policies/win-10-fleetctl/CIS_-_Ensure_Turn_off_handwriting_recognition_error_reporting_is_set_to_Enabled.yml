@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Turn off handwriting recognition error reporting' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\HandwritingErrorReports\PreventHandwritingErrorReports' AND data = 1);
+  name: |
+    CIS - Ensure 'Turn off handwriting recognition error reporting' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\HandwritingErrorReports\PreventHandwritingErrorReports' AND data = 1);
   critical: false
   description: |
     Turns off the handwriting recognition error reporting tool.

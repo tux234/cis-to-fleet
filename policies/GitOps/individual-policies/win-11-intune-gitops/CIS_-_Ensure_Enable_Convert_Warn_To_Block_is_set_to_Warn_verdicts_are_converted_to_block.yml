@@ -1,0 +1,5 @@
+- name: CIS - Ensure 'Enable Convert Warn To Block' is set to 'Warn verdicts are converted to block'
+  platform: windows
+  description: 'This policy setting controls whether Microsoft Defender Antivirus network protection will display a warning, or block network traffic. The recommended state for this setting is: Warn verdicts are converted to block.'
+  resolution: To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Warn verdicts are converted to block. Defender\Enable Convert Warn To Block
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Defender/Configuration/EnableConvertWarnToBlock</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '1';

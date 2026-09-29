@@ -1,0 +1,24 @@
+- name: CIS - Ensure Firewall Is Enabled
+  platform: darwin
+  description: |
+    A firewall is a piece of software that blocks unwanted incoming connections to a system. The socketfilter Firewall is what is used when the Firewall is turned on in the Security & Privacy Preference Pane. Logging is required to appropriately monitor what access is allowed and denied.
+
+    A firewall minimizes the threat of unauthorized users gaining access to your system while connected to a network or the Internet.
+
+    Note: Prior to macOS 15.0 Sequoia, there were additional steps to turn on firewall logging after enabling the firewall. As of macOS 15, logging is turned on automatically without user interaction.
+  resolution: |
+    Graphical Method:
+      1. Open System Settings
+      2. Select Network
+      3. Select Firewall
+      4. Set Firewall to enabled
+
+    Terminal Method:
+      /usr/bin/sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
+
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.security.firewall
+      - Key: EnableFirewall, Value: <true/>
+      (must be in the same profile as EnableStealthMode — see 2.2.2)
+  query: SELECT 1 FROM alf WHERE global_state >= 1;

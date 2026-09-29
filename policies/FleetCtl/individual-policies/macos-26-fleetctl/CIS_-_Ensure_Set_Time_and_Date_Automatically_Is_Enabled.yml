@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Set Time and Date Automatically Is Enabled
+  query: |
+    SELECT 1 FROM file
+    WHERE path = '/private/etc/ntp.conf'
+      AND size > 0;
+  critical: false
+  description: |
+    Correct date and time settings are required for authentication protocols, file creation, modification dates, and log entries.
+
+    Kerberos may not operate correctly if the time on the Mac is off by more than 5 minutes. This in turn can affect Apple's single sign-on feature, Active Directory logons, and other features.
+
+    Note: The default Apple time server is time.apple.com. If your organization has internal time servers, configure them instead.
+  resolution: |
+    Graphical Method:
+      1. Open System Settings
+      2. Select General
+      3. Select Date & Time
+      4. Set Set time and date automatically to enabled
+
+    Terminal Method:
+      /usr/bin/sudo /usr/sbin/systemsetup -setnetworktimeserver time.apple.com
+      /usr/bin/sudo /usr/sbin/systemsetup -setusingnetworktime on
+  platform: darwin

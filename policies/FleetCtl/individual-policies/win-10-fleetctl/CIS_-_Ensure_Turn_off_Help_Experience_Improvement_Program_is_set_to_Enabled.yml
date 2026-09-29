@@ -1,8 +1,10 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Turn off Help Experience Improvement Program' is set to 'Enabled'
-  query: SELECT 1 FROM registry WHERE path LIKE 'HKEY_USERS\%\SOFTWARE\Policies\Microsoft\Assistance\Client\1.0\NoImplicitFeedback' AND data = 1;
+  name: |
+    CIS - Ensure 'Turn off Help Experience Improvement Program' is set to 'Enabled'
+  query: |
+    SELECT 1 FROM registry WHERE path LIKE 'HKEY_USERS\%\SOFTWARE\Policies\Microsoft\Assistance\Client\1.0\NoImplicitFeedback' AND data = 1;
   critical: false
   description: |
     This policy setting specifies whether users can participate in the Help Experience Improvement program. The Help Experience Improvement program collects information about how customers use Windows Help so that Microsoft can improve it.

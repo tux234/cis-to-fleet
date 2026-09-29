@@ -1,0 +1,11 @@
+- name: CIS - Ensure 'Enable Public Network Firewall Disable Inbound Notifications' is set to 'True'
+  platform: windows
+  description: |-
+    Select this option to have Windows Firewall with Advanced Security display notifications
+    to the user when a program is blocked from receiving inbound connections.
+    The recommended state for this setting is: True.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to 'True':
+    Firewall\Enable Public Network Firewall: Disable Inbound Notifications
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\Mdm\PublicProfile\DisableNotifications' AND data = '1';

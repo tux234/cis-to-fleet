@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Security Auditing Logs Are Retained for 30 Days
+  query: |
+    SELECT 1 WHERE EXISTS (
+      SELECT 1
+      FROM file_lines
+      WHERE path = '/etc/security/audit_control'
+        AND line LIKE 'expire-after:%'
+        AND CAST(regex_match(line, 'expire-after:\s*(\d+)d', 1) AS INTEGER) >= 30
+    );
+  critical: false
+  description: |
+    The macOS audit capability contains important information to investigate security or operational issues. This resource is only completely useful if it is retained long enough to allow technical staff to find the root cause of anomalies in the records. The recommendation is to retain audit logs for at least 30 days (expire-after:30d). If your organization has storage constraints, a size clause may be added in addition to the days retained, for example: expire-after:30d OR 5G.
+  resolution: |
+    Terminal Method:
+      Edit /etc/security/audit_control so that expire-after: is at least 30d.
+  platform: darwin

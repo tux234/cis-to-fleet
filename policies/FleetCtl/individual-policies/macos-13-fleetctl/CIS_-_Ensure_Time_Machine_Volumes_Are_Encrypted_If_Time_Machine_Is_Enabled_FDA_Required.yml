@@ -14,7 +14,7 @@ spec:
     The time to check for backups is before the hard drive fails or the computer goes missing.
     In order to simplify the user experience so that backups are more likely to occur,
     Time Machine should be on and set to Back Up Automatically whenever the target volume is available.
-    
+
     FDA (Full Disk Access) is required to read the /Library/Preferences/com.apple.TimeMachine.plist
     file that contains the Time Machine configuration and backup destinations.
   resolution: |

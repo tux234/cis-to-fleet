@@ -1,0 +1,31 @@
+- name: CIS - Ensure Prevent Cross-site Tracking in Safari Is Enabled (MDM Required)
+  platform: darwin
+  description: |
+    There is a vast network of groups that collect, use, and sell user data. Tracking cookies allow information brokers to track web users across visited sites. For better privacy and to provide some resistance to data brokers, prevent cross-tracking.
+
+    Three keys must all be set together for the profile to be effective: `BlockStoragePolicy=2`, `WebKitPreferences.storageBlockingPolicy=1`, and `WebKitStorageBlockingPolicy=1`.
+  resolution: |
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.Safari
+      - Key: BlockStoragePolicy, Value: <integer>2</integer>
+      - Key: WebKitPreferences.storageBlockingPolicy, Value: <integer>1</integer>
+      - Key: WebKitStorageBlockingPolicy, Value: <integer>1</integer>
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.Safari' AND name = 'BlockStoragePolicy' AND CAST(value AS INTEGER) = 2
+      )
+      AND EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.Safari' AND name = 'WebKitPreferences.storageBlockingPolicy' AND CAST(value AS INTEGER) = 1
+      )
+      AND EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.Safari' AND name = 'WebKitStorageBlockingPolicy' AND CAST(value AS INTEGER) = 1
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.Safari' AND name = 'BlockStoragePolicy' AND CAST(value AS INTEGER) != 2
+      );

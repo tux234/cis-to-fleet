@@ -1,0 +1,5 @@
+- name: CIS - Ensure 'Disable Enterprise Auth Proxy' is set to 'Enable'
+  platform: windows
+  description: 'This policy setting controls whether the Connected User Experience and Telemetry service can automatically use an authenticated proxy to send data back to Microsoft. The recommended state for this setting is: Enable.'
+  resolution: To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Enable. System\Disable Enterprise Auth Proxy
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet\DisableEnterpriseAuthProxy' AND data = '1';

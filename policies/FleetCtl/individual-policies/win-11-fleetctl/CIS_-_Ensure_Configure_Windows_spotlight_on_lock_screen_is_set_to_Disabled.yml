@@ -1,10 +1,13 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure Windows spotlight on lock screen' is set to Disabled'
-  query: SELECT 1 FROM registry WHERE (path LIKE 'HKEY_USERS\%\SOFTWARE\Microsoft\Windows\CurrentVersion\Group Policy Objects\%\Software\Policies\Microsoft\Windows\CloudContent\ConfigureWindowsSpotlight' AND data = 2);
+  name: |
+    CIS - Ensure 'Configure Windows spotlight on lock screen' is set to Disabled'
+  query: |
+    SELECT 1 FROM registry WHERE (path LIKE 'HKEY_USERS\%\SOFTWARE\Microsoft\Windows\CurrentVersion\Group Policy Objects\%\Software\Policies\Microsoft\Windows\CloudContent\ConfigureWindowsSpotlight' AND data = 2);
   critical: false
-  description: This policy setting lets you configure Windows Spotlight on the lock screen.
+  description: |
+    This policy setting lets you configure Windows Spotlight on the lock screen.
   resolution: |
     To establish the recommended configuration via GP, set the following UI path to Disabled:
     'User Configuration\Policies\Administrative Templates\Windows Components\Cloud Content\Configure Windows spotlight on lock screen'

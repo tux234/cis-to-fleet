@@ -1,0 +1,12 @@
+- name: 'CIS - Ensure ''ASR: Block process creations originating from PSExec and WMI commands'' is set to ''Audit'' or higher'
+  platform: windows
+  description: |-
+    This rule blocks processes created through PsExec and WMI from running. Both
+    PsExec and WMI can remotely execute code.
+    The recommended state for this setting is: Audit. Configuring this setting to Block also
+    conforms to the benchmark.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Audit or Block.
+    Defender\Block process creations originating from PSExec and WMI commands
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Defender/AttackSurfaceReductionRules</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output LIKE '%D1E49AAC-8F56-4280-B9BA-993A6D77406C=1%' OR mdm_command_output LIKE '%D1E49AAC-8F56-4280-B9BA-993A6D77406C=2%');

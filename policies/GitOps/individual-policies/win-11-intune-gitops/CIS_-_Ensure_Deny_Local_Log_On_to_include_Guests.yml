@@ -1,0 +1,19 @@
+- name: CIS - Ensure 'Deny Local Log On' to include 'Guests'
+  platform: windows
+  description: |-
+    This security setting determines which users are prevented from logging on at the
+    computer. This policy setting supersedes the Allow log on locally policy setting if an
+    account is subject to both policies.
+    The recommended state for this setting is to include: *S-1-5-32-546 (Guests).
+    Important: If you apply this security policy to the Everyone group, no one will be able to
+    log on locally.
+    Warning: The help text in Intune associated with this recommendation is for the setting,
+    Deny log on as a service and not this setting.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to *S-1-5-32-546 (Guests).
+    User Rights\Deny Local Log On
+
+    Note: Include only one User or Group per line in the Settings Catalog configuration
+    screen.
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/DenyLocalLogOn</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%Guests%';
