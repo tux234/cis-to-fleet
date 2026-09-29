@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configures LSASS to run as a protected process' is set to 'Enabled: Enabled with UEFI Lock' 
+  name: "CIS - Ensure 'Configures LSASS to run as a protected process' is set to 'Enabled: Enabled with UEFI Lock' "
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa\RunAsPPL' and data = 1);
   critical: false
   description: |

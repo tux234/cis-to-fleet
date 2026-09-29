@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Allow search highlights' is set to '0'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Windows Search\EnableDynamicContentInWSB' AND data = '0';
+  critical: false
+  description: "This policy setting controls search highlights in the start menu search box and in search home. The recommended state for this setting is: 0. Note: As of February 2024 this setting does not deploy correctly on Windows 10 via Intune and only applies to Windows 11."
+  resolution: "To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to 0: Search\\Allow search highlights"
+  platform: windows

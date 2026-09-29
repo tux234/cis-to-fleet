@@ -1,0 +1,17 @@
+- name: CIS - Ensure 'MSI Always install with elevated privileges (User)' is set to 'Disabled'
+  platform: windows
+  description: |-
+    This setting controls whether or not Windows Installer should use system permissions
+    when it installs any program on the system.
+    Note: This setting appears both in the Computer Configuration and User Configuration
+    folders. To make this setting effective, you must enable the setting in both folders.
+    Caution: If enabled, skilled users can take advantage of the permissions this setting
+    grants to change their privileges and gain permanent access to restricted files and
+    folders. Note that the User Configuration version of this setting is not guaranteed to be
+    secure.
+    The recommended state for this setting is: Disabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Disabled:
+    Microsoft App Store\MSI Always install with elevated privileges (User)
+  query: SELECT 1 WHERE NOT EXISTS (SELECT 1 FROM registry WHERE path LIKE 'HKEY_USERS\S-1-%\SOFTWARE\Policies\Microsoft\Windows\Installer\AlwaysInstallElevated' AND data = '1');

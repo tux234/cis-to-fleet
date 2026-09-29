@@ -1,0 +1,12 @@
+- name: CIS - Ensure 'Enable App Installer Hash Override' is set to 'Disabled'
+  platform: windows
+  description: |-
+    This policy setting controls whether or not users can override the SHA256 security
+    validation in the Windows Package Manager settings.
+    The recommended state for this setting is: Disabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Disabled:
+    Administrative Templates\Windows Components\Desktop App Installer\Enable App
+    Installer Hash Override
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppInstaller\EnableHashOverride' AND data = '0';

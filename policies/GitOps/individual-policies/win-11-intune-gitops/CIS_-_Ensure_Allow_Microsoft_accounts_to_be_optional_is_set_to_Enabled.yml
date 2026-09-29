@@ -1,0 +1,13 @@
+- name: CIS - Ensure 'Allow Microsoft accounts to be optional' is set to 'Enabled'
+  platform: windows
+  description: |-
+    This policy setting lets you control whether Microsoft accounts are optional for Windows
+    Store apps that require an account to sign in. This policy only affects Windows Store
+    apps that support it.
+    The recommended state for this setting is: Enabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled.
+    Administrative Templates\Windows Components\App runtime\Allow Microsoft
+    accounts to be optional
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/AppRuntime/AllowMicrosoftAccountsToBeOptional</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%enabled%';

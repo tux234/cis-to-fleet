@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'IIS Admin Service (IISADMIN)' is set to 'Disabled' or 'Not Installed'
+  query: SELECT 1 WHERE NOT EXISTS (SELECT 1 FROM services WHERE name = 'IISADMIN') OR EXISTS (SELECT 1 FROM services WHERE name = 'IISADMIN' AND start_type = 'DISABLED');
+  critical: false
+  description: |
+    Enables the server to administer the IIS metabase. The IIS metabase stores
+    configuration for the SMTP and FTP services.
+    The recommended state for this setting is: Disabled or Not Installed.
+    Note: This service is not installed by default. It is supplied with Windows, but is installed
+    by enabling an optional Windows feature (Internet Information Services).
+    Note #2: An organization may choose to selectively grant exceptions to web developers
+    to allow IIS (or another web server) on their workstation, in order for them to locally test
+    & develop web pages. However, the organization should track those machines and
+    ensure the security controls and mitigations are kept up to date, to reduce risk of
+    compromise.
+  resolution: |
+    To establish the recommended configuration, set the following Custom Configuration
+    Policy to 4 or confirm that the service is Not installed:
+    Name:
+    <Enter name>
+    Description: <Enter Description>
+    OMA-URI:
+    ./Device/Vendor/MSFT/Policy/Config/SystemServices/ConfigureIISAdminServiceSta
+    rtupMode
+    Data Type:
+    Integer
+    Value:
+    4
+    
+    Note: As of January 2024, despite its inclusion in Microsoft’s official documentation,
+    using an OMI-URI to configure a Windows Service Startup Mode via a custom profile
+    will lead to an error in Intune. This error will be logged in the local event log as “The
+    system cannot find the file specified.” Currently, the most reliable method for
+    remediation is through PowerShell.
+    The recommended configuration can also be established via PowerShell by running the
+    following cmdlet:
+    Set-Service -Name IISADMIN -StartupType Disabled
+  platform: windows

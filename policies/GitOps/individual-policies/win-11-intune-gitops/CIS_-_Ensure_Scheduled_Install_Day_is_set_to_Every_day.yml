@@ -1,0 +1,14 @@
+- name: CIS - Ensure 'Scheduled Install Day' is set to 'Every day'
+  platform: windows
+  description: |-
+    This policy setting specifies when computers in your environment will receive security
+    updates from Windows Update or WSUS.
+    The recommended state for this setting is: Every day.
+    Note: This setting is only applicable if the option of 3 or 4 is selected in the
+    recommendation 'Allow Auto Update'. It will have no impact if any other option is
+    selected.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Every day.
+    Windows Update For Business\Scheduled Install Day
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Update/ScheduledInstallDay</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '0';

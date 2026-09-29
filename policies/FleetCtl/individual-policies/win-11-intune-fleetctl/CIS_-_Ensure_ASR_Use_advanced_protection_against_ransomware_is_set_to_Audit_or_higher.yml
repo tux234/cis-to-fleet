@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'ASR: Use advanced protection against ransomware' is set to 'Audit' or higher"
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Defender/AttackSurfaceReductionRules</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output LIKE '%C1DB55AB-C21A-4637-BB3F-A12568109D35=1%' OR mdm_command_output LIKE '%C1DB55AB-C21A-4637-BB3F-A12568109D35=2%');
+  critical: false
+  description: |
+    This rule provides an extra layer of protection against ransomware. It uses both client
+    and cloud heuristics to determine whether a file resembles ransomware. This rule
+    doesn't block files that have one or more of the following characteristics:
+    The file has already been found to be unharmful in the Microsoft cloud. The file is a valid
+    signed file. The file is prevalent enough to not be considered as ransomware. The rule
+    tends to err on the side of caution to prevent ransomware.
+    The recommended state for this setting is: Audit. Configuring this setting to Block also
+    conforms to the benchmark.
+    Note: Cloud-delivered protection must be enabled to use this rule.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Audit or Block.
+    Defender\Use advanced protection against ransomware
+  platform: windows

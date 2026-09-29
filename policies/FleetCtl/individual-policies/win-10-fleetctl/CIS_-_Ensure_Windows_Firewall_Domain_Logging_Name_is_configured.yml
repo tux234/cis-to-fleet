@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'Windows Firewall: Domain: Logging: Name' is configured"
+  query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging\LogFilePath' and data != '');
+  critical: false
+  description: |
+    Use this option to specify the path and name of the file in which Windows Firewall will write its log information.
+    The recommended state for this setting is: configured with a valid log file path.
+  resolution: |
+    To establish the recommended configuration via GP, set the following UI path to a valid log file path:
+    'Computer Configuration\Policies\Windows Settings\Security Settings\Windows Defender Firewall with Advanced Security\Windows Defender Firewall with Advanced Security - Local Group Policy Object\Windows Defender Firewall Properties\Domain Profile\Logging Customize\Name'
+  platform: windows

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Require Device Encryption' is set to 'Enabled'
+  query: SELECT 1 FROM bitlocker_info WHERE protection_status = 1;
+  critical: false
+  description: "This setting allows the Admin to require encryption to be turned on using BitLocker\\Device Encryption. Disabling the policy won't turn off the encryption on the system drive. But will stop prompting the user to turn it on. The recommended state for this setting is: Enabled. Note: Setting this policy to Enabled triggers encryption of all drives (silently or non- silently based on AllowWarningForOtherDiskEncryption policy)."
+  resolution: "To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Enabled: Bitlocker\\Require Device Encryption"
+  platform: windows

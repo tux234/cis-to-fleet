@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Disable Internet Explorer 11 as a standalone browser' is set to 'Enabled: Always'
+  name: "CIS - Ensure 'Disable Internet Explorer 11 as a standalone browser' is set to 'Enabled: Always'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Internet Explorer\\Main\\NotifyDisableIEOptions' AND (data = 1));
   critical: false
   description: This policy setting restricts the launching of Internet Explorer as a standalone browser.

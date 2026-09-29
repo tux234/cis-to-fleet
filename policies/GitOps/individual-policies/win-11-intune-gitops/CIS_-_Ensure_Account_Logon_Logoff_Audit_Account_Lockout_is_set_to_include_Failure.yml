@@ -1,0 +1,15 @@
+- name: CIS - Ensure 'Account Logon Logoff Audit Account Lockout' is set to include 'Failure'
+  platform: windows
+  description: |-
+    This subcategory reports when a user's account is locked out as a result of too many
+    failed logon attempts. Events for this subcategory include:
+    •
+
+    4625: An account failed to log on.
+
+    The recommended state for this setting is to include: Failure.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Failure.
+    Auditing\Account Logon Logoff Audit Account Lockout
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Audit/AccountLogonLogoff_AuditAccountLockout</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output = '2' OR mdm_command_output = '3');

@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'Network access: Restrict anonymous access to Named Pipes and Shares' is set to 'Enabled'"
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/LocalPoliciesSecurityOptions/NetworkAccess_RestrictAnonymousAccessToNamedPipesAndShares</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '1';
+  critical: false
+  description: |
+    When enabled, this policy setting restricts anonymous access to only those shares and
+    pipes that are named in the Network access: Named pipes that can be accessed
+    anonymously and Network access: Shares that can be accessed anonymously
+    settings. This policy setting controls null session access to shares on your computers by
+    adding RestrictNullSessAccess with the value 1 in the
+    HKLM\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters
+    registry key. This registry value toggles null session shares on or off to control whether
+    the server service restricts unauthenticated clients' access to named resources.
+    The recommended state for this setting is: Enabled.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled:
+    Local Policies Security Options\Network access: Restrict anonymous access to
+    Named Pipes and Shares
+  platform: windows

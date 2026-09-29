@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Configure 'Accounts: Rename administrator account'"
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/LocalPoliciesSecurityOptions/Accounts_RenameAdministratorAccount</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output NOT LIKE '%Administrator%';
+  critical: false
+  description: The built-in local administrator account is a well-known account name that attackers will target. It is recommended to choose another name for this account, and to avoid names that denote administrative or elevated access accounts. Be sure to also change the default description for the local administrator (through the Computer Management console).
+  resolution: "To establish the recommended configuration via configuration profiles, set the following Settings Catalog path: Local Policies Security Options\\Accounts: Rename administrator account"
+  platform: windows

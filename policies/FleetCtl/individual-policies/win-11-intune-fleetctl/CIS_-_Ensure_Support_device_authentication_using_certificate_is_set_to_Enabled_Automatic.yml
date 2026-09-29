@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'Support device authentication using certificate' is set to 'Enabled: Automatic'"
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/ADMX_Kerberos/DevicePKInitEnabled</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%<enabled%';
+  critical: false
+  description: "This policy setting allows you to set support for Kerberos to attempt authentication using the certificate for the device to the domain. Support for device authentication using certificate will require connectivity to a DC in the device account domain which supports certificate authentication for computer accounts. The recommended state for this setting is: Enabled: Automatic."
+  resolution: "To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Enabled: Automatic. Administrative Templates\\System\\Kerberos\\Support device authentication using certificate"
+  platform: windows

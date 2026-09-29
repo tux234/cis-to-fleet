@@ -8,18 +8,26 @@ spec:
         path = '/var/db/com.apple.xpc.launchd/disabled.plist' AND
         key = 'com.openssh.sshd' AND
         value = '0'
+    )
+    AND NOT EXISTS (
+      SELECT 1 FROM processes WHERE path = '/usr/sbin/sshd'
     );
   critical: false
   description: |
-    Remote Login allows an interactive terminal session to a computer.
-    The SSH server built into macOS should not be enabled on a standard user computer,
-    particularly one that changes locations and IP addresses.
-    A standard user that runs local applications, including email, web browser,
-    and productivity tools, should not use the same device as a server
+    Remote Login allows an interactive terminal connection to a computer.
+    Disabling Remote Login mitigates the risk of an unauthorized person gaining access
+    to the system via Secure Shell (SSH). The SSH server built into macOS should not be
+    enabled on a standard user computer, particularly one that changes locations and IP
+    addresses. A standard user that runs local applications, including email, web
+    browser, and productivity tools, should not use the same device as a server.
   resolution: |
     Graphical Method:
     1. Open System Settings
     2. Select General
     3. Select Sharing
     4. Set Remote Login to disabled
+    Terminal Method:
+    Run the following command to disable Remote Login:
+      /usr/bin/sudo /usr/sbin/systemsetup -setremotelogin off
+    Note: This command disables Remote Login and stops the SSH service immediately.
   platform: darwin

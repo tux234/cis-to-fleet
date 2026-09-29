@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Network Security Minimum Session Security For NTLMSSP Based Servers' is set to 'Require NTLM and 128bit encryption'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/LocalPoliciesSecurityOptions/NetworkSecurity_MinimumSessionSecurityForNTLMSSPBasedServers</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '537395200';
+  critical: false
+  description: |
+    This policy setting determines which behaviors are allowed by servers for applications
+    using the NTLM Security Support Provider (SSP). The SSP Interface (SSPI) is used by
+    applications that need authentication services. The setting does not modify how the
+    authentication sequence works but instead require certain behaviors in applications that
+    use the SSPI.
+    The recommended state for this setting is: Require NTLM and 128-bit encryption.
+    Note: These values are dependent on the Network security: LAN Manager
+    Authentication Level security setting value.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Require NTLM and 128-bit encryption:
+    Local Policies Security Options\Network security: Minimum session security
+    for NTLM SSP based (including secure RPC) servers
+  platform: windows

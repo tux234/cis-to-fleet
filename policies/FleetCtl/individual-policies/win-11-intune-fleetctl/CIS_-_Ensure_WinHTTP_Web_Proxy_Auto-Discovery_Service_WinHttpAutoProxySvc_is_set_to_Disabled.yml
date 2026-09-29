@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'WinHTTP Web Proxy Auto-Discovery Service (WinHttpAutoProxySvc)' is set to 'Disabled'
+  query: SELECT 1 FROM services WHERE name = 'WinHttpAutoProxySvc' AND UPPER(start_type) IN ('DISABLED', 'DEMAND_START');
+  critical: false
+  description: "WinHTTP implements the client HTTP stack and provides developers with a Win32 API and COM Automation component for sending HTTP requests and receiving responses. In addition, WinHTTP provides support for auto-discovering a proxy configuration via its implementation of the Web Proxy Auto-Discovery (WPAD) protocol. The recommended state for this setting is: Disabled. Note: Although CIS categorizes this as a L2 recommendation, if none of the cases listed in the Impact Section apply, we highly recommend disabling this service."
+  resolution: "Remediation of this service is currently not possible through Settings Catalog or a custom profile OMA-URI. Instead, it can be scripted and deployed through the Intune Scripts or Remediations blade or by other means. To establish the recommended configuration via PowerShell, run the following cmdlet: Set-Service -Name WinHttpAutoProxySvc -StartupType Disabled"
+  platform: windows

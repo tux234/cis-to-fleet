@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Software Update Deferment Is Less Than or Equal to 30 Days (MDM Required)
+  query: |
+    SELECT 1 WHERE NOT EXISTS (
+      SELECT 1 FROM managed_policies WHERE
+        domain='com.apple.applicationaccess' AND
+        name='enforcedSoftwareUpdateDelay' AND
+        CAST(value AS INTEGER) > 30
+    );
+  critical: false
+  description: |
+    Apple provides the capability to manage software updates on Apple devices through mobile device management. Part of those capabilities permit organizations to defer software updates and allow for testing. Many organizations have specialized software and configurations that may be negatively impacted by Apple updates. If software updates are deferred, they should not be deferred for more than 30 days. This control only verifies that deferred software updates are not deferred for more than 30 days.
+    
+    Note: Software deferment is deprecated by Apple and will be removed in a future OS release/update.
+  resolution: |
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.applicationaccess
+      - Key: enforcedSoftwareUpdateDelay, Value: <integer> 1-30
+      - Key: forceDelayedSoftwareUpdates, Value: <true/>
+    
+    If your organization does not use a software deferment configuration profile, the audit passes by default (no deferment is in effect).
+  platform: darwin

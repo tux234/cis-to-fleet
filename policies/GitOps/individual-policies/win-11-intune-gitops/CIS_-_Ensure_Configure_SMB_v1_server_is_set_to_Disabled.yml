@@ -1,0 +1,11 @@
+- name: CIS - Ensure 'Configure SMB v1 server' is set to 'Disabled'
+  platform: windows
+  description: |-
+    This setting configures the server-side processing of the Server Message Block version
+    1 (SMBv1) protocol.
+    The recommended state for this setting is: Disabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Disabled.
+    Administrative Templates\MS Security Guide\Configure SMB v1 server
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters\SMB1' AND data = '0';

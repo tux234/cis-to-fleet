@@ -1,0 +1,15 @@
+- name: CIS - Ensure 'Configure local setting override for reporting to Microsoft MAPS' is set to 'Disabled'
+  platform: windows
+  description: |-
+    This policy setting configures a local override for the configuration to join Microsoft
+    Active Protection Service (MAPS), which Microsoft renamed to Windows Defender
+    Antivirus Cloud Protection Service and then Microsoft Defender Antivirus Cloud
+    Protection Service.
+    The recommended state for this setting is: Disabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Disabled.
+    Administrative Templates\Windows Components\Microsoft Defender
+    Antivirus\MAPS\Configure local setting override for reporting to Microsoft
+    MAPS
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet\LocalSettingOverrideSpynetReporting' AND data = '0';

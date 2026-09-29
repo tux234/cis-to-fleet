@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure the Sudo Timeout Period Is Set to Zero (Fleetd Required)
+  query: |
+    SELECT 1 WHERE
+      EXISTS (SELECT 1 FROM file WHERE path = '/etc/sudoers.d' AND uid = 0 AND gid = 0)
+      AND EXISTS (
+        SELECT COALESCE(JSON_EXTRACT(json_result, '$.Authentication timestamp timeout'), '') AS tstamp
+        FROM sudo_info
+        WHERE tstamp = '0.0 minutes'
+      );
+  critical: false
+  description: The sudo command stays logged in as the root user for five minutes before timing out and re-requesting a password. This five-minute grace window should be eliminated since it leaves the system extremely vulnerable — an exploit gaining access would be able to make changes as a root user without a password prompt.
+  resolution: |
+    Terminal Method:
+      Edit (or create) /etc/sudoers.d/<config-file-no-dot> via `visudo -f` and add:
+        Defaults timestamp_timeout=0
+      Ensure /etc/sudoers.d is owned by root:wheel.
+  platform: darwin

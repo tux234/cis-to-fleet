@@ -1,0 +1,5 @@
+- name: CIS - Ensure 'Allow Message Sync' is set to 'message sync is not allowed and cannot be changed by the user.'
+  platform: windows
+  description: 'This policy setting allows backup and restore of cellular text messages to Microsoft''s cloud services. The recommended state for this setting is: message sync is not allowed and cannot be changed by the user..'
+  resolution: 'To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to message sync is not allowed and cannot be changed by the user.: Messaging\Allow Message Sync'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Messaging/AllowMessageSync</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '0';

@@ -1,0 +1,18 @@
+- name: CIS - Ensure 'Increase Scheduling Priority' is set to 'Administrators, Window Manager\Window Manager Group'
+  platform: windows
+  description: |-
+    This policy setting determines whether users can increase the base priority class of a
+    process. (It is not a privileged operation to increase relative priority within a priority
+    class.) This user right is not required by administrative tools that are supplied with the
+    operating system but might be required by software development tools.
+    The recommended state for this setting is: *S-1-5-32-544 and *S-1-5-90-0
+    (Administrators, Window Manager\Window Manager Group).
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to *S-1-5-32-544 and *S-1-5-90-0 (Administrators, Window
+    Manager\Window Manager Group).
+    User Rights\Increase scheduling priority
+
+    Note: Include only one User or Group per line in the Settings Catalog configuration
+    screen.
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/IncreaseSchedulingPriority</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%Administrators%';

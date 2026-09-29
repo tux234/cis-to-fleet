@@ -1,0 +1,13 @@
+- name: 'CIS - Ensure ''Network security: Allow Local System to use computer identity for NTLM'' is set to ''Allow'''
+  platform: windows
+  description: |-
+    This policy setting determines whether Local System services that use Negotiate when
+    reverting to NTLM authentication can use the computer identity. This policy is supported
+    on at least Windows 7 or Windows Server 2008 R2.
+    The recommended state for this setting is: Allow.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Allow:
+    Local Policies Security Options\Network security: Allow Local System to use
+    computer identity for NTLM
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/LocalPoliciesSecurityOptions/NetworkSecurity_AllowLocalSystemToUseComputerIdentityForNTLM</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '1';

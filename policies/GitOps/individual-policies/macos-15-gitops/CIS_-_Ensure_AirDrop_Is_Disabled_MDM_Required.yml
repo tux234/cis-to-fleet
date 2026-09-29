@@ -9,4 +9,20 @@
       1. The PayloadType string is com.apple.applicationaccess
       2. The key to include is allowAirDrop
       3. The key must be set to <false/>
-  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.applicationaccess' AND \n        name='allowAirDrop' AND \n        (value = 0 OR value = 'false')\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.applicationaccess' AND \n        name='allowAirDrop' AND \n        (value != 0 AND value != 'false')\n    );  \n"
+    Note: AirDrop can only be enabled or disabled through configuration profiles. If your
+    organization allows AirDrop, that policy must be set through MDM; users may then use
+    the GUI to transfer files if AirDrop is permitted.
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.applicationaccess' AND
+            name='allowAirDrop' AND
+            (value = 0 OR value = 'false')
+        )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.applicationaccess' AND
+            name='allowAirDrop' AND
+            (value != 0 AND value != 'false')
+        );

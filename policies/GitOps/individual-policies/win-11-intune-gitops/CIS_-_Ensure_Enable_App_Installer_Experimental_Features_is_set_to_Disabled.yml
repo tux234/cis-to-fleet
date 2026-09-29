@@ -1,0 +1,12 @@
+- name: CIS - Ensure 'Enable App Installer Experimental Features' is set to 'Disabled'
+  platform: windows
+  description: |-
+    This policy setting controls whether users can enable experimental features in the
+    Windows Package Manager.
+    The recommended state for this setting is Disabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Disabled:
+    Administrative Templates\Windows Components\Desktop App Installer\Enable App
+    Installer Experimental Features
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\AppInstaller\EnableExperimentalFeatures' AND data = '0';

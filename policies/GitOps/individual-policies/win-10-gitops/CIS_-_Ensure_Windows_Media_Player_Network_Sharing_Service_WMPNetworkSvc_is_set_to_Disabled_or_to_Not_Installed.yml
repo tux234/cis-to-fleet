@@ -6,4 +6,8 @@
     Automatic method:
     Ask your system administrator to establish the recommended configuration via domain GP, set the following UI path to 'Disabled' or to 'Not Installed':
     'Computer Configuration\Policies\Windows Settings\Security Settings\System Services\Windows Media Player Network Sharing Service'
-  query: "SELECT CASE \n    WHEN NOT EXISTS (SELECT * FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Services\\\\WMPNetworkSvc\\\\Start') THEN 1 \n    WHEN (SELECT data FROM registry WHERE key = 'HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Services\\\\WMPNetworkSvc\\\\Start') == '4' THEN 1 \n    ELSE 0 \nEND AS result;\n"
+  query: |
+    SELECT 1 WHERE
+        NOT EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\WMPNetworkSvc\\Start' )
+        OR
+        EXISTS ( SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\WMPNetworkSvc\\Start' AND data == 4 );

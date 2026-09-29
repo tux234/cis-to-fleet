@@ -1,0 +1,11 @@
+- name: CIS - Ensure 'Enumerate local users on domain-joined computers' is set to 'Disabled'
+  platform: windows
+  description: |-
+    This policy setting allows local users to be enumerated on domain-joined computers.
+    The recommended state for this setting is: Disabled.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Disabled.
+    Administrative Templates\System\Logon\Enumerate local users on domain-joined
+    computers
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System\EnumerateLocalUsers' AND data = '0';

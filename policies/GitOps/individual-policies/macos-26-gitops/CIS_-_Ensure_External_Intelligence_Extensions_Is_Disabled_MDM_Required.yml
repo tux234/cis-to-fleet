@@ -1,0 +1,38 @@
+- name: CIS - Ensure External Intelligence Extensions Is Disabled (MDM Required)
+  platform: darwin
+  description: |
+    The External Intelligence Extensions allows Apple Intelligence to interface with 3rd party generative AI tools. Apple's external intelligence extension represents a calculated risk. They are extending their on-device privacy and security model to the cloud with PCC (Private Cloud Compute), and then carefully integrating with a third-party AI like ChatGPT, emphasizing user consent, data minimization, and strong contractual obligations. However, the inherent nature of sending data to an external service means a degree of trust is placed on that third party's security posture and adherence to agreements. Sending data to an external service is additional risk that must be reviewed and accepted in an organizational security plan.
+  resolution: |
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.applicationaccess
+      - Key: allowExternalIntelligenceIntegrations, Value: <false/>
+      - Key: allowExternalIntelligenceIntegrationsSignIn, Value: <false/>
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.applicationaccess' AND
+          name='allowExternalIntelligenceIntegrations' AND
+          (value = 0 OR value = 'false') AND
+          username = ''
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.applicationaccess' AND
+          name='allowExternalIntelligenceIntegrations' AND
+          (value != 0 AND value != 'false')
+      )
+      AND EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.applicationaccess' AND
+          name='allowExternalIntelligenceIntegrationsSignIn' AND
+          (value = 0 OR value = 'false') AND
+          username = ''
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain='com.apple.applicationaccess' AND
+          name='allowExternalIntelligenceIntegrationsSignIn' AND
+          (value != 0 AND value != 'false')
+      );

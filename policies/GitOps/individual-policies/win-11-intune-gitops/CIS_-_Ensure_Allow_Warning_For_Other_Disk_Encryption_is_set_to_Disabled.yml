@@ -1,0 +1,5 @@
+- name: CIS - Ensure 'Allow Warning For Other Disk Encryption' is set to 'Disabled'
+  platform: windows
+  description: 'This setting allows Admin to disable all UI (notification for encryption and warning prompt for other disk encryption) and turn on encryption on the user machines silently. When you disable the warning prompt, the OS drive''s recovery key will back up to the user''s Microsoft Entra account. When you allow the warning prompt, the user who receives the prompt can select where to back up the OS drive''s recovery key. The recommended state for this setting is: Disabled. Note: Starting in Windows 10, version 1803, the value 0 can only be set for Microsoft Entra joined devices. Windows will attempt to silently enable BitLocker for value 0.'
+  resolution: 'To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Disabled: Bitlocker\Allow Warning For Other Disk Encryption'
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PolicyManager\current\device\BitLocker\AllowWarningForOtherDiskEncryption' AND data = '0';

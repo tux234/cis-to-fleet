@@ -1,0 +1,15 @@
+- name: 'CIS - Ensure ''Enable Public Network Firewall: Allow Local Policy Merge'' is set to ''False'''
+  platform: windows
+  description: |-
+    This setting controls whether local administrators are allowed to create local firewall
+    rules that apply together with firewall rules configured by Group Policy.
+    The recommended state for this setting is: False.
+    Note: When the Allow Local Policy Merge setting is configured to False, it's
+    recommended to also configure the Disable Inbound Notifications setting to True.
+    Otherwise, users will continue to receive messages that ask if they want to unblock a
+    restricted inbound connection, but the user's response will be ignored.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to False:
+    Firewall\Enable Public Network Firewall: Allow Local Policy Merge
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Firewall/MdmStore/PublicProfile/AllowLocalPolicyMerge</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = 'false';

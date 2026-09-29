@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Prevent users and apps from accessing dangerous websites' is set to 'Enabled: Block'
+  name: "CIS - Ensure 'Prevent users and apps from accessing dangerous websites' is set to 'Enabled: Block'"
   query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Windows Defender Exploit Guard\\Network Protection\\EnableNetworkProtection' AND data = 1;
   critical: false
   description: This policy setting controls Microsoft Defender Exploit Guard network protection.

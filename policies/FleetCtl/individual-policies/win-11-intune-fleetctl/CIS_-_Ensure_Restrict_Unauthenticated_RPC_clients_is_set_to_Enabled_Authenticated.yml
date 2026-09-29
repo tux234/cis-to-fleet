@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'Restrict Unauthenticated RPC clients' is set to 'Enabled: Authenticated'"
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/RemoteProcedureCall/RestrictUnauthenticatedRPCClients</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%RpcRestrictRemoteClientsList" value="1"%';
+  critical: false
+  description: |
+    This policy setting controls how the RPC server runtime handles unauthenticated RPC
+    clients connecting to RPC servers.
+    This policy setting impacts all RPC applications. In a domain environment this policy
+    setting should be used with caution as it can impact a wide range of functionality
+    including group policy processing itself. Reverting a change to this policy setting can
+    require manual intervention on each affected machine. This policy setting should
+    never be applied to a Domain Controller.
+    A client will be considered an authenticated client if it uses a named pipe to
+    communicate with the server or if it uses RPC Security. RPC Interfaces that have
+    specifically requested to be accessible by unauthenticated clients may be exempt from
+    this restriction, depending on the selected value for this policy setting.
+    -- "None" allows all RPC clients to connect to RPC Servers running on the machine on
+    which the policy setting is applied.
+    -- "Authenticated" allows only authenticated RPC Clients (per the definition above) to
+    connect to RPC Servers running on the machine on which the policy setting is applied.
+    Exemptions are granted to interfaces that have requested them.
+    -- "Authenticated without exceptions" allows only authenticated RPC Clients (per the
+    definition above) to connect to RPC Servers running on the machine on which the policy
+    setting is applied. No exceptions are allowed. This value has the potential to cause
+    serious problems and is not recommended.
+    Note: This policy setting will not be applied until the system is rebooted.
+    The recommended state for this setting is: Enabled: Authenticated.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled: Authenticated.
+    Administrative Templates\System\Remote Procedure Call\Restrict
+    Unauthenticated RPC clients
+  platform: windows

@@ -1,0 +1,15 @@
+- name: CIS - Ensure 'Limit Dump Collection' is set to 'Enabled'
+  platform: windows
+  description: |-
+    This policy setting limits the type of memory dumps that can be collected when more
+    information is needed to troubleshoot a problem.
+    The recommended state for this setting is: Enabled.
+    Note: Memory dumps are only sent when the device has been configured to send
+    optional diagnostic data. Diagnostic data is limited when recommendation Allow
+    Diagnostic Data is set to Enabled: Diagnostic data off (not recommended) or
+    Enabled: Send required diagnostic data to send only basic information.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled.
+    System\Limit Dump Collection
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/System/LimitDumpCollection</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '1';

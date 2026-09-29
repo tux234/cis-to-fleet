@@ -1,0 +1,18 @@
+- name: CIS - Ensure Remote Login Is Disabled
+  platform: darwin
+  description: |
+    Remote Login allows an interactive terminal connection to a computer. Disabling Remote Login mitigates the risk of an unauthorized person gaining access to the system via Secure Shell (SSH). While SSH is an industry standard to connect to POSIX servers, the scope of the benchmark is for Apple macOS clients, not servers.
+  resolution: |
+    Graphical Method:
+      1. Open System Settings
+      2. Select General
+      3. Select Sharing
+      4. Set Remote Login to disabled
+
+    Terminal Method:
+      /usr/bin/sudo /usr/sbin/systemsetup -setremotelogin off
+      (confirm with "yes" when prompted)
+  query: |
+    SELECT 1 WHERE NOT EXISTS (
+      SELECT 1 FROM listening_ports WHERE port = 22 AND protocol = 6
+    );

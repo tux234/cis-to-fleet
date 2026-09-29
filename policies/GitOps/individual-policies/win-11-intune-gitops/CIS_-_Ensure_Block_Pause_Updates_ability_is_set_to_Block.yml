@@ -1,0 +1,9 @@
+- name: CIS - Ensure 'Block "Pause Updates" ability' is set to 'Block'
+  platform: windows
+  description: |-
+    This policy removes access to "Pause updates" feature.
+    The recommended state for this setting is: Block.
+  resolution: |-
+    To establish the recommended configuration via GP, set the following UI path to Block:
+    Windows Update For Business\Block "Pause Updates" ability
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PolicyManager\current\device\Update\SetDisablePauseUXAccess' AND data = '1';

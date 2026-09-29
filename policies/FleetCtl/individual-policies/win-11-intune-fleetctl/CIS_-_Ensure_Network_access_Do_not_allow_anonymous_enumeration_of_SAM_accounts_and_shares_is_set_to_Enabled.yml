@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'Network access: Do not allow anonymous enumeration of SAM accounts and shares' is set to 'Enabled'"
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/LocalPoliciesSecurityOptions/NetworkAccess_DoNotAllowAnonymousEnumerationOfSamAccountsAndShares</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '1';
+  critical: false
+  description: |
+    This policy setting controls the ability of anonymous users to enumerate SAM accounts
+    as well as shares. If you enable this policy setting, anonymous users will not be able to
+    enumerate domain account user names and network share names on the systems in
+    your environment.
+    The recommended state for this setting is: Enabled.
+    Note: This policy has no effect on Domain Controllers.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled:
+    Local Policies Security Options\Network access: Do not allow anonymous
+    enumeration of SAM accounts and shares
+  platform: windows

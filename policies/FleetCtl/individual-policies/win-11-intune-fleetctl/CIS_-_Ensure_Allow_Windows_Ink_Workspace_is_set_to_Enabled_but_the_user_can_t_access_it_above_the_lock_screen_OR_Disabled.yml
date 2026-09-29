@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'Allow Windows Ink Workspace' is set to 'Enabled: but the user can't access it above the lock screen' OR 'Disabled'"
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PolicyManager\current\device\WindowsInkWorkspace\AllowWindowsInkWorkspace' AND data = '1';
+  critical: false
+  description: |
+    This policy setting determines whether Windows Ink items are allowed above the lock
+    screen.
+    The recommended state for this setting is: Ink workspace is enabled (feature is
+    turned on), but the user can't access it above the lock screen OR
+    Access to ink workspace is disabled. The feature is turned off.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Ink workspace is enabled (feature is turned on),
+    but the user can't access it above the lock screen OR Access to ink
+    workspace is disabled. The feature is turned off.
+    Windows Ink Workspace\Allow Windows Ink Workspace
+  platform: windows

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Configure detection for potentially unwanted applications' is set to 'Enabled: Block'
+  name: "CIS - Ensure 'Configure detection for potentially unwanted applications' is set to 'Enabled: Block'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\PUAProtection' AND data = 1);
   critical: false
   description: This policy setting controls detection and action for Potentially Unwanted Applications (PUA), which are sneaky unwanted application bundlers or their bundled applications, that can deliver adware or malware.

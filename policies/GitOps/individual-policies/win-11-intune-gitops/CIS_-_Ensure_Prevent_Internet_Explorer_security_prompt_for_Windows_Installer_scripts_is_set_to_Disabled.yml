@@ -1,0 +1,5 @@
+- name: CIS - Ensure 'Prevent Internet Explorer security prompt for Windows Installer scripts' is set to 'Disabled'
+  platform: windows
+  description: 'This policy setting controls whether Web-based programs are allowed to install software on the computer without notifying the user. The recommended state for this setting is: Disabled.'
+  resolution: To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Disabled. Administrative Templates\Windows Components\Windows Installer\Prevent Internet Explorer security prompt for Windows Installer scripts
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/ADMX_MSI/SafeForScripting</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%<disabled%';

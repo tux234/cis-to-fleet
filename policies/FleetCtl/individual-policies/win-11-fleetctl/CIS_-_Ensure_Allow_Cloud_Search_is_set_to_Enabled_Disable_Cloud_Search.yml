@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Allow Cloud Search' is set to 'Enabled: Disable Cloud Search'
+  name: "CIS - Ensure 'Allow Cloud Search' is set to 'Enabled: Disable Cloud Search'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Windows Search\\AllowCloudSearch' AND data = 0);
   critical: false
   description: This policy setting allows search and Cortana to search cloud sources like OneDrive and SharePoint.

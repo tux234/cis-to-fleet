@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Select when Quality Updates are received' is set to 'Enabled: 0 days'
+  name: "CIS - Ensure 'Select when Quality Updates are received' is set to 'Enabled: 0 days'"
   query: |
     SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\DeferQualityUpdates' AND data = 1)
     AND EXISTS (

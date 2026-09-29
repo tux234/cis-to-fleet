@@ -10,4 +10,4 @@
     Note: This Group Policy path may not exist by default. It is provided by the Group Policy
     template 'LanmanServer.admx/adml' that is included with the Microsoft Windows 11 Release 24H2 Administrative Templates (or newer).
   query: |
-    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\InvalidAuthenticationDelayTimeInMs' AND data >= 2000);
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\LanmanServer\InvalidAuthenticationDelayTimeInMs' AND CAST(data AS INTEGER) >= 2000);

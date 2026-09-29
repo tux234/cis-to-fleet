@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Hardened UNC Paths' is set to 'Enabled, with "Require Mutual Authentication", "Require Integrity", and “Require Privacy” set for all NETLOGON and SYSVOL shares'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Connectivity/HardenedUNCPaths</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%<enabled%' AND mdm_command_output LIKE '%RequireMutualAuthentication=1%' AND mdm_command_output LIKE '%RequireIntegrity=1%' AND mdm_command_output LIKE '%RequirePrivacy=1%';
+  critical: false
+  description: |
+    This policy setting configures secure access to UNC paths.
+    The recommended state for this setting is: Enabled, with "Require Mutual
+    Authentication", "Require Integrity", and “Require Privacy” set for
+    all NETLOGON and SYSVOL shares.
+    Note: If the environment is 100% managed by Intune these shares will not be available.
+    An exception to this recommendation will be needed.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled with the following paths configured, at a minimum:
+    \\*\NETLOGON RequireMutualAuthentication=1, RequireIntegrity=1,
+    RequirePrivacy=1
+    \\*\SYSVOL RequireMutualAuthentication=1, RequireIntegrity=1,
+    RequirePrivacy=1
+    Administrative Templates\Network\Network Provider\Hardened UNC Paths
+  platform: windows

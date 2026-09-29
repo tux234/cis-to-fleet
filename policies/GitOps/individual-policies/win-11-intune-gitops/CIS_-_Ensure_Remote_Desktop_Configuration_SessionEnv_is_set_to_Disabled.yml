@@ -1,0 +1,5 @@
+- name: CIS - Ensure 'Remote Desktop Configuration (SessionEnv)' is set to 'Disabled'
+  platform: windows
+  description: 'Remote Desktop Configuration service (RDCS) is responsible for all Remote Desktop related configuration and session maintenance activities that require SYSTEM context. These include per-session temporary folders, RD themes, and RD certificates. The recommended state for this setting is: Disabled.'
+  resolution: 'Remediation of this service is currently not possible through Settings Catalog or a custom profile OMA-URI. Instead, it can be scripted and deployed through the Intune Scripts or Remediations blade or by other means. To establish the recommended configuration via PowerShell, run the following cmdlet: Set-Service -Name SessionEnv -StartupType Disabled'
+  query: SELECT 1 WHERE COALESCE((SELECT UPPER(start_type) FROM services WHERE name = 'SessionEnv'), 'DISABLED') = 'DISABLED';

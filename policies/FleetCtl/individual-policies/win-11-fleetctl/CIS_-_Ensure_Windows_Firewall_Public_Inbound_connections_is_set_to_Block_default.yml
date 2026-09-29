@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Public: Inbound connections' is set to 'Block (default)'
+  name: "CIS - Ensure 'Windows Firewall: Public: Inbound connections' is set to 'Block (default)'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\PublicProfile\DefaultInboundAction' and data == 1);
   critical: false
   description: |

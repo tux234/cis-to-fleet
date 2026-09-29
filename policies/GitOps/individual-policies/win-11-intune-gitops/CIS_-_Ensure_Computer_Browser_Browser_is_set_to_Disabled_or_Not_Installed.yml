@@ -1,0 +1,45 @@
+- name: CIS - Ensure 'Computer Browser (Browser)' is set to 'Disabled' or 'Not Installed'
+  platform: windows
+  description: |-
+    Maintains an updated list of computers on the network and supplies this list to
+    computers designated as browsers.
+    The recommended state for this setting is: Disabled or Not Installed.
+    Note: In Windows 8.1 and Windows 10, this service is bundled with the SMB 1.0/CIFS
+    File Sharing Support optional feature. As a result, removing that feature (highly
+    recommended unless backward compatibility is needed to XP/2003 and older Windows
+    OSes - see Stop using SMB1 | Storage at Microsoft) will also remediate this
+    recommendation. The feature is not installed by default starting with Windows 10
+    R1709.
+  resolution: |-
+    To establish the recommended configuration, set the following Custom Configuration
+    Policy to 4 or confirm that the service is Not installed:
+    Name:
+    <Enter name>
+    Description: <Enter Description>
+    OMA-URI:
+    ./Device/Vendor/MSFT/Policy/Config/SystemServices/ConfigureComputerBrowserSer
+    viceStartupMode
+    Data Type:
+    Integer
+    Value:
+    4
+
+    Note: As of January 2024, despite its inclusion in Microsoft’s official documentation,
+    using an OMI-URI to configure a Windows Service Startup Mode via a custom profile
+    will lead to an error in Intune. This error will be logged in the local event log as “The
+    system cannot find the file specified.” Currently, the most reliable method for
+    remediation is through PowerShell.
+    The recommended configuration can also be established via PowerShell, by running the
+    following cmdlet:
+    if(Test-Path -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\Browser")
+    {
+    Set-ItemProperty -LiteralPath
+    'HKLM:\SYSTEM\CurrentControlSet\Services\Browser' -Name 'Start' -Value 4 Verbose
+    }
+
+    Note: This service is not installed in Windows 10 R1709 and newer. Running the cmdlet
+    Set-Service or Get-Service aganist 'Browser' will cause a inadvertent match
+    against a similarly named service called bowser which also has the DisplayName of
+    Browser which will then throw an error. bowser is actually the NT Lan Manager
+    Datagram Receiver Driver. Using the literal registry path above avoids that error.
+  query: SELECT 1 WHERE COALESCE((SELECT UPPER(start_type) FROM services WHERE name = 'Browser'), 'DISABLED') = 'DISABLED';

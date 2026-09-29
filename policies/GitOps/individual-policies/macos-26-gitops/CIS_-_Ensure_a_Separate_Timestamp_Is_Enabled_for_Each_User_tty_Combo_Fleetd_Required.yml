@@ -1,0 +1,14 @@
+- name: CIS - Ensure a Separate Timestamp Is Enabled for Each User/tty Combo (Fleetd Required)
+  platform: darwin
+  description: |
+    Using tty tickets ensures that a user must enter the sudo password in each Terminal session. This reduces the possibility of a background process using elevated rights when a user elevates to root in an explicit context or tty.
+  resolution: |
+    Terminal Method:
+      Edit (or create) /etc/sudoers.d/<config-file-no-dot> via `visudo -f` and add:
+        Defaults timestamp_type=tty
+  query: |
+    SELECT 1 WHERE EXISTS (
+      SELECT COALESCE(JSON_EXTRACT(json_result, '$.Type of authentication timestamp record'), '') AS ttype
+      FROM sudo_info
+      WHERE ttype = 'tty'
+    );

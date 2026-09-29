@@ -1,0 +1,11 @@
+- name: |
+    CIS - Ensure 'Configure RPC listener settings: Authentication protocol to use for incoming RPC connections' is set to 'Enabled: Negotiate' or higher
+  platform: windows
+  description: |
+    This policy setting controls which protocols incoming Remote Procedure Call (RPC) connections to the print spooler are allowed to use. Configuring this setting to Enabled: Kerberos also conforms to the benchmark.
+  resolution: |
+    Automatic method:
+    Ask your system administrator to establish the recommended configuration via GP, set the following UI path to Enabled: Negotiate or Enabled: Kerberos:
+    'Computer Configuration\Policies\Administrative Templates\Printers\Configure RPC listener settings: Configure protocol options for incoming RPC connections'
+  query: |
+    SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC\ForceKerberosForRpc' AND (data = 0 OR data = 1);

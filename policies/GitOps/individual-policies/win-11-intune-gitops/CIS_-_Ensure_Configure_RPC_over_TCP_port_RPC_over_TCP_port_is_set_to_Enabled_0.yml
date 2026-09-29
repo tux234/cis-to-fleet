@@ -1,0 +1,13 @@
+- name: 'CIS - Ensure ''Configure RPC over TCP port: RPC over TCP port:'' is set to ''Enabled: 0'''
+  platform: windows
+  description: |-
+    This policy setting controls which port is used for RPC over TCP for incoming
+    connections to the print spooler and outgoing connections to remote print spoolers.
+    The recommended state for this setting is: Enabled: 0.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to
+    Enabled: 0:
+    Administrative Templates\Printers\Configure RPC over TCP port: RPC over TCP
+    port
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows NT\\Printers\\RPC\\RpcTcpPort' AND data = '0';

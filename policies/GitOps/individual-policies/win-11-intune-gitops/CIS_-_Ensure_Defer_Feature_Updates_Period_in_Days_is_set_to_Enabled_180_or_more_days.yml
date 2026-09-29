@@ -1,0 +1,40 @@
+- name: 'CIS - Ensure ''Defer Feature Updates Period in Days'' is set to ''Enabled: 180 or more days'''
+  platform: windows
+  description: |-
+    This policy setting determines when Preview Build or Feature Updates are received.
+    Defer Updates This enables devices to defer taking the next Feature Update available
+    to your channel for up to 14 days for all the pre-release channels and up to 365 days for
+    the Semi-Annual Channel. Or, if the device is updating from the Semi-Annual Channel,
+    a version for the device to move to and/or stay on until the policy is updated or the
+    device reaches end of service can be specified. Note: If you set both policies, the
+    version specified will take precedence and the deferrals will not be in effect. Please see
+    the Windows Release Information page for OS version information.
+    Pause Updates To prevent Feature Updates from being received on their scheduled
+    time, you can temporarily pause Feature Updates. The pause will remain in effect for 35
+    days from the specified start date or until the field is cleared (Quality Updates will still be
+    offered).
+    Note: If the "Allow Diagnostic Data" (formerly "Allow Telemetry") policy is set to 0, this
+    policy will have no effect.
+    Note #2: Starting with Windows 10 R1607, Microsoft introduced a new Windows
+    Update (WU) client behavior called Dual Scan, with an eye to cloud-based update
+    management. In some cases, this Dual Scan feature can interfere with Windows
+    Updates from Windows Server Update Services (WSUS) and/or manual WU updates. If
+    you are using WSUS in your environment, you may need to set the above setting to Not
+    Configured or configure the setting Do not allow update deferral policies to cause
+    scans against Windows Update (added in the Windows 10 Release 1709 Administrative
+    Templates) in order to prevent the Dual Scan feature from interfering. More information
+    on Dual Scan is available at these links:
+    •
+    •
+
+    Demystifying “Dual Scan” – WSUS Product Team Blog
+    Improving Dual Scan on 1607 – WSUS Product Team Blog
+
+    Note #3: Prior to Windows 10 R1703, values above 180 days are not recognized by the
+    OS. Starting with Windows 10 R1703, the maximum number of days you can defer is
+    365 days.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled: 180 or more days.
+    Windows Update for Business\Defer Feature Updates Period in Days
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Update/DeferFeatureUpdatesPeriodInDays</LocURI></Target></Item></Get></SyncBody>' AND CAST(mdm_command_output AS INTEGER) >= 180;

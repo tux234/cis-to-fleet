@@ -1,0 +1,25 @@
+- name: CIS - Ensure On-Device Dictation Is Enabled (MDM Required)
+  platform: darwin
+  description: |
+    In macOS 14.0 Sonoma, Apple released the ability to limit dictation to staying on-device and not sending data to the Siri servers. The use of dictation is likely to include editing documents with confidential information. Sending dictation data to the Siri servers could allow data spillage to occur — it is much safer to ensure information of various levels of confidentiality is retained locally.
+  resolution: |
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.applicationaccess
+      - Key: forceOnDeviceOnlyDictation
+      - Value: <true/>
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.applicationaccess' AND
+          name = 'forceOnDeviceOnlyDictation' AND
+          (value = 1 OR value = 'true') AND
+          username = ''
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.applicationaccess' AND
+          name = 'forceOnDeviceOnlyDictation' AND
+          (value != 1 AND value != 'true')
+      );

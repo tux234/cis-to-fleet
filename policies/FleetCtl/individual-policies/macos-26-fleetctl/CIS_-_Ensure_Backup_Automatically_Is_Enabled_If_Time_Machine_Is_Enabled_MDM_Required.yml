@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure Backup Automatically Is Enabled If Time Machine Is Enabled (MDM Required)
+  query: |
+    SELECT 1 WHERE NOT EXISTS (
+      SELECT 1 FROM plist
+      WHERE path = '/Library/Preferences/com.apple.TimeMachine.plist'
+        AND key = 'AutoBackup'
+        AND value = '0'
+    );
+  critical: false
+  description: |
+    Backup solutions are only effective if the backups run on a regular basis. In order to simplify the user experience so that backups are more likely to occur, Time Machine should be on and set to Back Up Automatically whenever the target volume is available.
+    
+    Operational staff should ensure that backups complete on a regular basis and the backups are tested to ensure that file restoration from backup is possible when needed.
+    
+    Note: This recommendation needs to be set on devices where Time Machine is enabled. If Time Machine is disabled, the audit is passed by default.
+    
+    Note: In previous versions of the benchmark, the plist could be set in Terminal. In macOS 15 Sequoia that plist is now protected and cannot be written to, so the command-line remediation has been removed. Both the profile method and graphical method still configure Time Machine to the required state.
+  resolution: |
+    Graphical Method:
+      1. Open System Settings
+      2. Select General
+      3. Select Time Machine
+      4. Select Options...
+      5. Set Back up frequency to Automatically <every hour/every day/every week>
+    
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.MCX.TimeMachine
+      - Key: AutoBackup, Value: <true/>
+  platform: darwin

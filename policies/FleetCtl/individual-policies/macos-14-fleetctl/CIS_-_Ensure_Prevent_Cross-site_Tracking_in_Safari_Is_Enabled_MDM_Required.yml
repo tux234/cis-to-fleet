@@ -3,46 +3,44 @@ kind: policy
 spec:
   name: CIS - Ensure Prevent Cross-site Tracking in Safari Is Enabled (MDM Required)
   query: |
-    SELECT 1 WHERE 
+    -- Safari profiles deliver at user scope; drop the username='' filter.
+    SELECT 1 WHERE
       EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='BlockStoragePolicy' AND 
-            value = '2' AND 
-            username = ''
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='BlockStoragePolicy' AND
+            value = '2'
         )
       AND EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='WebKitPreferences.storageBlockingPolicy' AND 
-            value = '1' AND 
-            username = ''
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='WebKitPreferences.storageBlockingPolicy' AND
+            value = '1'
         )
       AND EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='WebKitStorageBlockingPolicy' AND 
-            value = '1' AND 
-            username = ''
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='WebKitStorageBlockingPolicy' AND
+            value = '1'
         )
       AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='BlockStoragePolicy' AND 
-            value != '2' 
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='BlockStoragePolicy' AND
+            value != '2'
         )
       AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='WebKitPreferences.storageBlockingPolicy' AND 
-            value != '1' 
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='WebKitPreferences.storageBlockingPolicy' AND
+            value != '1'
         )
       AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='WebKitStorageBlockingPolicy' AND 
-            value != '1' 
-        );  
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='WebKitStorageBlockingPolicy' AND
+            value != '1'
+        );
   critical: false
   description: |
     Cross-tracking allows data-brokers to follow you across the Internet to enable their business model of

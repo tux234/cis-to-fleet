@@ -1,0 +1,14 @@
+- name: CIS - Ensure Setup 'Specify the maximum log file size (KB) is set to Enabled and 32,768 or greater'
+  platform: windows
+  description: |2-
+     This policy setting specifies the maximum size of the log file in kilobytes. The maximum
+    log file size can be configured between 1 megabyte (1,024 kilobytes) and 4 terabytes
+    (4,194,240 kilobytes) in kilobyte increments.
+    The recommended state for this setting is: Enabled: 32,768 or greater.
+  resolution: |-
+
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Enabled: 32,768 or greater.
+    Administrative Templates\Windows Components\Event Log
+    Service\Setup\Specify the maximum log file size (KB).
+  query: SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EventLog\Setup\MaxSize' AND CAST(data AS INTEGER) >= 32768;

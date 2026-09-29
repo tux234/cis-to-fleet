@@ -1,4 +1,4 @@
-- name: CIS - Ensure All Apple-provided Software Is Current (Fleetd Required)
+- name: CIS - Ensure Apple-provided Software Updates Are Installed (Fleetd Required)
   platform: darwin
   description: |
     Software vendors release security patches and software updates for their products when security vulnerabilities are discovered. There is no simple way to complete this action without a network connection to an Apple software repository. Please ensure appropriate access for this control. This check is only for what Apple provides through software update.
@@ -6,10 +6,15 @@
   resolution: |
     Graphical Method:
     Perform the following to install all available software updates:
-      1. Open System Settings 
+      1. Open System Settings
       2. Select General
       3. Select Software Update
       4. Select Update All
+    Terminal Method:
+    Run the following commands to install all available updates:
+      /usr/bin/sudo /usr/sbin/softwareupdate -l (to list packages)
+      /usr/bin/sudo /usr/sbin/softwareupdate -i -a (to install all)
+      If an update includes Action: restart, attach the -R flag to force a system restart.
   query: SELECT 1 FROM software_update WHERE software_update_required = '0';
 - name: CIS - Ensure Auto Update Is Enabled (MDM Required)
   platform: darwin
@@ -111,7 +116,12 @@
     Ensure that system and security updates are installed after they are available from
     Apple. This setting enables definition updates for XProtect and Gatekeeper. With this
     setting in place, new malware and adware that Apple has added to the list of malware or
-    untrusted software will not execute.
+    untrusted software will not execute. These updates do not require reboots or end user
+    admin rights. Apple has introduced a security feature that allows for smaller downloads
+    and the installation of security updates when a reboot is not required. This feature is
+    only available when the last regular update has already been applied. This feature
+    emphasizes that a Mac must be up-to-date on patches so that Apple's security tools can
+    be used to quickly patch when a rapid response is necessary.
   resolution: Ask your system administrator to deploy an MDM profile that enables automatic critical system and security updates.
   query: |
     SELECT 1 WHERE 
@@ -127,31 +137,6 @@
             domain='com.apple.SoftwareUpdate' AND 
             name='CriticalUpdateInstall' AND 
             (value != 1 AND value != 'true')
-        );  
-- name: CIS - Ensure Software Update Deferment Is Less Than or Equal to 30 Days (MDM Required)
-  platform: darwin
-  description: |
-    Apple provides the capability to manage software updates on Apple devices through
-    mobile device management. Part of those capabilities permit organizations to defer
-    software updates and allow for testing. Many organizations have specialized software
-    and configurations that may be negatively impacted by Apple updates. If software
-    updates are deferred, they should not be deferred for more than 30 days.
-    This control only verifies that deferred software updates are not deferred for more than 30 days.
-  resolution: Ask your system administrator to deploy an MDM profile configures update deferment to a value of 30 days or less.
-  query: |
-    SELECT 1 WHERE 
-      EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.applicationaccess' AND 
-            name='enforcedSoftwareUpdateDelay' AND 
-            value <= 30 AND 
-            username = ''
-        )
-      AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.applicationaccess' AND 
-            name='enforcedSoftwareUpdateDelay' AND 
-            value > 30
         );  
 - name: CIS - Ensure iCloud Drive storage solution is disabled (MDM Required)
   platform: darwin
@@ -313,17 +298,23 @@
       4. Select Options...
       5. Set Enabled stealth mode to enabled
   query: SELECT 1 FROM alf WHERE global_state >= 1 AND stealth_enabled = 1;
-- name: CIS - Ensure AirDrop Is Disabled (MDM Required)
+- name: CIS - Ensure AirDrop Is Disabled When Not Actively Transferring Files (MDM Required)
   platform: darwin
   description: |
-    AirDrop can allow malicious files to be downloaded from unknown sources.
-    Contacts Only limits may expose personal information to devices in the same area.
+    AirDrop is Apple's built-in, on-demand, ad hoc file exchange system that is compatible
+    with both macOS and iOS. It uses Bluetooth LE for discovery that limits connectivity to
+    Mac or iOS users that are in close proximity. Depending on the setting, it allows
+    everyone or only Contacts to share files when they are near each other. While there are
+    positives to AirDrop, there are privacy concerns that could expose personal information.
+    AirDrop should be disabled, and should only be enabled when needed and disabled
+    afterwards.
   resolution: |
     Ask your system administrator to deploy an MDM profile that disables AirDrop.
     Create or edit a configuration profile with the following information:
       1. The PayloadType string is com.apple.applicationaccess
       2. The key to include is allowAirDrop
       3. The key must be set to <false/>
+    Note: AirDrop can only be enabled or disabled through configuration profiles.
   query: |
     SELECT 1 WHERE 
       EXISTS (
@@ -396,30 +387,11 @@
         );  
 - name: CIS - Ensure the Time Service Is Enabled
   platform: darwin
-  description: In macOS 10.14, Apple replace ntp with timed for time services, and is used to ensure correct time is kept. Correct date and time settings are required for authentication protocols, file creation, modification dates and log entries. 
+  description: "In macOS 10.14, Apple replace ntp with timed for time services, and is used to ensure correct time is kept. Correct date and time settings are required for authentication protocols, file creation, modification dates and log entries. "
   resolution: |
     Ask your system administrator to deploy a script that will configure:
     /usr/bin/sudo /bin/launchctl load -w /System/Library/LaunchDaemons/com.apple.timed.plist
   query: SELECT 1 WHERE  EXISTS(SELECT * FROM processes WHERE path = '/usr/libexec/timed');
-- name: CIS - Ensure DVD or CD Sharing Is Disabled
-  platform: darwin
-  description: |
-    DVD or CD Sharing allows users to remotely access the system's optical drive.
-    Disabling DVD or CD Sharing minimizes the risk of an attacker using the optical drive as
-    a vector for attack and exposure of sensitive data.
-  resolution: |
-    Graphical Method:
-    1. Open System Settings
-    2. Select General
-    3. Select Sharing
-    4. Set CD/DVD Sharing to disabled
-  query: |
-    SELECT 1 WHERE NOT EXISTS (
-      SELECT * FROM plist WHERE
-        path = '/var/db/com.apple.xpc.launchd/disabled.plist' AND
-        key = 'com.apple.ODSAgent' AND
-        value = '0'
-    );
 - name: CIS - Ensure Screen Sharing Is Disabled
   platform: darwin
   description: |
@@ -484,23 +456,26 @@
 - name: CIS - Ensure Remote Login Is Disabled
   platform: darwin
   description: |
-    Remote Login allows an interactive terminal session to a computer.
+    Remote Login allows an interactive terminal connection to a computer.
     The SSH server built into macOS should not be enabled on a standard user computer,
     particularly one that changes locations and IP addresses.
     A standard user that runs local applications, including email, web browser,
-    and productivity tools, should not use the same device as a server
+    and productivity tools, should not use the same device as a server.
   resolution: |
-    Graphical Method:
-    1. Open System Settings
-    2. Select General
-    3. Select Sharing
-    4. Set Remote Login to disabled
+    Terminal Method:
+    /usr/bin/sudo /usr/sbin/systemsetup -setremotelogin off
+    Enter "yes" to confirm.
+    Note: This command will disable the service as well as stop it from running.
   query: |
     SELECT 1 WHERE NOT EXISTS (
       SELECT * FROM plist WHERE
         path = '/var/db/com.apple.xpc.launchd/disabled.plist' AND
         key = 'com.openssh.sshd' AND
         value = '0'
+    )
+    AND NOT EXISTS (
+      SELECT * FROM launchd WHERE
+        name = 'com.openssh.sshd'
     );
 - name: CIS - Ensure Remote Management is Disabled
   platform: darwin
@@ -721,63 +696,6 @@
     UNION
     SELECT 'time machines destinations with encryption with automatic backup' as output
     FROM (SELECT COUNT(*) as c FROM time_machine_destinations WHERE encryption <> 'Encrypted') t2 WHERE t2.c = 0;
-- name: CIS - Ensure Show Wi-Fi status in Menu Bar Is Enabled (MDM Required)
-  platform: darwin
-  description: |
-    The Wi-Fi status in the menu bar indicates if the system's wireless internet capabilities are enabled.
-    If so, the system will scan for available wireless networks in order to connect.
-    Enabling "Show Wi-Fi status in menu bar" is a security awareness method that helps mitigate public area
-    wireless exploits by making the user aware of their wireless connectivity status.
-  resolution: |
-    Automated method:
-    Ask your system administrator to deploy an MDM profile that enables the Wi-Fi status in the menu bar.
-    Create or edit a configuration profile with the following information:
-    1. The `PayloadType` string is `com.apple.controlcenter`.
-    2. The key to include is `WiFi`.
-    3. The key must be set to `<integer>18</integer>`.
-  query: |
-    SELECT 1 WHERE 
-      EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.controlcenter' AND 
-            name='WiFi' AND 
-            value = 18 AND 
-            username = ''
-        )
-      AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.controlcenter' AND 
-            name='WiFi' AND 
-            value != 18
-        );  
-- name: CIS - Ensure Show Bluetooth Status in Menu Bar Is Enabled (MDM Required)
-  platform: darwin
-  description: |
-    Enabling "Show Bluetooth status in menu bar" is a security awareness method that
-    helps understand the current state of Bluetooth, including whether it is enabled,
-    discoverable, what paired devices exist, and what paired devices are currently active.
-  resolution: |
-    Automated method:
-    Ask your system administrator to deploy an MDM profile that enables the Bluetooth status in the menu bar.
-    Create or edit a configuration profile with the following information:
-    1. The `PayloadType` string is `com.apple.controlcenter`.
-    2. The key to include is `Bluetooth`.
-    3. The key must be set to `<integer>18</integer>`.
-  query: |
-    SELECT 1 WHERE 
-      EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.controlcenter' AND 
-            name='Bluetooth' AND 
-            value = 18 AND 
-            username = ''
-        )
-      AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.controlcenter' AND 
-            name='Bluetooth' AND 
-            value != 18
-        );  
 - name: CIS - Ensure Siri is disabled (MDM required)
   platform: darwin
   description: |
@@ -1119,34 +1037,40 @@
         3. Select Advanced
         4. Set Require an administrator password to access system-wide settings to enabled
   query: SELECT 1 FROM authdb WHERE right_name = 'system.preferences' AND json_extract(json_result, '$.shared') == 0;
-- name: CIS - Ensure Screen Saver Corners Are Secure (FDA Required)
+- name: CIS - Ensure Screen Saver Hot Corners Are Secure For Current User (FDA Required)
   platform: darwin
   description: |
-    Setting a hot corner to disable the screen saver poses a potential security risk since an
-    unauthorized person could use this to bypass the login screen and gain access to the system.
+    Hot Corners can be configured to disable the screen saver by moving the mouse cursor to a corner of the screen. This can only be accomplished by the current user, so that is the only user that needs to be audited. Setting a hot corner to disable the screen saver poses a potential security risk since an unauthorized person could use this to bypass the login screen and gain access to the system.
     
-    FDA (Full Disk Access) is required to read the configuration of all the users in the device
-    ('/Users/*/Library/Preferences/com.apple.dock.plist')
+    FDA (Full Disk Access) is required to read the current console user's Dock configuration
+    ('/Users/<current user>/Library/Preferences/com.apple.dock.plist').
   resolution: |
-    Ask your system administrator to deploy a script that will configure
-    `wvous-tl-corner`, `wvous-bl-corner`, `wvous-tr-corner`, and `wvous-br-corner` in
-    domain `com.apple.dock` to a value that is not 6 (for all users of the device).
+    Terminal Method:
+      For the current user, ensure none of `wvous-tl-corner`, `wvous-tr-corner`,
+      `wvous-bl-corner`, or `wvous-br-corner` in domain `com.apple.dock` is set to 6
+      (Disable Screen Saver):
+        /usr/bin/sudo -u <current user> /usr/bin/defaults delete /Users/<current user>/Library/Preferences/com.apple.dock wvous-bl-corner
+        (repeat for wvous-tl-corner, wvous-tr-corner, and wvous-br-corner)
     
     Graphical Method:
       Perform the following steps to ensure that a Hot Corner is not set to Disable Screen Saver:
         1. Open System Settings
         2. Select Desktop & Dock
-        3. Select`Hot Corners...`
+        3. Select `Hot Corners...`
         4. Verify that `Disable Screen Saver` is not set to any of the corners.
   query: |
-    SELECT 1 WHERE NOT EXISTS(
+    SELECT 1 WHERE NOT EXISTS (
       SELECT 1 FROM plist
-      WHERE path LIKE '/Users/%/Library/Preferences/com.apple.dock.plist' AND (
-        key = 'wvous-br-corner' OR
-        key = 'wvous-bl-corner' OR
-        key = 'wvous-tr-corner' OR
-        key = 'wvous-tl-corner'
-    ) AND value = 6);
+      WHERE path = (
+          SELECT '/Users/' || user || '/Library/Preferences/com.apple.dock.plist'
+          FROM logged_in_users
+          WHERE type = 'user' AND tty = 'console'
+          ORDER BY time DESC
+          LIMIT 1
+        )
+        AND key IN ('wvous-tl-corner', 'wvous-tr-corner', 'wvous-bl-corner', 'wvous-br-corner')
+        AND value = 6
+    );
 - name: CIS - Ensure Universal Control is enabled (Based on organization's policy) (MDM Required)
   platform: darwin
   description: |
@@ -1472,32 +1396,32 @@
             name='Disable' AND 
             value != 2
         );  
-- name: CIS - Ensure an Inactivity Interval of 20 Minutes Or Less for the Screen Saver Is Enabled (MDM Required)
+- name: CIS - Ensure an Inactivity Interval of 15 Minutes Or Less for the Screen Saver Is Enabled (MDM Required)
   platform: darwin
-  description: A locking screen saver is one of the standard security controls to limit access to a computer and the current user's session when the computer is temporarily unused or unattended. In macOS, the screen saver starts after a value is selected in the drop- down menu. 20 minutes or less is an acceptable value. Any value can be selected through the command line or script, but a number that is not reflected in the GUI can be problematic. 20 minutes is the default for new accounts.
+  description: A locking screen saver is one of the standard security controls to limit access to a computer and the current user's session when the computer is temporarily unused or unattended. In macOS, the screen saver starts after a value is selected in the drop- down menu. 15 minutes or less is an acceptable value. Any value can be selected through the command line or script, but a number that is not reflected in the GUI can be problematic. 15 minutes is the default for new accounts.
   resolution: |
     Automated method:
-    Ask your system administrator to deploy an MDM profile that ensure an Inactivity Interval of 20 Minutes Or Less for the Screen Saver to be Enabled.
+    Ask your system administrator to deploy an MDM profile that ensure an Inactivity Interval of 15 Minutes Or Less for the Screen Saver to be Enabled.
     Graphical method:
-      Perform the following steps to ensure an Inactivity Interval of 20 Minutes Or Less for the Screen Saver Is Enabled:
+      Perform the following steps to ensure an Inactivity Interval of 15 Minutes Or Less for the Screen Saver Is Enabled:
         1. Open System Settings
         2. Select Lock Screen
-        3. Verify that Start Screen Saver when inactive is set for 20 minutes or less (≤1200 seconds)
+        3. Verify that Start Screen Saver when inactive is set for 15 minutes or less (≤900 seconds)
   query: |
     SELECT 1 WHERE 
       EXISTS (
         SELECT 1 FROM managed_policies WHERE 
             domain='com.apple.screensaver' AND 
             name='idleTime' AND 
-            CAST(value AS INT) <= 1200 AND
+            CAST(value AS INT) <= 900 AND
             username = ''
         )
       AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.screensaver' AND 
-            name='idleTime' AND 
-            CAST(value AS INT) > 1200
-        );  
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.screensaver' AND
+            name='idleTime' AND
+            CAST(value AS INT) > 900
+        );
 - name: CIS - Ensure a Custom Message for the Login Screen Is Enabled
   platform: darwin
   description: An access warning informs the user that the system is reserved for authorized use only, and that the use of the system may be monitored
@@ -1777,26 +1701,28 @@
              FROM file_lines 
              WHERE path = '/etc/asl/com.apple.install'  
              AND  line  LIKE "%all_max=%" );
-- name: CIS - Ensure Security Auditing Retention Is Enabled
+- name: CIS - Ensure Security Auditing Logs Are Retained for 30 Days
   platform: darwin
   description: |
     The macOS audit capability contains important information to investigate security or operational issues. This resource is only completely useful if it is retained long enough to allow technical staff to find the root cause of anomalies in the records.
-    Retention can be set to respect both size and longevity. To retain as much as possible under a certain size, the recommendation is to use the following:
-    expire-after:60d OR 5G
-    This recomendation is based on minimum storage for review and investigation. When a third party tool is in use to allow remote logging or the store and forwarding of logs, this local storage requirement is not required.
+    Retention can be set to respect both size and longevity. The recommendation is to retain audit logs for at least 30 days:
+    expire-after:30d
+    This recommendation is based on the minimum number of days retained for review and investigation. If your organization has storage constraints, you can add a storage value limit in addition to the days retained, for example: expire-after:30d OR 5G. When a third party tool is in use to allow remote logging or the store and forwarding of logs, this local storage is a supplemental source of data.
   resolution: |
     Automated method:
-    Ask your system administrator to deploy the following script which will ensure proper Security Auditing Retention:
-    cp /etc/security/audit_control ./tmp.txt; origExpire=$(cat ./tmp.txt  | grep expire-after);  sed "s/${origExpire}/expire-after:60d OR 5G/" ./tmp.txt > /etc/security/audit_control; rm ./tmp.txt;
+    Ask your system administrator to deploy the following script, which ensures audit logs are retained for at least 30 days. It writes to a unique temp file and atomically replaces /etc/security/audit_control only on success:
+    TMP="$(/usr/bin/mktemp /tmp/audit_control.XXXXXX)" && \
+    /usr/bin/sudo /usr/bin/awk '/^expire-after:/ { print "expire-after:30d"; found=1; next } { print } END { if (!found) print "expire-after:30d" }' /etc/security/audit_control > "$TMP" && \
+    /usr/bin/sudo /bin/mv "$TMP" /etc/security/audit_control && \
+    /usr/bin/sudo /usr/sbin/chown root:wheel /etc/security/audit_control && \
+    /usr/bin/sudo /bin/chmod 0400 /etc/security/audit_control
   query: |
     SELECT 1 WHERE EXISTS (
-      SELECT line,
-      CAST(regex_match(line, 'expire-after:(\d+)d OR (\d+)G', 1) AS INTEGER) AS days,
-      CAST(regex_match(line, 'expire-after:(\d+)d OR (\d+)G', 2) AS INTEGER) AS size
+      SELECT 1
       FROM file_lines
       WHERE path = '/etc/security/audit_control'
-      AND days >=60
-      AND size >=5
+      AND line LIKE 'expire-after:%'
+      AND CAST(regex_match(line, 'expire-after:\s*(\d+)d', 1) AS INTEGER) >= 30
     );
 - name: CIS - Ensure Access to Audit Records Is Controlled
   platform: darwin
@@ -2069,11 +1995,19 @@
   query: |
     SELECT 1 WHERE NOT EXISTS (
       SELECT 1 FROM file f
-      WHERE 
+      WHERE
         f.path LIKE '/Library/%'
+        -- Exclude the non-accessible /Library/AppStore folder (per CIS audit)
+        AND NOT (f.path = '/Library/AppStore' OR f.path LIKE '/Library/AppStore/%')
         AND f.type = 'directory'
+        -- World-writable: other-write bit (octal 2) in the last digit
         AND (CAST(SUBSTR(f.mode,-1) AS INTEGER) & 2) = 2
-        AND NOT ((CAST(f.mode AS INTEGER) & 01000) = 01000)
+        -- Exclude sticky-bit dirs. osquery reports mode as a 4-char
+        -- octal string like "1777" (sticky) or "0755". The first digit
+        -- encodes setuid(4)/setgid(2)/sticky(1). SQLite has no native
+        -- octal literals, so we compare the first char's integer value
+        -- to the possible sticky combinations (1, 3, 5, 7).
+        AND CAST(SUBSTR(f.mode, 1, 1) AS INTEGER) NOT IN (1, 3, 5, 7)
         AND NOT EXISTS (
           SELECT 1 FROM extended_attributes ea
           WHERE ea.path = f.path
@@ -2137,7 +2071,7 @@
         );  
 - name: CIS - Ensure Complex Password Must Contain Special Character Is Configured (MDM Required)
   platform: darwin
-  description: Complex passwords contain one character from each of the following classes: English uppercase letters, English lowercase letters, Westernized Arabic numerals, and non- alphanumeric characters. Ensure that a special character is part of the password policy on the computer.
+  description: "Complex passwords contain one character from each of the following classes: English uppercase letters, English lowercase letters, Westernized Arabic numerals, and non- alphanumeric characters. Ensure that a special character is part of the password policy on the computer."
   resolution: Ask your system administrator to deploy an MDM profile that ensures Complex Password Must Contain Special Characters
   query: |
     SELECT 1 WHERE 
@@ -2204,17 +2138,22 @@
       2. The key to include is pinHistory
       3. The key must be set to <integer><value≥24></integer>
   query: SELECT 1 FROM pwd_policy WHERE history_depth >= 24;
-- name: CIS - Ensure all user storage APFS volumes are encrypted (Fleetd Required)
+- name: CIS - Ensure all internal user storage APFS volumes are encrypted (Fleetd Required)
   platform: darwin
   description: |
-    Apple developed a new file system which was first made available in 10.12 and then became the
-    default in 10.13. The file system is optimized for Flash and Solid-State storage and encryption.
-    https://en.wikipedia.org/wiki/Apple_File_System macOS computers generally have several volumes
-    created as part of APFS formatting, including Preboot, Recovery and Virtual Memory (VM), as well
-    as traditional user disks.
+    Apple developed the APFS (Apple File System) structure primarily for flash and solid-state
+    drives. This file structure was first made available in 10.12 and then became the default in
+    10.13. macOS computers generally have several volumes created as part of APFS formatting,
+    including Preboot, Recovery and Virtual Memory (VM), as well as traditional user disks.
     All APFS volumes that do not have specific roles and do not require encryption should be
     encrypted. "Role" disks include Preboot, Recovery and VM. User disks are labelled with "(No
     specific role)" by default.
+    
+    Note: The fleetd `apfs_volumes` table does not distinguish internal from external disks, so
+    this query evaluates all non-role APFS volumes. External APFS/HFS+ volumes (CIS 5.3.2) are
+    not separately covered — see the README limitations.
+    Apple's sealed, read-only asset cryptex volumes (names ending in "Cryptex") have no role and
+    cannot be encrypted, so they are excluded.
   resolution: |
     Manual method:
     Use Disk Utility to erase a user disk and format as APFS (Encrypted).
@@ -2228,21 +2167,11 @@
         role != "Preboot" AND
         role != "xART" AND
         role != "Hardware" AND
+        -- Apple ships sealed, read-only asset cryptex volumes (Siri models,
+        -- PKI trust store) with no role and no encryption. They are not
+        -- user storage and cannot be encrypted, so they must not count.
+        NOT (role = '' AND name LIKE '%Cryptex') AND
         filevault != 1
-    );
-- name: CIS - Ensure all user storage CoreStorage volumes are encrypted (Fleetd Required)
-  platform: darwin
-  description: |
-    Apple introduced CoreStorage with 10.7. It is used as the default for formatting on macOS volumes prior to 10.13.
-    While FileVault protects the boot volume, data may be copied to other attached storage and reduce the protection afforded by FileVault.
-    Ensure all user volumes are encrypted to protect data.
-  resolution: |
-    Manual method:
-      Use Disk Utility to convert volumes to APFS or delete them.
-      It is no longer possible to encrypt CoreStorage volumes without converting them.
-  query: |
-    SELECT 1 WHERE NOT EXISTS (
-      SELECT 1 FROM corestorage_logical_volume_families WHERE EncryptionType != "AES-XTS"
     );
 - name: CIS - Ensure the Sudo Timeout Period Is Set to Zero (Fleetd Required)
   platform: darwin
@@ -2291,10 +2220,16 @@
     Using the sudo command allows users to perform functions as a root user while limiting and password
     protecting the access privileges. By default the root account is not enabled on a macOS computer.
     An administrator can escalate privileges using the sudo command (use -s or -i to get a root shell).
+    
+    If root was ever enabled it may have been granted a secure token that is not removed when the
+    account is disabled. The audit verifies that root has no secure token — even when the account is
+    not enabled — by confirming the AuthenticationAuthority key is absent for /Users/root.
   resolution: |
     Automated method:
-    Ask your system administrator to deploy the following script:
-      /usr/bin/sudo /usr/sbin/dsenableroot -d
+    Ask your system administrator to deploy the following script, which removes root's secure token
+    (if any) and disables the root user:
+      /usr/bin/sudo /usr/bin/fdesetup remove -user root
+      /usr/bin/sudo /usr/bin/dscl /Local/Default delete /Users/root AuthenticationAuthority
   query: SELECT 1 from dscl WHERE command = 'read' AND path = '/Users/root' AND key = 'AuthenticationAuthority' AND value = '';
 - name: CIS - Ensure an Administrator Account Cannot Login to Another User's Active and Locked Session (Fleetd Required)
   platform: darwin
@@ -2346,35 +2281,6 @@
     Ask your system administrator to deploy the following script:
       /usr/bin/sudo /bin/rm -R /Users/Guest
   query: SELECT 1 WHERE NOT EXISTS (SELECT * FROM file WHERE path = '/Users/Guest');
-- name: CIS - Ensure Show All Filename Extensions Setting is Enabled
-  platform: darwin
-  description: |
-    A filename extension is a suffix added to a base filename that indicates the
-    base filename's file format. This is intended for any user that logs into
-    the GUI and has a home folder and not for service accounts. For the audit,
-    we will continue to verify that every account with a home folder has
-    filename extensions enabled.
-    Visible filename extensions allow the user to identify the file type and the
-    application it is associated with which leads to quick identification of
-    misrepresented malicious files.
-  resolution: |
-    Automated method:
-    Ask your administrator to deploy a script that runs the following command
-    for each user:
-    /usr/bin/sudo -u <username> /usr/bin/defaults write \
-    /Users/<username>/Library/Preferences/.GlobalPreferences.plist AppleShowAllExtensions -bool true
-  query: |
-    SELECT 1 WHERE NOT EXISTS (
-      SELECT 1 FROM users AS u
-      LEFT JOIN (
-        SELECT * FROM plist WHERE
-          path LIKE '/Users/%/Library/Preferences/.GlobalPreferences.plist' AND
-          key = 'AppleShowAllExtensions' AND
-          value = '1') AS p
-      ON p.path = CONCAT(u.directory, '/Library/Preferences/.GlobalPreferences.plist')
-        WHERE u.directory LIKE '/Users/%' AND
-        p.value IS NULL
-    );
 - name: CIS - Ensure Automatic Opening of Safe Files in Safari Is Disabled (MDM Required)
   platform: darwin
   description: |
@@ -2391,20 +2297,22 @@
     Payload Method:
     Ask your administrator to deploy a profile which disables AutoOpenSafeDownloads in Safari
   query: |
-    SELECT 1 WHERE 
+    -- Safari profiles deliver at user scope (not system/username='')
+    -- so we accept any scope; the NOT EXISTS still guards against
+    -- a conflicting value anywhere.
+    SELECT 1 WHERE
       EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='AutoOpenSafeDownloads' AND 
-            (value = 0 OR value = 'false') AND 
-            username = ''
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='AutoOpenSafeDownloads' AND
+            (value = 0 OR value = 'false')
         )
       AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='AutoOpenSafeDownloads' AND 
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='AutoOpenSafeDownloads' AND
             (value != 0 AND value != 'false')
-        );  
+        );
 - name: CIS - Audit Safari Web Browser History and Remove History Items (organization decision needed)(MDM Required)
   platform: darwin
   description: |
@@ -2426,11 +2334,12 @@
       2. The key to include is HistoryAgeInDaysLimit
       3. The key must be set to: <integer><1,7,14,31,365,36500></integer>
   query: |
-    SELECT 1 WHERE 
+    -- Safari profiles deliver at user scope; drop the username='' filter.
+    SELECT 1 WHERE
       EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='HistoryAgeInDaysLimit' AND 
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='HistoryAgeInDaysLimit' AND
               /*
               Please replace the checked value bellow to match the one decided by your organization.
               1 - After one day
@@ -2440,15 +2349,14 @@
               365 - After one year
               36500 - Set Manually
               */
-            value = 1 AND 
-            username = ''
+            value = 1
         )
       AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='HistoryAgeInDaysLimit' AND 
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='HistoryAgeInDaysLimit' AND
             value != 1
-        );  
+        );
 - name: CIS - Ensure Warn When Visiting A Fraudulent Website in Safari Is Enabled (MDM Required)
   platform: darwin
   description: |
@@ -2459,20 +2367,21 @@
     Payload Method:
     Ask your administrator to deploy a profile which enableds WarnAboutFraudulentWebsites in Safari
   query: |
-    SELECT 1 WHERE 
+    -- Safari profiles deliver at user scope; drop the username='' filter.
+    -- Also fix the NOT EXISTS domain (was com.apple.loginwindow, a typo).
+    SELECT 1 WHERE
       EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='WarnAboutFraudulentWebsites' AND 
-            (value = 1 OR value = 'true') AND 
-            username = ''
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='WarnAboutFraudulentWebsites' AND
+            (value = 1 OR value = 'true')
         )
       AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.loginwindow' AND 
-            name='WarnAboutFraudulentWebsites' AND 
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='WarnAboutFraudulentWebsites' AND
             (value != 1 AND value != 'true')
-        );  
+        );
 - name: CIS - Ensure Prevent Cross-site Tracking in Safari Is Enabled (MDM Required)
   platform: darwin
   description: |
@@ -2489,46 +2398,44 @@
       6. The key to also include is WebKitStorageBlockingPolicy
       7. The key must be set to: 1
   query: |
-    SELECT 1 WHERE 
+    -- Safari profiles deliver at user scope; drop the username='' filter.
+    SELECT 1 WHERE
       EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='BlockStoragePolicy' AND 
-            value = '2' AND 
-            username = ''
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='BlockStoragePolicy' AND
+            value = '2'
         )
       AND EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='WebKitPreferences.storageBlockingPolicy' AND 
-            value = '1' AND 
-            username = ''
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='WebKitPreferences.storageBlockingPolicy' AND
+            value = '1'
         )
       AND EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='WebKitStorageBlockingPolicy' AND 
-            value = '1' AND 
-            username = ''
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='WebKitStorageBlockingPolicy' AND
+            value = '1'
         )
       AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='BlockStoragePolicy' AND 
-            value != '2' 
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='BlockStoragePolicy' AND
+            value != '2'
         )
       AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='WebKitPreferences.storageBlockingPolicy' AND 
-            value != '1' 
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='WebKitPreferences.storageBlockingPolicy' AND
+            value != '1'
         )
       AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='WebKitStorageBlockingPolicy' AND 
-            value != '1' 
-        );  
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='WebKitStorageBlockingPolicy' AND
+            value != '1'
+        );
 - name: CIS - Ensure the Hide IP Address in Safari is Enabled (Based on organization's policy)
   platform: darwin
   description: |
@@ -2621,20 +2528,20 @@
       2. The key to include is ShowFullURLInSmartSearchField 
       3. The key must be set to: <true/>
   query: |
-    SELECT 1 WHERE 
+    -- Safari profiles deliver at user scope; drop the username='' filter.
+    SELECT 1 WHERE
       EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='ShowFullURLInSmartSearchField' AND 
-            (value = 1 OR value = 'true') AND 
-            username = ''
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='ShowFullURLInSmartSearchField' AND
+            (value = 1 OR value = 'true')
         )
       AND NOT EXISTS (
-        SELECT 1 FROM managed_policies WHERE 
-            domain='com.apple.Safari' AND 
-            name='ShowFullURLInSmartSearchField' AND 
+        SELECT 1 FROM managed_policies WHERE
+            domain='com.apple.Safari' AND
+            name='ShowFullURLInSmartSearchField' AND
             (value != 1 AND value != 'true')
-        );  
+        );
 - name: CIS - Ensure Show Status Bar Is Enabled (MDM Required)
   platform: darwin
   description: The Status Bar in Safari shows the full URL of any link on hover. It protects the user from visiting sites where the domain has been obfuscated by allowing the user to review whether the link points to an unexpected location.

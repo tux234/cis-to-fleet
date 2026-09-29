@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Audit User Account Management' is set to 'Success and Failure'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Audit/AccountManagement_AuditUserAccountManagement</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '3';
+  critical: false
+  description: |
+    This subcategory reports each event of user account management, such as when a
+    user account is created, changed, or deleted; a user account is renamed, disabled, or
+    enabled; or a password is set or changed. If you enable this Audit policy setting,
+    administrators can track events to detect malicious, accidental, and authorized creation
+    of user accounts. Events for this subcategory include:
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    
+    4720: A user account was created.
+    4722: A user account was enabled.
+    4723: An attempt was made to change an account's password.
+    4724: An attempt was made to reset an account's password.
+    4725: A user account was disabled.
+    4726: A user account was deleted.
+    4738: A user account was changed.
+    4740: A user account was locked out.
+    4765: SID History was added to an account.
+    4766: An attempt to add SID History to an account failed.
+    4767: A user account was unlocked.
+    4780: The ACL was set on accounts which are members of administrators
+    groups.
+    4781: The name of an account was changed:
+    4794: An attempt was made to set the Directory Services Restore Mode.
+    5376: Credential Manager credentials were backed up.
+    5377: Credential Manager credentials were restored from a backup.
+    
+    The recommended state for this setting is: Success and Failure.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Success and Failure.
+    Auditing\Audit User Account Management
+  platform: windows

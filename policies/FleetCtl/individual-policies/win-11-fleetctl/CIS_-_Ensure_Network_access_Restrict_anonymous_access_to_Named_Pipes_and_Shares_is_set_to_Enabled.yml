@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Network access: Restrict anonymous access to Named Pipes and Shares' is set to 'Enabled'
+  name: "CIS - Ensure 'Network access: Restrict anonymous access to Named Pipes and Shares' is set to 'Enabled'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\LanManServer\\Parameters\restrictnullsessaccess' and data == '1');
   critical: false
   description: |

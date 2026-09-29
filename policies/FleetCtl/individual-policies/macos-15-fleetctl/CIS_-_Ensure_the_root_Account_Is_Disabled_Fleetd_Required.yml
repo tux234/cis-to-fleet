@@ -10,8 +10,14 @@ spec:
     Using the sudo command allows users to perform functions as a root user while limiting and password
     protecting the access privileges. By default the root account is not enabled on a macOS computer.
     An administrator can escalate privileges using the sudo command (use -s or -i to get a root shell).
+    
+    If root was ever enabled it may have been granted a secure token that is not removed when the
+    account is disabled. The audit verifies that root has no secure token — even when the account is
+    not enabled — by confirming the AuthenticationAuthority key is absent for /Users/root.
   resolution: |
     Automated method:
-    Ask your system administrator to deploy the following script:
-      /usr/bin/sudo /usr/sbin/dsenableroot -d
+    Ask your system administrator to deploy the following script, which removes root's secure token
+    (if any) and disables the root user:
+      /usr/bin/sudo /usr/bin/fdesetup remove -user root
+      /usr/bin/sudo /usr/bin/dscl /Local/Default delete /Users/root AuthenticationAuthority
   platform: darwin

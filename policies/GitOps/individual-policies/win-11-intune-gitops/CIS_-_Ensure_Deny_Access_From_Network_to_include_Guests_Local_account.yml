@@ -1,0 +1,23 @@
+- name: CIS - Ensure 'Deny Access From Network' to include 'Guests, Local account'
+  platform: windows
+  description: |-
+    This policy setting prohibits users from connecting to a computer from across the
+    network, which would allow users to access and potentially modify data remotely. In
+    high security environments, there should be no need for remote users to access data on
+    a computer. Instead, file sharing should be accomplished through the use of network
+    servers. This user right supersedes the Access Computer From Network user right if
+    an account is subject to both policies.
+    The recommended state for this setting is to include: *S-1-5-32-546 and *S-1-5-113
+    (Guests, Local account).
+    Caution: Configuring a standalone (non-domain-joined) workstation as described above
+    may result in an inability to remotely administer the workstation.
+    Note: The security identifier Local account is not available in Windows 7 and
+    Windows 8.0 unless MSKB 2871997 has been installed.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to *S-1-5-32-546 and *S-1-5-113 (Guests, Local account).
+    User Rights\Deny Access From Network
+
+    Note: Include only one User or Group per line in the Settings Catalog configuration
+    screen.
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/DenyAccessFromNetwork</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output LIKE '%Guests%' AND mdm_command_output LIKE '%Local account%');

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure the "root" Account Is Disabled (Fleetd Required)
+  query: SELECT 1 FROM dscl WHERE command = 'read' AND path = '/Users/root' AND key = 'AuthenticationAuthority' AND value = '';
+  critical: false
+  description: |
+    Enabling and using the root account puts the system at risk since any successful exploit or mistake while the root account is in use could have unlimited access privileges within the system. Using sudo allows users to perform functions as root while limiting and password-protecting the access privileges.
+    
+    If root was ever enabled it may have been granted a secure token that is not removed when the account is disabled. The audit verifies that root has no secure token — even when the account is not enabled — by confirming the AuthenticationAuthority key is absent for /Users/root.
+  resolution: |
+    Terminal Method:
+      /usr/bin/sudo /usr/bin/fdesetup remove -user root
+      /usr/bin/sudo /usr/bin/dscl /Local/Default delete /Users/root AuthenticationAuthority
+  platform: darwin

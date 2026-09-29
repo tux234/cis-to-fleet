@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Select when Preview Builds and Feature Updates are received' is set to 'Enabled: 180 or more days'
+  name: "CIS - Ensure 'Select when Preview Builds and Feature Updates are received' is set to 'Enabled: 180 or more days'"
   query: |
     SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\DeferFeatureUpdates' AND CAST(data AS INTEGER) = 1)
     AND EXISTS (

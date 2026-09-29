@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'
+  name: "CIS - Ensure 'Windows Firewall: Domain: Logging: Log dropped packets' is set to 'Yes'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsFirewall\DomainProfile\Logging\LogDroppedPackets' and data == 1);
   critical: false
   description: |

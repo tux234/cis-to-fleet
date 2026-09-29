@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'Require additional authentication at startup: Configure TPM startup PIN:' is set to 'Enabled: Require startup PIN with TPM'"
+  query: SELECT 1 FROM registry WHERE path LIKE 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PolicyManager\Providers\%\default\Device\BitLocker\SystemDrivesRequireStartupAuthentication' AND data LIKE '%ConfigurePINUsageDropDown_Name" value="1"%';
+  critical: false
+  description: "This policy setting allows you to configure whether BitLocker requires additional authentication each time the computer starts. This policy setting is applied when you turn on BitLocker. Note: Only one of the additional authentication options can be required at startup, otherwise a policy error occurs. The recommended state for this setting is: Enabled: Require startup PIN with TPM. Warning: If silent encryption is desired, this setting must be configured to Do not allow startup PIN with TPM and an exception to this recommendation will be needed."
+  resolution: "To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Enabled: Require startup PIN with TPM. Administrative Templates\\Windows Components\\BitLocker Drive Encryption\\Operating System Drives\\Require additional authentication at startup: Configure TPM startup PIN:"
+  platform: windows

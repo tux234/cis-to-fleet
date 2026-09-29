@@ -1,0 +1,26 @@
+- name: CIS - Ensure an Inactivity Interval of 15 Minutes Or Less for the Screen Saver Is Enabled (MDM Required)
+  platform: darwin
+  description: |
+    A locking screen saver is one of the standard security controls to limit access to a computer and the current user's session when the computer is temporarily unused or unattended. Setting an inactivity interval for the screen saver prevents unauthorized persons from viewing a system left unattended for an extensive period of time.
+  resolution: |
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.screensaver
+      - Key: idleTime
+      - Value: <integer>900</integer> (or any value ≤ 900 seconds)
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.screensaver' AND
+          name = 'idleTime' AND
+          CAST(value AS INTEGER) > 0 AND
+          CAST(value AS INTEGER) <= 900 AND
+          username = ''
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.screensaver' AND
+          name = 'idleTime' AND
+          (CAST(value AS INTEGER) = 0 OR CAST(value AS INTEGER) > 900)
+      );

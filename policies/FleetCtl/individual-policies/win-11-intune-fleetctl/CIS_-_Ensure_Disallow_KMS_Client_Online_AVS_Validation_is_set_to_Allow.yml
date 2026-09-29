@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Disallow KMS Client Online AVS Validation' is set to 'Allow'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Licensing/DisallowKMSClientOnlineAVSValidation</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '0';
+  critical: false
+  description: "The Key Management Service (KMS) is a Microsoft license activation method that entails setting up a local server to store the software licenses. The KMS server itself needs to connect to Microsoft to activate the KMS service, but subsequent on-network clients can activate Microsoft Windows OS and/or their Microsoft Office via the KMS server instead of connecting directly to Microsoft. This policy setting lets you opt-out of sending KMS client activation data to Microsoft automatically. The recommended state for this setting is: Allow."
+  resolution: "To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Allow: Licensing\\Disallow KMS Client Online AVS Validation"
+  platform: windows

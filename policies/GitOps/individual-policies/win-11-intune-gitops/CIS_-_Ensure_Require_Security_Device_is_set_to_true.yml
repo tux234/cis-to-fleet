@@ -1,0 +1,20 @@
+- name: CIS - Ensure 'Require Security Device' is set to 'true'
+  platform: windows
+  description: |-
+    This policy controls whether a Trusted Platform Module (TPM) is required to provision
+    Windows Hello for Business.
+    •
+    •
+
+    If you enable this policy setting, only devices with a usable TPM provision
+    Windows Hello for Business.
+    If you disable or don't configure this policy setting, the TPM is still preferred, but
+    all devices provision Windows Hello for Business using software if the TPM is
+    non-functional or unavailable.
+
+    The recommended state for this setting is: true.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to true:
+    Windows Hello For Business\Require Security Device
+  query: SELECT 1 FROM registry WHERE path LIKE 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Policies\PassportForWork\%\Device\Policies\RequireSecurityDevice' AND data = '1';

@@ -1,0 +1,5 @@
+- name: CIS - Ensure 'GameInput Service (GameInputSvc)' is set to 'Disabled'
+  platform: windows
+  description: 'This service enables the use of keyboards, mice, gamepads, and other input devices to be used with the GameInput API. The recommended state for this setting is: Disabled. Note: GameInput service runs as LocalSystem in its own process of GameInputSvc.exe and doesn''t share its process with other services.'
+  resolution: 'Remediation of this service is currently not possible through Settings Catalog or a custom profile OMA-URI. Instead, it can be scripted and deployed through the Intune Scripts or Remediations blade or by other means. To establish the recommended configuration via PowerShell, run the following cmdlet: Set-Service -Name GameInputSvc -StartupType Disabled'
+  query: SELECT 1 WHERE COALESCE((SELECT UPPER(start_type) FROM services WHERE name = 'GameInputSvc'), 'DISABLED') = 'DISABLED';

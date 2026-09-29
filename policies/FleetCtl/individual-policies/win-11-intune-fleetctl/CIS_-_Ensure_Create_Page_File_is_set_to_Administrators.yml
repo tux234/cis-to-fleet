@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Create Page File' is set to 'Administrators'
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/UserRights/CreatePageFile</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output LIKE '%Administrators%';
+  critical: false
+  description: |
+    This policy setting allows users to change the size of the pagefile. By making the
+    pagefile extremely large or extremely small, an attacker could easily affect the
+    performance of a compromised computer.
+    The recommended state for this setting is: *S-1-5-32-544 (Administrators).
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to *S-1-5-32-544 (Administrators).
+    User Rights\Create Page File
+    
+    Note: Include only one User or Group per line in the Settings Catalog configuration
+    screen.
+  platform: windows

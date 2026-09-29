@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: "CIS - Ensure 'ASR: Block Office communication application from creating child processes' is set to 'Audit' or higher"
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Defender/AttackSurfaceReductionRules</LocURI></Target></Item></Get></SyncBody>' AND (mdm_command_output LIKE '%26190899-1602-49E8-8B27-EB1D0A1CE869=1%' OR mdm_command_output LIKE '%26190899-1602-49E8-8B27-EB1D0A1CE869=2%');
+  critical: false
+  description: |
+    This rule prevents Outlook from creating child processes, while still allowing legitimate
+    Outlook functions.
+    The recommended state for this setting is: Audit. Configuring this setting to Block also
+    conforms to the benchmark.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Audit or Block.
+    Defender\Block Office communication application from creating child processes
+  platform: windows

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'Scan excluded files and directories during quick scans' is set to 'Enabled: 1'
+  name: "CIS - Ensure 'Scan excluded files and directories during quick scans' is set to 'Enabled: 1'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\Scan\QuickScanIncludeExclusions' AND data = 1);
   critical: false
   description: |

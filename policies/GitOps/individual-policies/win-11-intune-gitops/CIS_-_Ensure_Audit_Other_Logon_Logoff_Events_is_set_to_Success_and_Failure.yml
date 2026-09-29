@@ -1,0 +1,35 @@
+- name: CIS - Ensure 'Audit Other Logon Logoff Events' is set to 'Success and Failure'
+  platform: windows
+  description: |-
+    This subcategory reports other logon/logoff-related events, such as Remote Desktop
+    Services session disconnects and reconnects, using RunAs to run processes under a
+    different account, and locking and unlocking a workstation. Events for this subcategory
+    include:
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+    •
+
+    4649: A replay attack was detected.
+    4778: A session was reconnected to a Window Station.
+    4779: A session was disconnected from a Window Station.
+    4800: The workstation was locked.
+    4801: The workstation was unlocked.
+    4802: The screen saver was invoked.
+    4803: The screen saver was dismissed.
+    5378: The requested credentials delegation was disallowed by policy.
+    5632: A request was made to authenticate to a wireless network.
+    5633: A request was made to authenticate to a wired network.
+
+    The recommended state for this setting is: Success and Failure.
+  resolution: |-
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Success and Failure.
+    Auditing\Audit Other Logon Logoff Events
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Audit/AccountLogonLogoff_AuditOtherLogonLogoffEvents</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '3';

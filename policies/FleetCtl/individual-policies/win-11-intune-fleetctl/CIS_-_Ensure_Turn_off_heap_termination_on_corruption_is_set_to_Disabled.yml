@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure 'Turn off heap termination on corruption' is set to 'Disabled'
+  query: SELECT 1 WHERE NOT EXISTS (SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer\DisableHeapTerminationOnCorruption' AND data = '1');
+  critical: false
+  description: |
+    Without heap termination on corruption, legacy plug-in applications may continue to
+    function when a File Explorer session has become corrupt. Ensuring that heap
+    termination on corruption is active will prevent this.
+    The recommended state for this setting is: Disabled.
+  resolution: |
+    To establish the recommended configuration via configuration profiles, set the following
+    Settings Catalog path to Disabled.
+    Administrative Templates\Windows Components\File Explorer\Turn off heap
+    termination on corruption
+  platform: windows

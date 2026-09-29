@@ -1,0 +1,5 @@
+- name: CIS - Ensure 'Enable File Hash Computation' is set to 'Enable'
+  platform: windows
+  description: 'This setting determines whether hash values are computed for files scanned by Microsoft Defender. The recommended state for this setting is: Enable.'
+  resolution: To establish the recommended configuration via configuration profiles, set the following Settings Catalog path to Enable. Defender\Enable File Hash Computation
+  query: SELECT 1 FROM mdm_bridge WHERE mdm_command_input = '<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Defender/Configuration/EnableFileHashComputation</LocURI></Target></Item></Get></SyncBody>' AND mdm_command_output = '1';

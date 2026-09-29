@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: policy
+spec:
+  name: CIS - Ensure iCloud Drive Document and Desktop Sync Is Disabled (MDM Required)
+  query: |
+    SELECT 1 WHERE
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.applicationaccess' AND
+          name = 'allowCloudDesktopAndDocuments' AND
+          (value = 0 OR value = 'false') AND
+          username = ''
+      )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE
+          domain = 'com.apple.applicationaccess' AND
+          name = 'allowCloudDesktopAndDocuments' AND
+          (value != 0 AND value != 'false')
+      );
+  critical: false
+  description: With macOS 10.12, Apple introduced the capability to have a user's Desktop and Documents folders automatically synchronize to the user's iCloud Drive. Enterprise users may not be allowed to store Enterprise information in a third-party public cloud. Automated Document synchronization should be planned and controlled to approved storage.
+  resolution: |
+    Profile Method:
+    Create or edit a configuration profile with the following information:
+      - PayloadType: com.apple.applicationaccess
+      - Key: allowCloudDesktopAndDocuments
+      - Value: <false/>
+  platform: darwin

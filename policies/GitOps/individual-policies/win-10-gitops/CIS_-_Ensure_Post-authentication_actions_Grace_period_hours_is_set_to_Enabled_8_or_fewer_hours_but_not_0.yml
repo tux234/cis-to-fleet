@@ -18,4 +18,4 @@
     Note: This Group Policy path may not exist by default. It is provided by the Group Policy
     template 'LAPS.admx/adml' that is included with the Microsoft Windows 11 Release 22H2 Administrative Templates v3.0 (or newer).
   query: |
-    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS\PostAuthenticationResetDelay' AND data <= 8 AND data != 0 );
+    SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\LAPS\PostAuthenticationResetDelay' AND CAST(data AS INTEGER) <= 8 AND data != 0 );

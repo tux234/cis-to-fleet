@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: policy
 spec:
-  name: CIS - Ensure 'NetBT NodeType configuration' is set to 'Enabled: P-node (recommended)'
+  name: "CIS - Ensure 'NetBT NodeType configuration' is set to 'Enabled: P-node (recommended)'"
   query: SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\NetBT\\Parameters\NodeType' AND data = 2);
   critical: false
   description: |
