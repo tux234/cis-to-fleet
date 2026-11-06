@@ -11,4 +11,18 @@
         1. The Payload Type string is `com.apple.mDNSResponder`.
         2. The key to include is `NoMulticastAdvertisements`.
         3. The key must be set to `<true/>`.
-  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.mDNSResponder' AND \n        name='NoMulticastAdvertisements' AND \n        (value = 1 OR value = 'true') AND \n        username = ''\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.mDNSResponder' AND \n        name='NoMulticastAdvertisements' AND \n        (value != 1 AND value != 'true')\n    );  \n"
+  query: |
+    SELECT 1 WHERE 
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.mDNSResponder' AND 
+            name='NoMulticastAdvertisements' AND 
+            (value = 1 OR value = 'true') AND 
+            username = ''
+        )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.mDNSResponder' AND 
+            name='NoMulticastAdvertisements' AND 
+            (value != 1 AND value != 'true')
+        );  

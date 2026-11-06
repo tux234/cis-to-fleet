@@ -7,4 +7,17 @@
       1. The PayloadType string is com.apple.applicationaccess.
       2. The key to include is allowCloudDesktopAndDocuments.
       3. The key must be set to <false/>.
-  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.applicationaccess' AND \n        name='allowCloudDesktopAndDocuments' AND \n        (value = 0 OR value = 'false')\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.applicationaccess' AND \n        name='allowCloudDesktopAndDocuments' AND \n        (value != 0 AND value != 'false')\n    );  \n"
+  query: |
+    SELECT 1 WHERE 
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.applicationaccess' AND 
+            name='allowCloudDesktopAndDocuments' AND 
+            (value = 0 OR value = 'false')
+        )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.applicationaccess' AND 
+            name='allowCloudDesktopAndDocuments' AND 
+            (value != 0 AND value != 'false')
+        );  

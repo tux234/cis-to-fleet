@@ -16,4 +16,39 @@
         4. Set any applications listed to your organization's requirements
         5. Select System Services
         6. Set any System Services listed to your organization's requirements
-  query: "-----------------------------------------------------------------------------------------------------------\n-- Instructions for running and modifying this query:\n-- Put the list of allowed applications in the designated area below.\n-- To see what apps are currently allowed (and get the exact name format of the app name), use this query:\n--    SELECT * FROM plist WHERE \n--    path='/var/db/locationd/clients.plist'  \n--    AND subkey = \"Authorized\"  \n--    AND value = '1'; \n-----------------------------------------------------------------------------------------------------------\nSELECT 1 WHERE \n    -- If location_services is not allowed at all, we are good. \n    EXISTS(\n      SELECT 1 FROM location_services WHERE enabled = 0\n    )\n    OR \n    -- If location_services is allowed, make sure allowed apps are approved. \n    NOT EXISTS(\n      SELECT 1 FROM plist WHERE \n        path='/var/db/locationd/clients.plist'  \n        AND subkey = \"Authorized\"  \n        AND value = '1'  \n        AND NOT(\n            ------------------------------------------------------------------------------------\n            -- Designated area to add applications allowed to use location-services\n            ------------------------------------------------------------------------------------\n            -- Typical app name\n            key LIKE \"%:com.apple.TV\"\n            OR \n            -- Typical system service name\n            key LIKE \"%com.apple.locationd.bundle-/System/Library/PrivateFrameworks/CoreParsec.framework\"\n            OR \n            key LIKE \"%:com.apple.locationd.bundle-/System/Library/LocationBundles/DoNotDisturb.bundle\"\n            ------------------------------------------------------------------------------------\n        )\n    );\n"
+  query: |
+    -----------------------------------------------------------------------------------------------------------
+    -- Instructions for running and modifying this query:
+    -- Put the list of allowed applications in the designated area below.
+    -- To see what apps are currently allowed (and get the exact name format of the app name), use this query:
+    --    SELECT * FROM plist WHERE 
+    --    path='/var/db/locationd/clients.plist'  
+    --    AND subkey = "Authorized"  
+    --    AND value = '1'; 
+    -----------------------------------------------------------------------------------------------------------
+    SELECT 1 WHERE 
+        -- If location_services is not allowed at all, we are good. 
+        EXISTS(
+          SELECT 1 FROM location_services WHERE enabled = 0
+        )
+        OR 
+        -- If location_services is allowed, make sure allowed apps are approved. 
+        NOT EXISTS(
+          SELECT 1 FROM plist WHERE 
+            path='/var/db/locationd/clients.plist'  
+            AND subkey = "Authorized"  
+            AND value = '1'  
+            AND NOT(
+                ------------------------------------------------------------------------------------
+                -- Designated area to add applications allowed to use location-services
+                ------------------------------------------------------------------------------------
+                -- Typical app name
+                key LIKE "%:com.apple.TV"
+                OR 
+                -- Typical system service name
+                key LIKE "%com.apple.locationd.bundle-/System/Library/PrivateFrameworks/CoreParsec.framework"
+                OR 
+                key LIKE "%:com.apple.locationd.bundle-/System/Library/LocationBundles/DoNotDisturb.bundle"
+                ------------------------------------------------------------------------------------
+            )
+        );

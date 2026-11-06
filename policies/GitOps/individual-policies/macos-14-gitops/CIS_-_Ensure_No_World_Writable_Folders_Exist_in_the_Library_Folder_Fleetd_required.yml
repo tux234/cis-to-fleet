@@ -14,7 +14,16 @@
     the standard practice on POSIX systems. It is considered compliant here
     because of additional security vendor controls that are controlled through
     industry standard mitigations.
-  resolution: "Ask your system administrator to deploy a script that will ensure folders\nare not world-writable in the /Library folder. \n/usr/bin/sudo IFS=$'\\n'\nfor libPermissions in $(/usr/bin/find /Library -type d -perm -002 ! -perm -1000 ! -xattrname com.apple.rootless 2>/dev/null); do\n  /bin/chmod -R o-w \"$libPermissions\"\ndone\nNote: Applications that are not following standard practices, and have\nworld-writable files in /System/Volumes/Data/Library may not launch or\noperate correctly after the remediation has been run.\n"
+  resolution: |
+    Ask your system administrator to deploy a script that will ensure folders
+    are not world-writable in the /Library folder. 
+    /usr/bin/sudo IFS=$'\n'
+    for libPermissions in $(/usr/bin/find /Library -type d -perm -002 ! -perm -1000 ! -xattrname com.apple.rootless 2>/dev/null); do
+      /bin/chmod -R o-w "$libPermissions"
+    done
+    Note: Applications that are not following standard practices, and have
+    world-writable files in /System/Volumes/Data/Library may not launch or
+    operate correctly after the remediation has been run.
   query: |
     SELECT 1 WHERE NOT EXISTS (
       SELECT 1 FROM file f

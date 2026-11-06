@@ -1,4 +1,5 @@
-- name: "CIS - Ensure 'Enable ESS with Supported Peripherals' is set to 'Enabled: 1' \n"
+- name: |
+    CIS - Ensure 'Enable ESS with Supported Peripherals' is set to 'Enabled: 1' 
   platform: windows
   description: |
     Enhanced Sign-in Security isolates Windows Hello biometric (face and fingerprint) template data and matching operations to trusted hardware or specified memory regions.
