@@ -9,4 +9,18 @@
         1. Open System Settings
         2. Select Lock Screen
         3. Verify that Start Screen Saver when inactive is set for 20 minutes or less (≤1200 seconds)
-  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.screensaver' AND \n        name='idleTime' AND \n        CAST(value AS INT) <= 1200 AND \n        username = ''\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.screensaver' AND \n        name='idleTime' AND \n        CAST(value AS INT) > 1200\n    );  \n"
+  query: |
+    SELECT 1 WHERE 
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.screensaver' AND 
+            name='idleTime' AND 
+            CAST(value AS INT) <= 1200 AND 
+            username = ''
+        )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.screensaver' AND 
+            name='idleTime' AND 
+            CAST(value AS INT) > 1200
+        );  

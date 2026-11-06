@@ -1,4 +1,5 @@
-- name: "CIS - Ensure 'Disable Cloud Clipboard integration for server-to-client data transfer' is set to 'Enabled' \n"
+- name: |
+    CIS - Ensure 'Disable Cloud Clipboard integration for server-to-client data transfer' is set to 'Enabled' 
   platform: windows
   description: |
     This policy setting controls whether data transferred from the remote session to the client using clipboard redirection is added to the client-side cloud clipboard.

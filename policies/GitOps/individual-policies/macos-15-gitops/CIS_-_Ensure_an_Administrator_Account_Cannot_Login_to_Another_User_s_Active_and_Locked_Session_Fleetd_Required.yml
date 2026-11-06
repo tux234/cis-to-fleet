@@ -16,4 +16,10 @@
     # Note: Running this command will disable Touch ID to unlock the screen
     # saver. To re-enable Touch ID for users, run:
     /usr/bin/sudo /usr/bin/defaults write /Library/Preferences/com.apple.loginwindow screenUnlockMode -int 1
-  query: "SELECT 1 WHERE EXISTS (\n  SELECT JSON_EXTRACT(json_result, '$.rule') AS rule\n  FROM authdb\n  WHERE right_name = 'system.login.screensaver' AND \n  rule LIKE '%authenticate-session-owner%'\n);\n"
+  query: |
+    SELECT 1 WHERE EXISTS (
+      SELECT JSON_EXTRACT(json_result, '$.rule') AS rule
+      FROM authdb
+      WHERE right_name = 'system.login.screensaver' AND 
+      rule LIKE '%authenticate-session-owner%'
+    );

@@ -1,4 +1,5 @@
-- name: "CIS - Ensure 'Configure Redirection Guard' is set to 'Enabled: Redirection Guard Enabled' \n"
+- name: |
+    CIS - Ensure 'Configure Redirection Guard' is set to 'Enabled: Redirection Guard Enabled' 
   platform: windows
   description: |
     This policy setting determines whether Redirection Guard is enabled for the print spooler. Redirection Guard can prevent file redirections from being used within the print spooler.

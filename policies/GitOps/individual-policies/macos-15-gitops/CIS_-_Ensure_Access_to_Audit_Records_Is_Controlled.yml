@@ -11,4 +11,29 @@
       /usr/bin/sudo /bin/chmod -R og-rw /etc/security/audit_control
       /usr/bin/sudo /usr/sbin/chown -R root:wheel $(/usr/bin/sudo /usr/bin/grep '^dir' /etc/security/audit_control | /usr/bin/awk -F: '{print $2}')
       /usr/bin/sudo /bin/chmod -R og-rw $(/usr/bin/sudo /usr/bin/grep '^dir' /etc/security/audit_control | /usr/bin/awk -F: '{print $2}')
-  query: "SELECT 1 WHERE \n  -- For all files in /var/audit:\n  -- UID, GID should be owned by root.\n  -- MODE should be 0440 (\"-r--r-----\")\n  NOT EXISTS ( SELECT 1 FROM file WHERE path LIKE '/var/audit/%' AND (uid !=0 OR gid !=0 OR mode != \"0440\") )\n  AND \n  NOT EXISTS ( select 1 from file \n                    where path LIKE \n                    ( \n                        SELECT dir FROM \n                        ( \n                          -- The path we are looking for is written inside /etc/security/audit_control in a line that starts with \"dir:\"\n                          -- Looking immediately at this and REGEX-ing the path after it (and concatenating \"/%\")\n                          -- Same explanation for queries below.\n                          select line, CONCAT(regex_match(line, '^dir:(.+)',1 ), '/%') AS dir \n                          FROM file_lines \n                          WHERE path = '/etc/security/audit_control' \n                          AND line LIKE \"dir:%\"\n                        )\n                    ) \n                    AND ( uid !=0 OR gid !=0 OR mode != \"0440\" )\n              ) \n  AND \n  -- For /etc/security/audit_control the MODE should be 0400 (\"-r--------\")\n  NOT EXISTS ( select 1 from file where path = \"/etc/security/audit_control\" AND mode != \"0400\" );\n"
+  query: |
+    SELECT 1 WHERE 
+      -- For all files in /var/audit:
+      -- UID, GID should be owned by root.
+      -- MODE should be 0440 ("-r--r-----")
+      NOT EXISTS ( SELECT 1 FROM file WHERE path LIKE '/var/audit/%' AND (uid !=0 OR gid !=0 OR mode != "0440") )
+      AND 
+      NOT EXISTS ( select 1 from file 
+                        where path LIKE 
+                        ( 
+                            SELECT dir FROM 
+                            ( 
+                              -- The path we are looking for is written inside /etc/security/audit_control in a line that starts with "dir:"
+                              -- Looking immediately at this and REGEX-ing the path after it (and concatenating "/%")
+                              -- Same explanation for queries below.
+                              select line, CONCAT(regex_match(line, '^dir:(.+)',1 ), '/%') AS dir 
+                              FROM file_lines 
+                              WHERE path = '/etc/security/audit_control' 
+                              AND line LIKE "dir:%"
+                            )
+                        ) 
+                        AND ( uid !=0 OR gid !=0 OR mode != "0440" )
+                  ) 
+      AND 
+      -- For /etc/security/audit_control the MODE should be 0400 ("-r--------")
+      NOT EXISTS ( select 1 from file where path = "/etc/security/audit_control" AND mode != "0400" );

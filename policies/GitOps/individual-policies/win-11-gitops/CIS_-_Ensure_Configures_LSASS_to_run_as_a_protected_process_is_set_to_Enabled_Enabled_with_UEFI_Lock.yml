@@ -1,4 +1,5 @@
-- name: "CIS - Ensure 'Configures LSASS to run as a protected process' is set to 'Enabled: Enabled with UEFI Lock' \n"
+- name: |
+    CIS - Ensure 'Configures LSASS to run as a protected process' is set to 'Enabled: Enabled with UEFI Lock' 
   platform: windows
   description: |
     This policy setting controls whether the Local Security Authority Subservice Service

@@ -11,4 +11,18 @@
     emphasizes that a Mac must be up-to-date on patches so that Apple's security tools can
     be used to quickly patch when a rapid response is necessary.
   resolution: Ask your system administrator to deploy an MDM profile that enables automatic critical system and security updates.
-  query: "SELECT 1 WHERE \n  EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.SoftwareUpdate' AND \n        name='CriticalUpdateInstall' AND \n        (value = 1 OR value = 'true') AND \n        username = ''\n    )\n  AND NOT EXISTS (\n    SELECT 1 FROM managed_policies WHERE \n        domain='com.apple.SoftwareUpdate' AND \n        name='CriticalUpdateInstall' AND \n        (value != 1 AND value != 'true')\n    );  \n"
+  query: |
+    SELECT 1 WHERE 
+      EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.SoftwareUpdate' AND 
+            name='CriticalUpdateInstall' AND 
+            (value = 1 OR value = 'true') AND 
+            username = ''
+        )
+      AND NOT EXISTS (
+        SELECT 1 FROM managed_policies WHERE 
+            domain='com.apple.SoftwareUpdate' AND 
+            name='CriticalUpdateInstall' AND 
+            (value != 1 AND value != 'true')
+        );  

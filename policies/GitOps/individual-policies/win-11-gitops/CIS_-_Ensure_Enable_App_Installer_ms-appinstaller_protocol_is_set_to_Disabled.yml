@@ -1,4 +1,5 @@
-- name: "CIS - Ensure 'Enable App Installer ms-appinstaller protocol' is set to 'Disabled' \n"
+- name: |
+    CIS - Ensure 'Enable App Installer ms-appinstaller protocol' is set to 'Disabled' 
   platform: windows
   description: |
     This policy setting controls whether users can install packages from a website that is using the ms-appinstaller protocol. The ms-appinstaller protocol allows users to install an application by clicking a link on a website.

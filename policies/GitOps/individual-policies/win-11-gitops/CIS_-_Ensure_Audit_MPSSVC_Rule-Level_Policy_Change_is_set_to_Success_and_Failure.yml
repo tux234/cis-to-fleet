@@ -21,4 +21,6 @@
     Automatic method:
     Ask your system administrator to establish the recommended configuration via GP, set the following UI path to include Success and Failure:
     'Computer Configuration\Policies\Windows Settings\Security Settings\Advanced Audit Policy Configuration\Audit Policies\Policy Change\Audit MPSSVC Rule- Level Policy Change'
-  query: "SELECT 1 FROM mdm_bridge where mdm_command_input = \"<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Audit/PolicyChange_AuditMPSSVCRuleLevelPolicyChange</LocURI></Target></Item></Get></SyncBody>\" \nAND mdm_command_output = 3;\n"
+  query: |
+    SELECT 1 FROM mdm_bridge where mdm_command_input = "<SyncBody><Get><CmdID>1</CmdID><Item><Target><LocURI>./Device/Vendor/MSFT/Policy/Result/Audit/PolicyChange_AuditMPSSVCRuleLevelPolicyChange</LocURI></Target></Item></Get></SyncBody>" 
+    AND mdm_command_output = 3;
